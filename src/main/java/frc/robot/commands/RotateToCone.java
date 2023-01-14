@@ -10,15 +10,17 @@ import frc.robot.subsystems.NetworkTables;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class ExampleCommand extends CommandBase {
+public class RotateToCone extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Claw m_claw;
-  private final NetworkTables table;
 
   private final Supplier<Double> clawTwist;
+  private final Timer time;
+  private double angle;
   
   private final PIDController pid;
   /**
@@ -26,26 +28,32 @@ public class ExampleCommand extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ExampleCommand(Claw claw, NetworkTables tables, Supplier<Double> twist) {
+  public RotateToCone(Claw claw, Supplier<Double> twist) {
     m_claw = claw;
-    table = tables;
 
     clawTwist = twist;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(claw);
-    addRequirements(tables);
     pid = new PIDController(0.5, 0, 0);
+    time = new Timer();
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    time.start();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double power = pid.calculate(table.getAngle(), 45);
+    angle = NetworkTables.getAngle();
+
+    double power = pid.calculate(NetworkTables.getAngle(), 45);
     System.out.println("Power: " + power);
+
+
+
   }
 
   // Called once the command ends or is interrupted.
@@ -55,6 +63,7 @@ public class ExampleCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    //time.get() > 1 && 
     return false;
   }
 }
