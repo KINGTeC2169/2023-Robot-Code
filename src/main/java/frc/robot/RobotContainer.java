@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.RotateToCone;
 import frc.robot.subsystems.Claw;
-import frc.robot.subsystems.NetworkTables;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**

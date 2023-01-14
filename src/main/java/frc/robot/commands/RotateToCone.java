@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 /** An example command that uses an example subsystem. */
 public class RotateToCone extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Claw m_claw;
+  private final Claw claw;
 
   private final Supplier<Double> clawTwist;
   private final Timer time;
@@ -29,7 +29,7 @@ public class RotateToCone extends CommandBase {
    * @param subsystem The subsystem used by this command.
    */
   public RotateToCone(Claw claw, Supplier<Double> twist) {
-    m_claw = claw;
+    this.claw = claw;
 
     clawTwist = twist;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -42,14 +42,19 @@ public class RotateToCone extends CommandBase {
   @Override
   public void initialize() {
     time.start();
+    claw.resestEncoder();
+    angle = NetworkTables.getAngle();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    angle = NetworkTables.getAngle();
+    //angle = NetworkTables.getAngle();
 
-    double power = pid.calculate(NetworkTables.getAngle(), 45);
+    //  x/2048 * 360
+
+
+    double power = pid.calculate(claw.getEnconder() * (360.0 / 2048), angle);
     System.out.println("Power: " + power);
 
 
