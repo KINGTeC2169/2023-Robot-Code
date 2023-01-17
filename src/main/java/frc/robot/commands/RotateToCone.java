@@ -72,7 +72,7 @@ public class RotateToCone extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    make an epic claw no ball auto 5
+    make an epic claw no ball auto 6
   }
 
   // Returns true when the command should end.
