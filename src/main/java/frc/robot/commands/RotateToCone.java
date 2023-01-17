@@ -76,7 +76,7 @@ public class RotateToCone extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //time.get() > 1 && 
+    //time.getUsClock()() > 1 && Math.abs(NetworkTable.getAngle()) < 5?
     return false;
   }
 }
