@@ -4,10 +4,12 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants.Motors;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.NetworkTables;
 
 import java.util.function.Supplier;
+
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
@@ -18,9 +20,11 @@ public class RotateToCone extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Claw claw;
 
+
   private final Supplier<Double> clawTwist;
   private final Timer time;
   private double angle;
+  private boolean isAngle;
   
   private final PIDController pid;
   /**
@@ -54,9 +58,13 @@ public class RotateToCone extends CommandBase {
     //  x/2048 * 360
 
 
-    double power = pid.calculate(claw.getEnconder() * (360.0 / 2048), angle);
-    System.out.println("Power: " + power);
+    double currentAngle = claw.getEnconder() / Motors.TalonFXCPR * 360;
 
+    double power = pid.calculate(currentAngle, angle);
+
+    System.out.println("Current angle: " + currentAngle + "\tAngle: " + power + "\tPower: " + power);
+
+    //claw.turnWrist(clawTwist.get());
 
 
   }
