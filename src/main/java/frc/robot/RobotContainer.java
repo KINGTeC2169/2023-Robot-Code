@@ -10,6 +10,7 @@ import frc.robot.Constants.Ports;
 import frc.robot.commands.RotateToCone;
 import frc.robot.subsystems.Claw;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -24,12 +25,14 @@ public class RobotContainer {
   private final Claw m_claw = new Claw();
   //private final NetworkTables tables = new NetworkTables();
 
-  private final XboxController controller = new XboxController(Ports.controller);
-  private final RotateToCone rotateToCone = new RotateToCone(m_claw, 
-  () -> controller.getRightX());
+  //private final XboxController controller = new XboxController(Ports.controller);
+  private final RotateToCone rotateToCone = new RotateToCone(m_claw);
+  private final CommandXboxController controller =
+      new CommandXboxController(Ports.controller);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
     //m_claw.setDefaultCommand(rotateToCone);
     // Configure the button bindings
     configureButtonBindings();
@@ -42,7 +45,14 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(controller, 0).onTrue(rotateToCone);
+    //new JoystickButton(controller, 0).onTrue(rotateToCone);
+
+    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+    //new Trigger(m_drivetrain::exampleCondition).onTrue(new DriveCommand(m_drivetrain));
+
+    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
+    // cancelling on release.
+    controller.b().whileTrue(rotateToCone);
   }
 
   /**

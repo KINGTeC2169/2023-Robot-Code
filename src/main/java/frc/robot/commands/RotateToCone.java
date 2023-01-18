@@ -21,7 +21,6 @@ public class RotateToCone extends CommandBase {
   private final Claw claw;
 
 
-  private final Supplier<Double> clawTwist;
   private final Timer time;
   private double angle;
   private boolean isAngle;
@@ -32,10 +31,9 @@ public class RotateToCone extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public RotateToCone(Claw claw, Supplier<Double> twist) {
+  public RotateToCone(Claw claw) {
     this.claw = claw;
 
-    clawTwist = twist;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(claw);
     pid = new PIDController(0.5, 0, 0);
@@ -78,6 +76,7 @@ public class RotateToCone extends CommandBase {
   @Override
   public boolean isFinished() {
     //time.getUsClock()() > 1 && Math.abs(NetworkTable.getAngle()) < 5?
+    //return isAngle;
     return false;
   }
 }
