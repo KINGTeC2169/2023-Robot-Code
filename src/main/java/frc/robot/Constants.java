@@ -21,6 +21,20 @@ public final class Constants {
     public static final class Ports {
         public static final int wristMotor = 1;
         public static final int controller = 0;
+
+        //Swervedrive ports
+        public static final int frontRightDrive = 8;
+        public static final int frontRightTurn = 7;
+        public static final int frontRightAbsolute = 12;
+        public static final int frontLeftDrive = 2;
+        public static final int frontLeftTurn = 1;
+        public static final int frontLeftAbsolute = 11;
+        public static final int backRightDrive = 6;
+        public static final int backRightTurn = 5;
+        public static final int backRightAbsolute = 10;
+        public static final int backLeftDrive = 4;
+        public static final int backLeftTurn = 3;
+        public static final int backLeftAbsolute = 9;
     }
 
     public static final class Motors {
@@ -29,8 +43,8 @@ public final class Constants {
     }
 
     public static final class ModuleConstants {
-        public static final double maxNeoSpeed = 3.68808;
-        public static final double maxSpeed = 4.14528;
+        //public static final double maxNeoSpeed = 3.68808;
+        public static final double maxSpeed = 4.96824;
         public static final double maxNeoRadPerSec = 2 * 2 * Math.PI;
         public static final double wheelDiameter = 0.1016;//Units.inchesToMeters(4.0);
         public static final double driveGearRatio = 1 / 8.16;

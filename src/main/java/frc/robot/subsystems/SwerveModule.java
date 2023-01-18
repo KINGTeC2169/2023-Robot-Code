@@ -112,4 +112,26 @@ public class SwerveModule {
         turnMotor.set(ControlMode.PercentOutput, 0);
     }
 
+
+    //EXPERIMENTAL METHODS:
+
+    /**
+     * Uses a PID to set drive velocity to 0
+     */
+    public void semiAutoStop() {
+        driveMotor.set(ControlMode.PercentOutput, drivePID.calculate(getDriveVelocity(), 0));
+        turnMotor.set(ControlMode.PercentOutput, 0);
+    }
+
+    /**
+     * Sets wheels to X formation
+     */
+    public void activeStop(int direction) {
+        System.out.println("2\n2\n2\n2\n2\n2\n2\n2");
+        SwerveModuleState state = new SwerveModuleState(0, new Rotation2d(0.785398 * direction));
+        state = SwerveModuleState.optimize(state, getState().angle);
+        driveMotor.set(ControlMode.PercentOutput, drivePID.calculate(getDriveVelocity(), 0));
+        turnMotor.set(ControlMode.PercentOutput, turningPID.calculate(getTurnPosition(), state.angle.getRadians()));
+    }
+
 }
