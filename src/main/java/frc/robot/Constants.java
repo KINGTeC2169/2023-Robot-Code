@@ -19,6 +19,8 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
     public static final class Ports {
+        public static final int liftMotor = 3;
+        public static final int elevatorMotor = 2;
         public static final int wristMotor = 1;
         public static final int controller = 0;
 

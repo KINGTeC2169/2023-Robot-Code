@@ -47,8 +47,6 @@ public class SwerveSubsystem extends SubsystemBase {
     DriveConstants.BRabsoluteOffset,
     false);
 
-    private AHRS gyro = new AHRS(SPI.Port.kMXP);
-
     public SwerveSubsystem() {
         
         //Creates a new thread, which sleeps and then zeros out the gyro
@@ -65,15 +63,15 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void zeroHeading() {
         System.out.println("Zeroing gyro \n.\n.\n.\n.\n.\n.\n.");
-        gyro.reset();
+        NavX.reset();
     }
 
     public double getHeading() {
-        return Math.IEEEremainder(gyro.getAngle(), 360);
+        return Math.IEEEremainder(NavX.getAngle(), 360);
     }
 
     public Rotation2d getRotation2d() {
-        return gyro.getRotation2d();
+        return NavX.getRotation2d();
         //return Rotation2d.fromDegrees(getHeading());
     }
 
