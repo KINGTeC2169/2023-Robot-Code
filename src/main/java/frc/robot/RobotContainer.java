@@ -27,8 +27,7 @@ public class RobotContainer {
 
   //private final XboxController controller = new XboxController(Ports.controller);
   private final RotateToCone rotateToCone = new RotateToCone(m_claw);
-  private final CommandXboxController controller =
-      new CommandXboxController(Ports.controller);
+  private final CommandXboxController controller = new CommandXboxController(Ports.controller);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
