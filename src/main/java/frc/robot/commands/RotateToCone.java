@@ -73,6 +73,7 @@ public class RotateToCone extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     changing things again
+    commit
   }
 
   // Returns true when the command should end.
