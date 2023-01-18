@@ -19,8 +19,12 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
     public static final class Ports {
-        public static final int wristMotor = 1;
         public static final int controller = 0;
+
+        public static final int wristMotor = 1;
+        public static final int clawTwist = 2;
+
+        public static final int grabber = 0;
 
         //Swervedrive ports
         public static final int frontRightDrive = 8;

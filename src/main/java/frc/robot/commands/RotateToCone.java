@@ -8,9 +8,6 @@ import frc.robot.Constants.Motors;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.NetworkTables;
 
-import java.util.function.Supplier;
-
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -44,7 +41,7 @@ public class RotateToCone extends CommandBase {
   @Override
   public void initialize() {
     time.start();
-    claw.resestEncoder();
+    claw.resetTwistEncoder();
     angle = NetworkTables.getAngle();
   }
 
@@ -56,7 +53,7 @@ public class RotateToCone extends CommandBase {
     //  x/2048 * 360
 
 
-    double currentAngle = claw.getEnconder() / Motors.TalonFXCPR * 360;
+    double currentAngle = claw.getTwistEncoder() / Motors.TalonFXCPR * 360;
 
     double power = pid.calculate(currentAngle, angle);
 

@@ -6,12 +6,18 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
 
 public class Claw extends SubsystemBase {
-  private final TalonFX wrist = new TalonFX(Ports.wristMotor);
+  private final TalonFX wristMotor = new TalonFX(Ports.wristMotor);
+  private final TalonSRX clawTwist = new TalonSRX(Ports.clawTwist);
+  private final Solenoid grabber = new Solenoid(PneumaticsModuleType.REVPH, Ports.grabber);
   //private final PIDController pid = new PIDController(0.5, 0, 0);
   /** Creates a new ExampleSubsystem. */
   public Claw() {}
@@ -19,19 +25,42 @@ public class Claw extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Wrist Encoder", getWristEncoder());
+    SmartDashboard.putNumber("ClawTwist", getTwistEncoder());
   }
 
-  public void turnWrist(double power) {
+  public void twistClaw(double power) {
     System.out.println("Turning: " + power);
-    wrist.set(ControlMode.PercentOutput, power);
+    clawTwist.set(ControlMode.PercentOutput, power);
+  }
+  public void moveWrist(double power) {
+    wristMotor.set(ControlMode.PercentOutput, power);
   }
 
-  public double getEnconder() {
-    return wrist.getSelectedSensorPosition();
+  public void grab() {
+    grabber.set(true);
+  }
+  public void unGrab() {
+    grabber.set(false);
+  }
+  public void setGrab(Boolean isGrab) {
+    grabber.set(isGrab);
+  } 
+
+  public double getWristEncoder() {
+    return wristMotor.getSelectedSensorPosition();
   }
 
-  public void resestEncoder() {
-    wrist.setSelectedSensorPosition(0);
+  public double getTwistEncoder() {
+    return clawTwist.getSelectedSensorPosition();
+  }
+
+  public void resestWristEncoder() {
+    wristMotor.setSelectedSensorPosition(0);
+  }
+
+  public void resetTwistEncoder() {
+    clawTwist.setSelectedSensorPosition(0);
   }
 
   @Override
