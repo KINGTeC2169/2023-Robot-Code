@@ -23,8 +23,6 @@ public final class Constants {
         public static final int elevatorMotor = 2;
         public static final int wristMotor = 1;
         public static final int controller = 0;
-
-        public static final int wristMotor = 1;
         public static final int clawTwist = 2;
 
         public static final int grabber = 0;
