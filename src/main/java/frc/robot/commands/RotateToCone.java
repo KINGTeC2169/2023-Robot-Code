@@ -42,7 +42,7 @@ public class RotateToCone extends CommandBase {
   public void initialize() {
     time.start();
     claw.resetTwistEncoder();
-    angle = NetworkTables.getAngle();
+    angle = NetworkTables.getPalmAngle("Cone");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
