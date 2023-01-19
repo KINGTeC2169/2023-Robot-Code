@@ -8,10 +8,11 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.RotateToCone;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -23,6 +24,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   
   private final Claw m_claw = new Claw();
+  private final Arm arm = new Arm();
   //private final NetworkTables tables = new NetworkTables();
 
   //private final XboxController controller = new XboxController(Ports.controller);
@@ -52,6 +54,8 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     controller.b().whileTrue(rotateToCone);
+    controller.y().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));
+    controller.a().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));
   }
 
   /**

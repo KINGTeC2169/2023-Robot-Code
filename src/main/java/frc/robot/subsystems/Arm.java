@@ -10,7 +10,7 @@ import frc.robot.Constants.Ports;
 public class Arm extends SubsystemBase {
 
     private final TalonFX elevatorMotor = new TalonFX(Ports.elevatorMotor);
-    private final TalonFX liftMotor = new TalonFX(Ports.liftMotor);
+    private final TalonFX winchMotor = new TalonFX(Ports.winchMotor);
     //private final PIDController pid = new PIDController(0.5, 0, 0);
 
     /**
@@ -42,12 +42,23 @@ public class Arm extends SubsystemBase {
         return elevatorMotor.getSelectedSensorPosition();
     }
 
-    public void lift(double power) {
-        liftMotor.set(ControlMode.PercentOutput, power);
+    public void setWinch(double power) {
+        winchMotor.set(ControlMode.PercentOutput, power);
+    }
+    public void winchUp() {
+        System.out.println("Balls in my mouth");
+        winchMotor.set(ControlMode.PercentOutput, 0.3);
+    }
+    public void winchDown() {
+        winchMotor.set(ControlMode.PercentOutput, -0.3);
+    }
+    public void winchStop() {
+        winchMotor.set(ControlMode.PercentOutput, 0);
     }
 
+
     public double getLiftEncoder() {
-        return liftMotor.getSelectedSensorPosition();
+        return winchMotor.getSelectedSensorPosition();
     }
 
     
