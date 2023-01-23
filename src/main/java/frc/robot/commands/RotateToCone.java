@@ -4,11 +4,15 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Motors;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.NetworkTables;
-
+import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -16,24 +20,42 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class RotateToCone extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Claw claw;
+  private final SwerveSubsystem swerve;
+  private final Arm arm;
 
 
   private final Timer time;
+  private double xSpeed;
+  private double ySpeed;
+  private double turningSpeed;
+  private double wristTurn;
   private double angle;
   private boolean isAngle;
+  private boolean readingAngle;
+  private boolean haveCone;
+  private boolean haveCube;
+  private ChassisSpeeds chassisSpeeds;
   
-  private final PIDController pid;
+  private final PIDController pidTurn;
+  private final PIDController pidX;
+  private final PIDController pidY;
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public RotateToCone(Claw claw) {
+  public RotateToCone(Claw claw, SwerveSubsystem swerve, Arm arm) {
     this.claw = claw;
+    this.swerve = swerve;
+    this.arm = arm;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(claw);
-    pid = new PIDController(0.5, 0, 0);
+    addRequirements(swerve);
+    addRequirements(arm);
+    pidTurn = new PIDController(0.5, 0, 0);
+    pidX = new PIDController(0.5, 0, 0);
+    pidY = new PIDController(0.5, 0, 0);
     time = new Timer();
   }
 
@@ -49,17 +71,39 @@ public class RotateToCone extends CommandBase {
   @Override
   public void execute() {
     //angle = NetworkTables.getAngle();
+    if(!haveCone && !haveCube) {
+      if (NetworkTables.getPalmCenter("Cone")[0] != 0)
+        haveCone = true;
+      else if (NetworkTables.getPalmCenter("Cube")[0] != 0)
+        haveCube = true;
+    }
+
 
     //  x/2048 * 360
+    if(haveCone) {
+      xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 0);//setpoint should be whatever the center of the image is
+      ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 0);
+      claw.twistClaw(pidTurn.calculate(NetworkTables.getPalmAngle("Cone"), 0));
+    }
+    else if(haveCube) {
+      xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 0);//setpoint should be whatever the center of the image is
+      ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 0);
+    }
+    else {
+      
+      turningSpeed = pidTurn.calculate(NetworkTables.getFrontCenter()[0], 0);// center of image
+    }
 
 
-    double currentAngle = claw.getTwistEncoder() / Motors.TalonFXCPR * 360;
+    chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+        
 
-    double power = pid.calculate(currentAngle, angle);
+    SwerveModuleState[] moduleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
 
-    System.out.println("Current angle: " + currentAngle + "\tAngle: " + power + "\tPower: " + power);
+    swerve.setModuleStates(moduleStates);
 
-    //claw.turnWrist(clawTwist.get());
+
+    //System.out.println("Current angle: " + currentAngle + "\tAngle: " + power + "\tPower: " + power);
 
 
   }
@@ -67,6 +111,8 @@ public class RotateToCone extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    haveCone = false;
+    haveCube = false;
   }
 
   // Returns true when the command should end.

@@ -21,5 +21,18 @@ public class NetworkTables {
         return table.getEntry("Front-" + coneOrCube + "-Center").getDoubleArray(arr);
     }
 
+    public static double[] getFrontCenter() {
+        return getFrontCenter("Cone")[0] == 0 ? 
+        getFrontCenter("Cube") : getFrontCenter("Cone");
+    }
 
+    public static String closestObject() {
+        if(getFrontCenter("Cube")[1] != 0 || getFrontCenter("Cone")[1] != 0) {
+            return table.getEntry("Front-Cone-Center").getDoubleArray(arr)[1] < table.getEntry("Front-Cone-Center").getDoubleArray(arr)[1] ? 
+        "Cone" : "Cube";
+        }
+        else
+            return null;
+    }
+        
 }
