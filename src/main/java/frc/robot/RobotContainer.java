@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.RotateToCone;
+import frc.robot.commands.Score;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -31,6 +32,7 @@ public class RobotContainer {
 
   //private final XboxController controller = new XboxController(Ports.controller);
   private final RotateToCone rotateToCone = new RotateToCone(claw, swerve, arm);
+  private final Score score = new Score(claw, swerve, arm);
   private final CommandXboxController controller = new CommandXboxController(Ports.controller);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -56,6 +58,7 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     controller.b().whileTrue(rotateToCone);
+    controller.x().whileTrue(score);
     controller.y().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));
     controller.a().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));
   }
