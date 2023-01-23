@@ -16,24 +16,30 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class RotateToCone extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Claw claw;
+  private final SwerveCommand swerve;
 
 
   private final Timer time;
   private double angle;
   private boolean isAngle;
   
-  private final PIDController pid;
+  private final PIDController pidTurn;
+  private final PIDController pidX;
+  private final PIDController pidY;
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public RotateToCone(Claw claw) {
+  public RotateToCone(Claw claw, SwerveCommand swerve) {
     this.claw = claw;
+    this.swerve = swerve;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(claw);
-    pid = new PIDController(0.5, 0, 0);
+    pidTurn = new PIDController(0.5, 0, 0);
+    pidX = new PIDController(0.5, 0, 0);
+    pidY = new PIDController(0.5, 0, 0);
     time = new Timer();
   }
 
@@ -55,9 +61,11 @@ public class RotateToCone extends CommandBase {
 
     double currentAngle = claw.getTwistEncoder() / Motors.TalonFXCPR * 360;
 
-    double power = pid.calculate(currentAngle, angle);
+    double power = pidTurn.calculate(currentAngle, angle);
 
     System.out.println("Current angle: " + currentAngle + "\tAngle: " + power + "\tPower: " + power);
+
+
 
     //claw.turnWrist(clawTwist.get());
 
