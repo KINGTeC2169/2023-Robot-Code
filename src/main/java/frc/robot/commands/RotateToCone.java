@@ -35,7 +35,7 @@ public class RotateToCone extends CommandBase {
 	private boolean haveCone;
 	private boolean haveCube;
 	private ChassisSpeeds chassisSpeeds;
-
+	
 	private final PIDController pidTurn;
 	private final PIDController pidX;
 	private final PIDController pidY;
@@ -48,7 +48,6 @@ public class RotateToCone extends CommandBase {
 		this.claw = claw;
 		this.swerve = swerve;
 		this.arm = arm;
-
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(claw);
 		addRequirements(swerve);
@@ -70,39 +69,42 @@ public class RotateToCone extends CommandBase {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-    //angle = NetworkTables.getAngle();
-    if(!haveCone && !haveCube) {
+		//angle = NetworkTables.getAngle();
+		if(!haveCone && !haveCube) {
 		if (NetworkTables.getPalmCenter("Cone")[0] != 0)
 			haveCone = true;
 		else if (NetworkTables.getPalmCenter("Cube")[0] != 0)
 			haveCube = true;
-	}
+		}
 
 
-    //  x/2048 * 360
-	if(haveCone) {
-    	xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 0);//setpoint should be whatever the center of the image is
-		ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 0);
-    	claw.twistClaw(pidTurn.calculate(NetworkTables.getPalmAngle("Cone"), 0));
-    }
-    else if(haveCube) {
-    	xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 0);//setpoint should be whatever the center of the image is
-    	ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 0);
-    }
-    else {
-    	turningSpeed = pidTurn.calculate(NetworkTables.getFrontCenter()[0], 0);// center of image
-    }
+		//  x/2048 * 360
+		if(haveCone) {
+			xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 0);//setpoint should be whatever the center of the image is
+			ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 0);
+			claw.twistClaw(pidTurn.calculate(NetworkTables.getPalmAngle("Cone"), 0));
+		}
+		else if(haveCube) {
+			xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 0);//setpoint should be whatever the center of the image is
+			ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 0);
+		}
+		else {
+			if(NetworkTables.closestObject() != null) {
+				turningSpeed = pidTurn.calculate(NetworkTables.getFrontCenter()[0], 0);// center of image
+				ySpeed = pidY.calculate(NetworkTables.getFrontCenter()[1], 0);
+			}
+		}
 
 
-    chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
-        
+		chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+			
 
-    SwerveModuleState[] moduleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
+		SwerveModuleState[] moduleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
 
-    swerve.setModuleStates(moduleStates);
+		swerve.setModuleStates(moduleStates);
 
 
-    //System.out.println("Current angle: " + currentAngle + "\tAngle: " + power + "\tPower: " + power);
+		//System.out.println("Current angle: " + currentAngle + "\tAngle: " + power + "\tPower: " + power);
 
 
 	}
@@ -111,14 +113,14 @@ public class RotateToCone extends CommandBase {
 	@Override
 	public void end(boolean interrupted) {
 		haveCone = false;
-    	haveCube = false;
+		haveCube = false;
 	}
 
-  // Returns true when the command should end.
-  	@Override
+	// Returns true when the command should end.
+	@Override
 	public boolean isFinished() {
 		//time.getUsClock()() > 1 && Math.abs(NetworkTable.getAngle()) < 5?
-    	//return isAngle;
-    	return false;
+		//return isAngle;
+		return false;
 	}
 }
