@@ -10,6 +10,7 @@ import frc.robot.Constants.Ports;
 import frc.robot.commands.RotateToCone;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -23,12 +24,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   
-  private final Claw m_claw = new Claw();
+  private final Claw claw = new Claw();
   private final Arm arm = new Arm();
+  private final SwerveSubsystem swerve = new SwerveSubsystem();
   //private final NetworkTables tables = new NetworkTables();
 
   //private final XboxController controller = new XboxController(Ports.controller);
-  private final RotateToCone rotateToCone = new RotateToCone(m_claw);
+  private final RotateToCone rotateToCone = new RotateToCone(claw, swerve, arm);
   private final CommandXboxController controller = new CommandXboxController(Ports.controller);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
