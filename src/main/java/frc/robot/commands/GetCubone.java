@@ -8,6 +8,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Motors;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.CuboneManager;
 import frc.robot.subsystems.NetworkTables;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.math.controller.PIDController;
@@ -17,14 +18,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class RotateToCone extends CommandBase {
+public class GetCubone extends CommandBase {
 	@SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 	private final Claw claw;
 	private final SwerveSubsystem swerve;
 	private final Arm arm;
 
 
-	private final Timer time;
 	private double xSpeed;
 	private double ySpeed;
 	private double turningSpeed;
@@ -44,7 +44,7 @@ public class RotateToCone extends CommandBase {
 	 *
 	 * @param subsystem The subsystem used by this command.
 	 */
-	public RotateToCone(Claw claw, SwerveSubsystem swerve, Arm arm) {
+	public GetCubone(Claw claw, SwerveSubsystem swerve, Arm arm) {
 		this.claw = claw;
 		this.swerve = swerve;
 		this.arm = arm;
@@ -55,46 +55,35 @@ public class RotateToCone extends CommandBase {
 		pidTurn = new PIDController(0.5, 0, 0);
 		pidX = new PIDController(0.5, 0, 0);
 		pidY = new PIDController(0.5, 0, 0);
-		time = new Timer();
 	}
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		time.start();
 		claw.resetTwistEncoder();
-		angle = NetworkTables.getPalmAngle("Cone");
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		//angle = NetworkTables.getAngle();
-		if(!haveCone && !haveCube) {
-		if (NetworkTables.getPalmCenter("Cone")[0] != 0)
-			haveCone = true;
-		else if (NetworkTables.getPalmCenter("Cube")[0] != 0)
-			haveCube = true;
-		}
+		//if(!CuboneManager.isSomethingInClaw()) {
+			CuboneManager.setConeInClaw(NetworkTables.getPalmCenter("Cone")[0] != 0);
+			CuboneManager.setCubeInClaw(NetworkTables.getPalmCenter("Cube")[0] != 0);
+		//}
 
-
-		//  x/2048 * 360
-		if(haveCone) {
-			xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 0);//setpoint should be whatever the center of the image is
+		if(CuboneManager.isConeInClaw()) {
+			xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 0);
 			ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 0);
 			claw.twistClaw(pidTurn.calculate(NetworkTables.getPalmAngle("Cone"), 0));
 		}
-		else if(haveCube) {
-			xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 0);//setpoint should be whatever the center of the image is
+		else if(CuboneManager.isCubeInClaw()) {
+			xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 0);
 			ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 0);
 		}
-		else {
-			if(NetworkTables.closestObject() != null) {
-				turningSpeed = pidTurn.calculate(NetworkTables.getFrontCenter()[0], 0);// center of image
-				ySpeed = pidY.calculate(NetworkTables.getFrontCenter()[1], 0);
-			}
+		else if(CuboneManager.isSomethingInFront()) {
+			xSpeed = pidX.calculate(NetworkTables.closestObject()[0]);
+			ySpeed = pidY.calculate(NetworkTables.closestObject()[1]);
 		}
-
 
 		chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
 			

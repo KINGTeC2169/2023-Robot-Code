@@ -8,7 +8,7 @@ public class CuboneManager extends SubsystemBase {
     private static boolean cubeInClaw;
     private static boolean coneInFront;
     private static boolean cubeInFront;
-    private static ColorSens
+
 
     public CuboneManager() {}
 
@@ -59,4 +59,11 @@ public class CuboneManager extends SubsystemBase {
         return cubeInFront;
     }
     
+    public static boolean isSomethingInFront() {
+        return cubeInFront || coneInFront;
+    }
+
+    public static boolean isSomethingInClaw() {
+        return cubeInClaw || coneInClaw;
+    }
 }

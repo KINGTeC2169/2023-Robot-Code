@@ -26,13 +26,13 @@ public class NetworkTables {
         getFrontCenter("Cube") : getFrontCenter("Cone");
     }
 
-    public static String closestObject() {
+    public static double[] closestObject() {
         if(getFrontCenter("Cube")[1] != 0 || getFrontCenter("Cone")[1] != 0) {
             return table.getEntry("Front-Cone-Center").getDoubleArray(arr)[1] < table.getEntry("Front-Cone-Center").getDoubleArray(arr)[1] ? 
-        "Cone" : "Cube";
+        getFrontCenter("Cone") : getFrontCenter("Cube");
         }
         else
-            return "None";
+            return arr;
     }
 
     public static String isThereObject() {
