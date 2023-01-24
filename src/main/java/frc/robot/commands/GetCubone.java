@@ -32,8 +32,7 @@ public class GetCubone extends CommandBase {
 	private double angle;
 	private boolean isAngle;
 	private boolean readingAngle;
-	private boolean haveCone;
-	private boolean haveCube;
+	private boolean itemCentered;
 	private ChassisSpeeds chassisSpeeds;
 	
 	private final PIDController pidTurn;
@@ -70,19 +69,25 @@ public class GetCubone extends CommandBase {
 			CuboneManager.setConeInClaw(NetworkTables.getPalmCenter("Cone")[0] != 0);
 			CuboneManager.setCubeInClaw(NetworkTables.getPalmCenter("Cube")[0] != 0);
 		//}
-
-		if(CuboneManager.isConeInClaw()) {
-			xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 0);
-			ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 0);
-			claw.twistClaw(pidTurn.calculate(NetworkTables.getPalmAngle("Cone"), 0));
+		if(!itemCentered) {
+			if(CuboneManager.isConeInClaw()) {
+				xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 0);
+				ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 0);
+				claw.twistClaw(pidTurn.calculate(NetworkTables.getPalmAngle("Cone"), 0));
+				itemCentered = pidX.atSetpoint() && pidY.atSetpoint() && pidTurn.atSetpoint();
+			}
+			else if(CuboneManager.isCubeInClaw()) {
+				xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 0);
+				ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 0);
+				itemCentered = pidX.atSetpoint() && pidY.atSetpoint();
+			}
+			else if(CuboneManager.isSomethingInFront()) {
+				turningSpeed = pidX.calculate(NetworkTables.closestObject()[0]);
+				ySpeed = pidY.calculate(NetworkTables.closestObject()[1]);
+			}
 		}
-		else if(CuboneManager.isCubeInClaw()) {
-			xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 0);
-			ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 0);
-		}
-		else if(CuboneManager.isSomethingInFront()) {
-			xSpeed = pidX.calculate(NetworkTables.closestObject()[0]);
-			ySpeed = pidY.calculate(NetworkTables.closestObject()[1]);
+		else {
+			//pick up item now
 		}
 
 		chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
