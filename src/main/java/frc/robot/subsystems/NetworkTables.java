@@ -32,7 +32,19 @@ public class NetworkTables {
         "Cone" : "Cube";
         }
         else
-            return null;
+            return "None";
+    }
+
+    public static String isThereObject() {
+        if(getFrontCenter("Cone")[0] != 0 && getFrontCenter("Cube")[0] != 0)
+            return "Both";
+        else if(getFrontCenter("Cube")[0] != 0) 
+            return "Cube";
+        else if(getFrontCenter("Cone")[0] != 0)
+            return "Cone";
+        else
+            return "None";
+            
     }
         
 }
