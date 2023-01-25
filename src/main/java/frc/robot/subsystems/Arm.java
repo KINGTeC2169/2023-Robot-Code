@@ -45,9 +45,9 @@ public class Arm extends SubsystemBase {
     public double getElevatorEncoder() {
         return elevatorMotor.getSelectedSensorPosition();
     }
-    public boolean setElevatorPosition(double inches) {
-        winchMotor.set(ControlMode.PercentOutput, elevatorPid.calculate(getElevatorEncoder(), inches));
-        return elevatorPid.atSetpoint();
+    public double setElevatorPosition(double inches) {
+        winchMotor.set(ControlMode.Position, inches);
+        return winchMotor.getClosedLoopError();
     }
 
     public void setWinch(double power) {
@@ -62,9 +62,9 @@ public class Arm extends SubsystemBase {
     public void winchStop() {
         winchMotor.set(ControlMode.PercentOutput, 0);
     }
-    public boolean setArmAngle(double angle) {
-        winchMotor.set(ControlMode.PercentOutput, winchPid.calculate(getLiftAngle(), angle));
-        return winchPid.atSetpoint();
+    public double setArmAngle(double angle) {
+        winchMotor.set(ControlMode.Position, angle);
+        return winchMotor.getClosedLoopError();
     }
 
 

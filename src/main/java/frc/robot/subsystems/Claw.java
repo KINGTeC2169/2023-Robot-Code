@@ -59,7 +59,7 @@ public class Claw extends SubsystemBase {
 		return clawTwist.getSelectedSensorPosition();
 	}
 
-	public void resestWristEncoder() {
+	public void resetWristEncoder() {
 		wristMotor.setSelectedSensorPosition(0);
 	}
 
@@ -67,9 +67,9 @@ public class Claw extends SubsystemBase {
 		clawTwist.setSelectedSensorPosition(0);
 	}
 
-	public boolean setTwistAngle(double angle) {
-		clawTwist.set(ControlMode.PercentOutput, pidTwist.calculate(getWristEncoder(), angle));
-		return pidTwist.atSetpoint();
+	public double setTwistAngle(double angle) {
+		clawTwist.set(ControlMode.Position, angle);
+		return clawTwist.getClosedLoopError();
 	}
 
 	@Override
