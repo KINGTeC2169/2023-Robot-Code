@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,9 +19,12 @@ public class Claw extends SubsystemBase {
 	private final TalonFX wristMotor = new TalonFX(Ports.wristMotor);
 	private final TalonSRX clawTwist = new TalonSRX(Ports.clawTwist);
 	private final Solenoid grabber = new Solenoid(PneumaticsModuleType.REVPH, Ports.grabber);
+	private final PIDController pidTwist = new PIDController(0.5, 0, 0);
 	//private final PIDController pid = new PIDController(0.5, 0, 0);
 	/** Creates a new ExampleSubsystem. */
-	public Claw() {}
+	public Claw() {
+		pidTwist.setTolerance(3);
+	}
 
 	@Override
 	public void periodic() {
@@ -29,13 +33,13 @@ public class Claw extends SubsystemBase {
 		SmartDashboard.putNumber("ClawTwist", getTwistEncoder());
 	}
 
-  public void twistClaw(double power) {
-    System.out.println("Turning: " + power);
-    clawTwist.set(ControlMode.PercentOutput, power);
-  }
-  public void moveWrist(double power) {
-    wristMotor.set(ControlMode.PercentOutput, power);
-  }
+  	public void twistClaw(double power) {
+    	System.out.println("Turning: " + power);
+    	clawTwist.set(ControlMode.PercentOutput, power);
+  	}
+  	public void moveWrist(double power) {
+    	wristMotor.set(ControlMode.PercentOutput, power);
+  	}
 
 	public void grab() {
 		grabber.set(true);
@@ -51,20 +55,25 @@ public class Claw extends SubsystemBase {
 		return wristMotor.getSelectedSensorPosition();
 	}
 
-  public double getTwistEncoder() {
-    return clawTwist.getSelectedSensorPosition();
-  }
+	public double getTwistEncoder() {
+		return clawTwist.getSelectedSensorPosition();
+	}
 
-  public void resestWristEncoder() {
-    wristMotor.setSelectedSensorPosition(0);
-  }
+	public void resestWristEncoder() {
+		wristMotor.setSelectedSensorPosition(0);
+	}
 
-  public void resetTwistEncoder() {
-    clawTwist.setSelectedSensorPosition(0);
-  }
+	public void resetTwistEncoder() {
+		clawTwist.setSelectedSensorPosition(0);
+	}
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
+	public boolean setTwistAngle(double angle) {
+		clawTwist.set(ControlMode.PercentOutput, pidTwist.calculate(getWristEncoder(), angle));
+		return pidTwist.atSetpoint();
+	}
+
+	@Override
+	public void simulationPeriodic() {
+		// This method will be called once per scheduler run during simulation
+	}
 }
