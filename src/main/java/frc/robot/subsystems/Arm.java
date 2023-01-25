@@ -12,15 +12,13 @@ public class Arm extends SubsystemBase {
 
     private final TalonFX elevatorMotor = new TalonFX(Ports.elevatorMotor);
     private final TalonFX winchMotor = new TalonFX(Ports.winchMotor);
-    private final PIDController winchPid = new PIDController(0.5, 0, 0);
-    private final PIDController elevatorPid = new PIDController(0.5, 0, 0);
 
     /**
      * Creates a new ExampleSubsystem.
      */
     public Arm() {
-        winchPid.setTolerance(3);
-        elevatorPid.setTolerance(3);
+        elevatorMotor.config_kP(0, 0.5);
+        winchMotor.config_kP(0, 0.5);
     }
 
     @Override
@@ -63,6 +61,7 @@ public class Arm extends SubsystemBase {
         winchMotor.set(ControlMode.PercentOutput, 0);
     }
     public double setArmAngle(double angle) {
+        //TODO: convert angle into encoder ticks
         winchMotor.set(ControlMode.Position, angle);
         return winchMotor.getClosedLoopError();
     }

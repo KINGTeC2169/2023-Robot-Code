@@ -19,11 +19,10 @@ public class Claw extends SubsystemBase {
 	private final TalonFX wristMotor = new TalonFX(Ports.wristMotor);
 	private final TalonSRX clawTwist = new TalonSRX(Ports.clawTwist);
 	private final Solenoid grabber = new Solenoid(PneumaticsModuleType.REVPH, Ports.grabber);
-	private final PIDController pidTwist = new PIDController(0.5, 0, 0);
-	//private final PIDController pid = new PIDController(0.5, 0, 0);
 	/** Creates a new ExampleSubsystem. */
 	public Claw() {
-		pidTwist.setTolerance(3);
+		wristMotor.config_kP(0, 0.5);
+		clawTwist.config_kP(0, 0.5);
 	}
 
 	@Override
@@ -68,6 +67,7 @@ public class Claw extends SubsystemBase {
 	}
 
 	public double setTwistAngle(double angle) {
+		//TODO convert angle to encoder ticks
 		clawTwist.set(ControlMode.Position, angle);
 		return clawTwist.getClosedLoopError();
 	}
