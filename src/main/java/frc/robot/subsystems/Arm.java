@@ -12,7 +12,8 @@ public class Arm extends SubsystemBase {
 
     private final TalonFX elevatorMotor = new TalonFX(Ports.elevatorMotor);
     private final TalonFX winchMotor = new TalonFX(Ports.winchMotor);
-    private final PIDController pid = new PIDController(0.5, 0, 0);
+    private final PIDController winchPid = new PIDController(0.5, 0, 0);
+    private final PIDController elevatorPid = new PIDController(0.5, 0, 0);
 
     /**
      * Creates a new ExampleSubsystem.
@@ -42,6 +43,10 @@ public class Arm extends SubsystemBase {
     public double getElevatorEncoder() {
         return elevatorMotor.getSelectedSensorPosition();
     }
+    public boolean setElevatorPosition(double inches) {
+        winchMotor.set(ControlMode.PercentOutput, elevatorPid.calculate(getElevatorEncoder(), inches));
+        return elevatorPid.atSetpoint();
+    }
 
     public void setWinch(double power) {
         winchMotor.set(ControlMode.PercentOutput, power);
@@ -56,8 +61,9 @@ public class Arm extends SubsystemBase {
     public void winchStop() {
         winchMotor.set(ControlMode.PercentOutput, 0);
     }
-    public void setArmAngle(double angle) {
-        winchMotor.set(ControlMode.PercentOutput, pid.calculate(getLiftAngle(), angle));
+    public boolean setArmAngle(double angle) {
+        winchMotor.set(ControlMode.PercentOutput, winchPid.calculate(getLiftAngle(), angle));
+        return winchPid.atSetpoint();
     }
 
 

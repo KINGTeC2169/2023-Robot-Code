@@ -46,5 +46,13 @@ public class NetworkTables {
             return "None";
             
     }
+
+    public static double[] chassisPositionLeft() {
+        return table.getEntry("apriltagPositionLeft").getDoubleArray(arr);
+    }
+
+    public static double[] chassisPositionRight() {
+        return table.getEntry("apriltagPositionRight").getDoubleArray(arr);
+    }
         
 }

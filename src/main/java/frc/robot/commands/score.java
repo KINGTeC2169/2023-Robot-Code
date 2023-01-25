@@ -1,11 +1,16 @@
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Motors;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.CuboneManager;
 import frc.robot.subsystems.NetworkTables;
 import frc.robot.subsystems.SwerveSubsystem;
+
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -33,16 +38,24 @@ public class Score extends CommandBase {
     private boolean haveCone;
     private boolean haveCube;
     private ChassisSpeeds chassisSpeeds;
+    private boolean centered;
+    private double average;
+    private boolean wallBanged;
+    private Supplier<Integer> scorePositionSupplier;
+    private int scorePosition;
+    private boolean reachedArmAngle;
+    private boolean extendedArm;
 
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public Score(Claw claw, SwerveSubsystem swerve, Arm arm) {
+    public Score(Claw claw, SwerveSubsystem swerve, Arm arm, Supplier<Integer> scorePositionSupplier) {
         this.claw = claw;
         this.swerve = swerve;
         this.arm = arm;
+        this.scorePositionSupplier = scorePositionSupplier;
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(claw);
@@ -58,35 +71,87 @@ public class Score extends CommandBase {
     @Override
     public void initialize() {
         time.start();
+        scorePosition = scorePositionSupplier.get();
         claw.resetTwistEncoder();
-        angle = NetworkTables.getPalmAngle("Cone");
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        //angle = NetworkTables.getAngle();
-        if (!haveCone && !haveCube) {
-            if (NetworkTables.getPalmCenter("Cone")[0] != 0)
-                haveCone = true;
-            else if (NetworkTables.getPalmCenter("Cube")[0] != 0)
-                haveCube = true;
-        }
+
+        if(!wallBanged) {
+            int divider = 2;
+            if(NetworkTables.chassisPositionLeft()[1] != 0 || NetworkTables.chassisPositionLeft()[1] != 0)
+                divider = 1;
+
+            double average = (Math.abs(NetworkTables.chassisPositionLeft()[1]) + Math.abs(NetworkTables.chassisPositionRight()[1])) / divider;
+            
+            ySpeed = pidY.calculate(average, 0);
+            if(pidY.atSetpoint())
+                wallBanged = true;
+            
+        } else if(!centered) {
+            int divider = 2;
+            if(NetworkTables.chassisPositionLeft()[0] != 0 || NetworkTables.chassisPositionLeft()[0] != 0)
+                divider = 1;
+
+            double average = (Math.abs(NetworkTables.chassisPositionLeft()[0]) + Math.abs(NetworkTables.chassisPositionRight()[0])) / divider;
 
 
-        //  x/2048 * 360
-        if (haveCone) {
-            xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 0);//setpoint should be whatever the center of the image is
-            ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 0);
-            claw.twistClaw(pidTurn.calculate(NetworkTables.getPalmAngle("Cone"), 0));
-        } else if (haveCube) {
-            xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 0);//setpoint should be whatever the center of the image is
-            ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 0);
+            
+            xSpeed = pidX.calculate(average, CuboneManager.isConeInClaw() ? Constants.Vision.apriltagOffset : 0);
+
+            if(pidX.atSetpoint())
+                centered = true;
+
+            
+
         } else {
+            if(CuboneManager.isConeInClaw() && (scorePosition != 1 || scorePosition != 4 || scorePosition != 7)) {
 
-            turningSpeed = pidTurn.calculate(NetworkTables.getFrontCenter()[0], 0);// center of image
+                
+
+
+            } else if(CuboneManager.isCubeInClaw() && (scorePosition == 1 || scorePosition == 4 || scorePosition == 7)) {
+                if(!reachedArmAngle) {
+                    switch(scorePosition) {
+                        case 1: 
+                        if(arm.setArmAngle(70))
+                            reachedArmAngle = true;
+                        break;
+                        case 4:
+                        if(arm.setArmAngle(30))
+                            reachedArmAngle = true;
+                        break;
+                        case 7:
+                        if(arm.setArmAngle(0))
+                            reachedArmAngle = true;
+                        break;
+                    }
+                } else if(!extendedArm) {
+                    switch(scorePosition) {
+                        case 1: 
+                        if(arm.setElevatorPosition(100))
+                            extendedArm = true;
+                        break;
+                        case 4:
+                        if(arm.setElevatorPosition(50))
+                            extendedArm = true;
+                        break;
+                        case 7:
+                        if(arm.setElevatorPosition(10))
+                            extendedArm = true;
+                        break;
+                    }
+                } else {
+                    claw.unGrab();
+                }
+
+
+            }
         }
 
+        
 
         chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
 

@@ -23,6 +23,7 @@ public final class Constants {
         public static final int elevatorMotor = 2;
         public static final int wristMotor = 1;
         public static final int controller = 0;
+        public static final int buttonBoard = 10;
         public static final int clawTwist = 2;
         public static final int colorSensorClaw = 1;
 
@@ -79,5 +80,9 @@ public final class Constants {
                 new Translation2d(frontBackWheels / 2, -rightLeftWheels / 2),//Front-Right
                 new Translation2d(-frontBackWheels / 2, rightLeftWheels / 2),//Back-Left
                 new Translation2d(-frontBackWheels / 2, -rightLeftWheels / 2));//Back-Right
+    }
+
+    public static final class Vision {
+        public static final double apriltagOffset = 20;
     }
 }

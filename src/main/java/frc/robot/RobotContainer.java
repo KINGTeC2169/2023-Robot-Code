@@ -34,8 +34,9 @@ public class RobotContainer {
 
   //private final XboxController controller = new XboxController(Ports.controller);
   private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
-  private final Score score = new Score(claw, swerve, arm);
   private final CommandXboxController controller = new CommandXboxController(Ports.controller);
+  private final CommandXboxController buttonBoard = new CommandXboxController(Ports.buttonBoard);
+  private final Score score = new Score(claw, swerve, arm, () -> 8);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
