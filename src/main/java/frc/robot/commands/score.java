@@ -116,30 +116,30 @@ public class Score extends CommandBase {
                 if(!reachedArmAngle) {
                     switch(scorePosition) {
                         case 1: 
-                        if(arm.setArmAngle(70))
+                        if(arm.setArmAngle(70) < 1)
                             reachedArmAngle = true;
                         break;
                         case 4:
-                        if(arm.setArmAngle(30))
+                        if(arm.setArmAngle(30) < 1)
                             reachedArmAngle = true;
                         break;
                         case 7:
-                        if(arm.setArmAngle(0))
+                        if(arm.setArmAngle(0) < 1)
                             reachedArmAngle = true;
                         break;
                     }
                 } else if(!extendedArm) {
                     switch(scorePosition) {
                         case 1: 
-                        if(arm.setElevatorPosition(100))
+                        if(arm.setElevatorPosition(100) < 1)
                             extendedArm = true;
                         break;
                         case 4:
-                        if(arm.setElevatorPosition(50))
+                        if(arm.setElevatorPosition(50) < 1)
                             extendedArm = true;
                         break;
                         case 7:
-                        if(arm.setElevatorPosition(10))
+                        if(arm.setElevatorPosition(10) < 1)
                             extendedArm = true;
                         break;
                     }
