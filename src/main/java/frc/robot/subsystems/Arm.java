@@ -19,7 +19,8 @@ public class Arm extends SubsystemBase {
      * Creates a new ExampleSubsystem.
      */
     public Arm() {
-        pid.setTolerance(3);
+        winchPid.setTolerance(3);
+        elevatorPid.setTolerance(3);
     }
 
     @Override
