@@ -19,6 +19,7 @@ public class Arm extends SubsystemBase {
      * Creates a new ExampleSubsystem.
      */
     public Arm() {
+        pid.setTolerance(3);
     }
 
     @Override
@@ -52,7 +53,6 @@ public class Arm extends SubsystemBase {
         winchMotor.set(ControlMode.PercentOutput, power);
     }
     public void winchUp() {
-        System.out.println("Balls in my mouth");
         winchMotor.set(ControlMode.PercentOutput, 0.3);
     }
     public void winchDown() {

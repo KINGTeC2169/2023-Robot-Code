@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.Motors;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.CuboneManager;
@@ -14,7 +13,6 @@ import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
@@ -28,10 +26,7 @@ public class GetCubone extends CommandBase {
 	private double xSpeed;
 	private double ySpeed;
 	private double turningSpeed;
-	private double wristTurn;
-	private double angle;
-	private boolean isAngle;
-	private boolean readingAngle;
+	private boolean gottem;
 	private boolean itemCentered;
 	private ChassisSpeeds chassisSpeeds;
 	
@@ -87,6 +82,17 @@ public class GetCubone extends CommandBase {
 			}
 		}
 		else {
+			if(arm.setArmAngle(0) && !gottem) {
+				claw.grab();
+				gottem = true;
+			}
+			if(gottem) {
+				if(arm.setArmAngle(30) && claw.setTwistAngle(0)) {
+					arm.winchStop();
+					claw.twistClaw(0);
+				}
+			}
+			
 			//pick up item now
 		}
 
@@ -111,8 +117,6 @@ public class GetCubone extends CommandBase {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		//time.getUsClock()() > 1 && Math.abs(NetworkTable.getAngle()) < 5?
-		//return isAngle;
 		return false;
 	}
 }
