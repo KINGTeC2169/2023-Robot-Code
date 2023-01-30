@@ -10,6 +10,7 @@ public class NetworkTables {
     public NetworkTables() {}
 
     public static double[] getPalmCenter(String coneOrCube) {
+        //returns in a array with [x,y]
         return table.getEntry("Palm-" + coneOrCube + "-Center").getDoubleArray(arr);
     }
 
@@ -47,12 +48,16 @@ public class NetworkTables {
             
     }
 
-    public static double[] chassisPositionLeft() {
+    public static double[] apriltagPositionLeft() {
         return table.getEntry("apriltagPositionLeft").getDoubleArray(arr);
     }
 
-    public static double[] chassisPositionRight() {
+    public static double[] apriltagPositionRight() {
         return table.getEntry("apriltagPositionRight").getDoubleArray(arr);
+    }
+
+    public static double[] apriltagPositionCenter() {
+        return table.getEntry("apriltagPositionCenter").getDoubleArray(arr);
     }
         
 }
