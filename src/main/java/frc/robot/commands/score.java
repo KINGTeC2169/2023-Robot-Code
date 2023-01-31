@@ -43,6 +43,7 @@ public class Score extends CommandBase {
     private int scorePosition;
     private boolean reachedArmAngle;
     private boolean extendedArm;
+    private boolean finished;
 
     /**
      * Creates a new ExampleCommand.
@@ -75,8 +76,36 @@ public class Score extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        haveCube = CuboneManager.isCubeInClaw();
+        haveCone = CuboneManager.isConeInClaw();
+        if(scorePosition == -1) 
+            end(true);
 
-        if(!wallBanged) {
+            
+        if(!centered) {
+            int divider = 2;
+            double average = 0;
+            if(CuboneManager.isConeInClaw()) {
+                if(NetworkTables.apriltagPositionLeft()[0] != 0 || NetworkTables.apriltagPositionLeft()[0] != 0)
+                divider = 1;
+
+                average = (Math.abs(NetworkTables.apriltagPositionLeft()[0]) + Math.abs(NetworkTables.apriltagPositionRight()[0])) / divider;
+            } else if(CuboneManager.isCubeInClaw()) {
+                    
+                average = (Math.abs(NetworkTables.apriltagScreenPositionCenter()[0]));
+            }
+            
+
+            
+            
+            xSpeed = pidX.calculate(average, CuboneManager.isConeInClaw() ? Constants.Vision.apriltagOffset : 0);
+
+            if(pidX.atSetpoint())
+                centered = true;
+
+            
+
+        } else if(!wallBanged) {
             int divider = 2;
             if(NetworkTables.apriltagPositionLeft()[1] != 0 || NetworkTables.apriltagPositionLeft()[1] != 0)
                 divider = 1;
@@ -87,65 +116,94 @@ public class Score extends CommandBase {
             if(pidY.atSetpoint())
                 wallBanged = true;
             
-        } else if(!centered) {
-            int divider = 2;
-            if(NetworkTables.apriltagPositionLeft()[0] != 0 || NetworkTables.apriltagPositionLeft()[0] != 0)
-                divider = 1;
-
-            double average = (Math.abs(NetworkTables.apriltagPositionLeft()[0]) + Math.abs(NetworkTables.apriltagPositionRight()[0])) / divider;
-
-
-            
-            xSpeed = pidX.calculate(average, CuboneManager.isConeInClaw() ? Constants.Vision.apriltagOffset : 0);
-
-            if(pidX.atSetpoint())
-                centered = true;
-
-            
-
         } else {
-            if(CuboneManager.isConeInClaw() && (scorePosition != 1 || scorePosition != 4 || scorePosition != 7)) {
-
-                
-
-
-            } else if(CuboneManager.isCubeInClaw() && (scorePosition == 1 || scorePosition == 4 || scorePosition == 7)) {
-                if(!reachedArmAngle) {
-                    switch(scorePosition) {
-                        case 1: 
-                        if(arm.setArmAngle(70) < 1)
-                            reachedArmAngle = true;
-                        break;
-                        case 4:
-                        if(arm.setArmAngle(30) < 1)
-                            reachedArmAngle = true;
-                        break;
-                        case 7:
-                        if(arm.setArmAngle(0) < 1)
-                            reachedArmAngle = true;
-                        break;
-                    }
-                } else if(!extendedArm) {
-                    switch(scorePosition) {
-                        case 1: 
-                        if(arm.setElevatorPosition(100) < 1)
-                            extendedArm = true;
-                        break;
-                        case 4:
-                        if(arm.setElevatorPosition(50) < 1)
-                            extendedArm = true;
-                        break;
-                        case 7:
-                        if(arm.setElevatorPosition(10) < 1)
-                            extendedArm = true;
-                        break;
-                    }
-                } else {
-                    claw.unGrab();
+            
+            if(!reachedArmAngle) {
+                switch(scorePosition) {
+                    case 0: 
+                    if(arm.setArmAngle(70) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 1: 
+                    if(arm.setArmAngle(70) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 2:
+                    if(arm.setArmAngle(70) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 3:
+                    if(arm.setArmAngle(30) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 4:
+                    if(arm.setArmAngle(30) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 5:
+                    if(arm.setArmAngle(30) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 6:
+                    if(arm.setArmAngle(0) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 7:
+                    if(arm.setArmAngle(0) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 8:
+                    if(arm.setArmAngle(0) < 1)
+                        reachedArmAngle = true;
+                    break;
                 }
-
-
+            } else if(!extendedArm) {
+                switch(scorePosition) {
+                    case 0: 
+                    if(arm.setElevatorPosition(100) < 1)
+                        extendedArm = true;
+                    break;
+                    case 1: 
+                    if(arm.setElevatorPosition(100) < 1)
+                        extendedArm = true;
+                    break;
+                    case 2:
+                    if(arm.setElevatorPosition(100) < 1)
+                        extendedArm = true;
+                    break;
+                    case 3:
+                    if(arm.setElevatorPosition(70) < 1)
+                        extendedArm = true;
+                    break;
+                    case 4:
+                    if(arm.setElevatorPosition(70) < 1)
+                        extendedArm = true;
+                    break;
+                    case 5:
+                    if(arm.setElevatorPosition(70) < 1)
+                        extendedArm = true;
+                    break;
+                    case 6:
+                    if(arm.setElevatorPosition(10) < 1)
+                        extendedArm = true;
+                    break;
+                    case 7:
+                    if(arm.setElevatorPosition(10) < 1)
+                        extendedArm = true;
+                    break;
+                    case 8:
+                    if(arm.setElevatorPosition(10) < 1)
+                        extendedArm = true;
+                    break;
+                }
+            } else {
+                arm.setElevatorPosition(0);
+                claw.unGrab();
+                finished = true;
             }
+
+
+            
         }
 
         
@@ -175,6 +233,6 @@ public class Score extends CommandBase {
     public boolean isFinished() {
 //time.getUsClock()() > 1 && Math.abs(NetworkTable.getAngle()) < 5?
 //return isAngle;
-        return false;
+        return finished;
     }
 }

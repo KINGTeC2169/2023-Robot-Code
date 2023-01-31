@@ -59,5 +59,9 @@ public class NetworkTables {
     public static double[] apriltagPositionCenter() {
         return table.getEntry("apriltagPositionCenter").getDoubleArray(arr);
     }
+    public static double[] apriltagScreenPositionCenter() {
+        return table.getEntry("apriltagPositionCenter").getDoubleArray(arr);
+    }
+
         
 }
