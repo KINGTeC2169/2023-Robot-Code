@@ -19,6 +19,10 @@ public class NavX {
     public static double getY() {
         return gyro.getPitch();
     }
+    
+    public static double getPitch() {
+        return gyro.getPitch();
+    }
 
     public static Rotation2d getRotation2d() {
         return gyro.getRotation2d();
