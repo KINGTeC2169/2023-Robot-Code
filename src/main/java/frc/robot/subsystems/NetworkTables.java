@@ -48,20 +48,43 @@ public class NetworkTables {
             
     }
 
-    public static double[] apriltagPositionLeft() {
-        return table.getEntry("apriltagPositionLeft").getDoubleArray(arr);
+    public static double frontApriltagYaw() {
+        return table.getEntry("Front-apriltag-Yaw").getDouble(-1);
     }
-
-    public static double[] apriltagPositionRight() {
-        return table.getEntry("apriltagPositionRight").getDoubleArray(arr);
+    public static long frontApriltagId() {
+        return table.getEntry("Front-apriltag-Id").getInteger(-1);
     }
-
-    public static double[] apriltagPositionCenter() {
-        return table.getEntry("apriltagPositionCenter").getDoubleArray(arr);
+    public static double frontApriltagX() {
+        return table.getEntry("Front-apriltag-X").getDouble(-1);
     }
-    public static double[] apriltagScreenPositionCenter() {
-        return table.getEntry("apriltagPositionCenter").getDoubleArray(arr);
+    public static double leftApriltagYaw() {
+        return table.getEntry("Left-apriltag-Yaw").getDouble(-1);
     }
+    public static long leftApriltagId() {
+        return table.getEntry("Left-apriltag-Id").getInteger(-1);
+    }
+    public static double leftApriltagX() {
+        return table.getEntry("Left-apriltag-X").getDouble(-1);
+    }
+    public static double rightApriltagYaw() {
+        return table.getEntry("Right-apriltag-Yaw").getDouble(-1);
+    }
+    public static long rightApriltagId() {
+        return table.getEntry("Right-apriltag-Id").getInteger(-1);
+    }
+    public static double rightApriltagX() {
+        return table.getEntry("Right-apriltag-X").getDouble(-1);
+    }
+    public static double rightApriltagY() {
+        return table.getEntry("Right-apriltag-Y").getDouble(-1);
+    }
+    public static double leftApriltagY() {
+        return table.getEntry("Right-apriltag-Y").getDouble(-1);
+    }
+    public static double centerApriltagY() {
+        return table.getEntry("Right-apriltag-Y").getDouble(-1);
+    }
+    
 
         
 }

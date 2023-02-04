@@ -40,7 +40,8 @@ public class Balance extends CommandBase {
     @Override
     public void execute() {
 
-       xSpeed = pidY.calculate(NavX.getPitch(), 0);
+       xSpeed = pidX.calculate(NavX.getPitch(), 0);
+       ySpeed = pidY.calculate(NavX.getYaw(), 0);
        chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
 
 

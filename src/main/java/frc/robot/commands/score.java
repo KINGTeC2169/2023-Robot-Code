@@ -86,13 +86,15 @@ public class Score extends CommandBase {
             int divider = 2;
             double average = 0;
             if(CuboneManager.isConeInClaw()) {
-                if(NetworkTables.apriltagPositionLeft()[0] != 0 || NetworkTables.apriltagPositionLeft()[0] != 0)
-                divider = 1;
+                if(NetworkTables.leftApriltagX() == -1 || NetworkTables.rightApriltagX() == -1)
+                    divider = 1;
 
-                average = (Math.abs(NetworkTables.apriltagPositionLeft()[0]) + Math.abs(NetworkTables.apriltagPositionRight()[0])) / divider;
+
+                average = (Math.abs(NetworkTables.leftApriltagX()) + Math.abs(NetworkTables.rightApriltagX())) / divider;
             } else if(CuboneManager.isCubeInClaw()) {
                     
-                average = (Math.abs(NetworkTables.apriltagScreenPositionCenter()[0]));
+                //TODO: fix this, 0 is not the middle
+                average = (Math.abs(NetworkTables.frontApriltagX()));
             }
             
 
@@ -107,10 +109,10 @@ public class Score extends CommandBase {
 
         } else if(!wallBanged) {
             int divider = 2;
-            if(NetworkTables.apriltagPositionLeft()[1] != 0 || NetworkTables.apriltagPositionLeft()[1] != 0)
+            if(NetworkTables.leftApriltagY() == -1 || NetworkTables.rightApriltagY() == -1)
                 divider = 1;
 
-            double average = (Math.abs(NetworkTables.apriltagPositionLeft()[1]) + Math.abs(NetworkTables.apriltagPositionRight()[1])) / divider;
+            double average = (Math.abs(NetworkTables.leftApriltagY()) + Math.abs(NetworkTables.rightApriltagY())) / divider;
             
             ySpeed = pidY.calculate(average, 0);
             if(pidY.atSetpoint())
@@ -224,8 +226,7 @@ public class Score extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        haveCone = false;
-        haveCube = false;
+    
     }
 
     // Returns true when the command should end.
