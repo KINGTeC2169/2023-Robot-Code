@@ -79,10 +79,10 @@ public class NetworkTables {
         return table.getEntry("Right-apriltag-Y").getDouble(-1);
     }
     public static double leftApriltagY() {
-        return table.getEntry("Right-apriltag-Y").getDouble(-1);
+        return table.getEntry("Left-apriltag-Y").getDouble(-1);
     }
     public static double centerApriltagY() {
-        return table.getEntry("Right-apriltag-Y").getDouble(-1);
+        return table.getEntry("Front-apriltag-Y").getDouble(-1);
     }
     
 
