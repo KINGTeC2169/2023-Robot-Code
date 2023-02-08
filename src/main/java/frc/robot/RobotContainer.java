@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.GetCubone;
 import frc.robot.commands.Score;
+import frc.robot.commands.SwerveCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.CuboneManager;
@@ -26,23 +27,32 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   
-  private final Claw claw = new Claw();
-  private final Arm arm = new Arm();
-  private final CuboneManager cuboneManager = new CuboneManager();
-  private final SwerveSubsystem swerve = new SwerveSubsystem();
+  //private final Claw claw = new Claw();
+  //private final Arm arm = new Arm();
+  //private final CuboneManager cuboneManager = new CuboneManager();
+  private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   //private final NetworkTables tables = new NetworkTables();
 
   //private final XboxController controller = new XboxController(Ports.controller);
-  private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
+  //private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
   private final CommandXboxController controller = new CommandXboxController(Ports.controller);
-  private final CommandXboxController buttonBoard = new CommandXboxController(Ports.buttonBoard);
-  private final Score score = new Score(claw, swerve, arm, () -> 8);
+ // private final CommandXboxController buttonBoard = new CommandXboxController(Ports.buttonBoard);
+  //private final Score score = new Score(claw, swerve, arm, () -> 8);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     //m_claw.setDefaultCommand(rotateToCone);
     // Configure the button bindings
+
+    swerveSubsystem.setDefaultCommand(new SwerveCommand(
+          swerveSubsystem,
+          () -> controller.getLeftY(),
+          //() -> driverJoystick.getY(),
+          //() -> driverJoystick.getX(),
+          () -> controller.getLeftX(),
+          () -> controller.getRightX()));
+          //() -> driverJoystick2.getX(),
     configureButtonBindings();
   }
 
@@ -60,10 +70,10 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    controller.b().whileTrue(rotateToCone);
-    controller.x().whileTrue(score);
-    controller.y().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));
-    controller.a().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));
+    //controller.b().whileTrue(rotateToCone);
+    //controller.x().whileTrue(score);
+    //controller.y().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));
+    //controller.a().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));
   }
 
   /**
@@ -73,6 +83,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return rotateToCone;
+    return null;
   }
 }

@@ -93,7 +93,6 @@ public class GetCubone extends CommandBase {
 				}
 			}
 			
-			//pick up item now
 		}
 
 		chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
