@@ -10,6 +10,7 @@ public class NetworkTables {
     public NetworkTables() {}
 
     public static double[] getPalmCenter(String coneOrCube) {
+        //returns in a array with [x,y]
         return table.getEntry("Palm-" + coneOrCube + "-Center").getDoubleArray(arr);
     }
 
@@ -47,12 +48,43 @@ public class NetworkTables {
             
     }
 
-    public static double[] chassisPositionLeft() {
-        return table.getEntry("apriltagPositionLeft").getDoubleArray(arr);
+    public static double frontApriltagYaw() {
+        return table.getEntry("Front-apriltag-Yaw").getDouble(-1);
     }
+    public static long frontApriltagId() {
+        return table.getEntry("Front-apriltag-Id").getInteger(-1);
+    }
+    public static double frontApriltagX() {
+        return table.getEntry("Front-apriltag-X").getDouble(-1);
+    }
+    public static double leftApriltagYaw() {
+        return table.getEntry("Left-apriltag-Yaw").getDouble(-1);
+    }
+    public static long leftApriltagId() {
+        return table.getEntry("Left-apriltag-Id").getInteger(-1);
+    }
+    public static double leftApriltagX() {
+        return table.getEntry("Left-apriltag-X").getDouble(-1);
+    }
+    public static double rightApriltagYaw() {
+        return table.getEntry("Right-apriltag-Yaw").getDouble(-1);
+    }
+    public static long rightApriltagId() {
+        return table.getEntry("Right-apriltag-Id").getInteger(-1);
+    }
+    public static double rightApriltagX() {
+        return table.getEntry("Right-apriltag-X").getDouble(-1);
+    }
+    public static double rightApriltagY() {
+        return table.getEntry("Right-apriltag-Y").getDouble(-1);
+    }
+    public static double leftApriltagY() {
+        return table.getEntry("Left-apriltag-Y").getDouble(-1);
+    }
+    public static double centerApriltagY() {
+        return table.getEntry("Front-apriltag-Y").getDouble(-1);
+    }
+    
 
-    public static double[] chassisPositionRight() {
-        return table.getEntry("apriltagPositionRight").getDoubleArray(arr);
-    }
         
 }

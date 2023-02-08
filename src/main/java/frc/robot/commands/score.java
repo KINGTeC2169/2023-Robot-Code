@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class Score extends CommandBase {
@@ -24,7 +23,6 @@ public class Score extends CommandBase {
     private final Arm arm;
 
 
-    private final Timer time;
     private final PIDController pidTurn;
     private final PIDController pidX;
     private final PIDController pidY;
@@ -45,6 +43,7 @@ public class Score extends CommandBase {
     private int scorePosition;
     private boolean reachedArmAngle;
     private boolean extendedArm;
+    private boolean finished;
 
     /**
      * Creates a new ExampleCommand.
@@ -64,13 +63,12 @@ public class Score extends CommandBase {
         pidTurn = new PIDController(0.5, 0, 0);
         pidX = new PIDController(0.5, 0, 0);
         pidY = new PIDController(0.5, 0, 0);
-        time = new Timer();
+
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        time.start();
         scorePosition = scorePositionSupplier.get();
         claw.resetTwistEncoder();
     }
@@ -78,26 +76,29 @@ public class Score extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        haveCube = CuboneManager.isCubeInClaw();
+        haveCone = CuboneManager.isConeInClaw();
+        if(scorePosition == -1) 
+            end(true);
 
-        if(!wallBanged) {
-            int divider = 2;
-            if(NetworkTables.chassisPositionLeft()[1] != 0 || NetworkTables.chassisPositionLeft()[1] != 0)
-                divider = 1;
-
-            double average = (Math.abs(NetworkTables.chassisPositionLeft()[1]) + Math.abs(NetworkTables.chassisPositionRight()[1])) / divider;
             
-            ySpeed = pidY.calculate(average, 0);
-            if(pidY.atSetpoint())
-                wallBanged = true;
-            
-        } else if(!centered) {
+        if(!centered) {
             int divider = 2;
-            if(NetworkTables.chassisPositionLeft()[0] != 0 || NetworkTables.chassisPositionLeft()[0] != 0)
-                divider = 1;
+            double average = 0;
+            if(CuboneManager.isConeInClaw()) {
+                if(NetworkTables.leftApriltagX() == -1 || NetworkTables.rightApriltagX() == -1)
+                    divider = 1;
 
-            double average = (Math.abs(NetworkTables.chassisPositionLeft()[0]) + Math.abs(NetworkTables.chassisPositionRight()[0])) / divider;
 
+                average = (Math.abs(NetworkTables.leftApriltagX()) + Math.abs(NetworkTables.rightApriltagX())) / divider;
+            } else if(CuboneManager.isCubeInClaw()) {
+                    
+                //TODO: fix this, 0 is not the middle
+                average = (Math.abs(NetworkTables.frontApriltagX()));
+            }
+            
 
+            
             
             xSpeed = pidX.calculate(average, CuboneManager.isConeInClaw() ? Constants.Vision.apriltagOffset : 0);
 
@@ -106,49 +107,105 @@ public class Score extends CommandBase {
 
             
 
+        } else if(!wallBanged) {
+            int divider = 2;
+            if(NetworkTables.leftApriltagY() == -1 || NetworkTables.rightApriltagY() == -1)
+                divider = 1;
+
+            double average = (Math.abs(NetworkTables.leftApriltagY()) + Math.abs(NetworkTables.rightApriltagY())) / divider;
+            
+            ySpeed = pidY.calculate(average, 0);
+            if(pidY.atSetpoint())
+                wallBanged = true;
+            
         } else {
-            if(CuboneManager.isConeInClaw() && (scorePosition != 1 || scorePosition != 4 || scorePosition != 7)) {
-
-                
-
-
-            } else if(CuboneManager.isCubeInClaw() && (scorePosition == 1 || scorePosition == 4 || scorePosition == 7)) {
-                if(!reachedArmAngle) {
-                    switch(scorePosition) {
-                        case 1: 
-                        if(arm.setArmAngle(70) < 1)
-                            reachedArmAngle = true;
-                        break;
-                        case 4:
-                        if(arm.setArmAngle(30) < 1)
-                            reachedArmAngle = true;
-                        break;
-                        case 7:
-                        if(arm.setArmAngle(0) < 1)
-                            reachedArmAngle = true;
-                        break;
-                    }
-                } else if(!extendedArm) {
-                    switch(scorePosition) {
-                        case 1: 
-                        if(arm.setElevatorPosition(100) < 1)
-                            extendedArm = true;
-                        break;
-                        case 4:
-                        if(arm.setElevatorPosition(50) < 1)
-                            extendedArm = true;
-                        break;
-                        case 7:
-                        if(arm.setElevatorPosition(10) < 1)
-                            extendedArm = true;
-                        break;
-                    }
-                } else {
-                    claw.unGrab();
+            
+            if(!reachedArmAngle) {
+                switch(scorePosition) {
+                    case 0: 
+                    if(arm.setArmAngle(70) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 1: 
+                    if(arm.setArmAngle(70) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 2:
+                    if(arm.setArmAngle(70) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 3:
+                    if(arm.setArmAngle(30) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 4:
+                    if(arm.setArmAngle(30) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 5:
+                    if(arm.setArmAngle(30) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 6:
+                    if(arm.setArmAngle(0) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 7:
+                    if(arm.setArmAngle(0) < 1)
+                        reachedArmAngle = true;
+                    break;
+                    case 8:
+                    if(arm.setArmAngle(0) < 1)
+                        reachedArmAngle = true;
+                    break;
                 }
-
-
+            } else if(!extendedArm) {
+                switch(scorePosition) {
+                    case 0: 
+                    if(arm.setElevatorPosition(100) < 1)
+                        extendedArm = true;
+                    break;
+                    case 1: 
+                    if(arm.setElevatorPosition(100) < 1)
+                        extendedArm = true;
+                    break;
+                    case 2:
+                    if(arm.setElevatorPosition(100) < 1)
+                        extendedArm = true;
+                    break;
+                    case 3:
+                    if(arm.setElevatorPosition(70) < 1)
+                        extendedArm = true;
+                    break;
+                    case 4:
+                    if(arm.setElevatorPosition(70) < 1)
+                        extendedArm = true;
+                    break;
+                    case 5:
+                    if(arm.setElevatorPosition(70) < 1)
+                        extendedArm = true;
+                    break;
+                    case 6:
+                    if(arm.setElevatorPosition(10) < 1)
+                        extendedArm = true;
+                    break;
+                    case 7:
+                    if(arm.setElevatorPosition(10) < 1)
+                        extendedArm = true;
+                    break;
+                    case 8:
+                    if(arm.setElevatorPosition(10) < 1)
+                        extendedArm = true;
+                    break;
+                }
+            } else {
+                arm.setElevatorPosition(0);
+                claw.unGrab();
+                finished = true;
             }
+
+
+            
         }
 
         
@@ -169,8 +226,7 @@ public class Score extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        haveCone = false;
-        haveCube = false;
+    
     }
 
     // Returns true when the command should end.
@@ -178,6 +234,6 @@ public class Score extends CommandBase {
     public boolean isFinished() {
 //time.getUsClock()() > 1 && Math.abs(NetworkTable.getAngle()) < 5?
 //return isAngle;
-        return false;
+        return finished;
     }
 }
