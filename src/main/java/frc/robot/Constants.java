@@ -32,16 +32,16 @@ public final class Constants {
         //Swervedrive ports
         public static final int frontRightDrive = 8;
         public static final int frontRightTurn = 7;
-        public static final int frontRightAbsolute = 12;
+        public static final int frontRightAbsolute = 11;
         public static final int frontLeftDrive = 6;
         public static final int frontLeftTurn = 5;
-        public static final int frontLeftAbsolute = 11;
+        public static final int frontLeftAbsolute = 13;
         public static final int backRightDrive = 2;
         public static final int backRightTurn = 1;
-        public static final int backRightAbsolute = 10;
+        public static final int backRightAbsolute = 12;
         public static final int backLeftDrive = 4;
         public static final int backLeftTurn = 3;
-        public static final int backLeftAbsolute = 9;
+        public static final int backLeftAbsolute = 10;
     }
 
     public static final class Motors {
@@ -70,10 +70,10 @@ public final class Constants {
         public static final double rightLeftWheels = Units.inchesToMeters(21.5);
         public static final double frontBackWheels = Units.inchesToMeters(21.5);
 
-        public static final double FRabsoluteOffset = -1.032;
-        public static final double FLabsoluteOffset = -0.370;
-        public static final double BRabsoluteOffset = -0.434;
-        public static final double BLabsoluteOffset = -0.357;
+        public static final double FRabsoluteOffset = -0.893;
+        public static final double FLabsoluteOffset = -1.33609;
+        public static final double BRabsoluteOffset = -0.7225;
+        public static final double BLabsoluteOffset = -1.453;
 
         public static final SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
                 new Translation2d(frontBackWheels / 2, rightLeftWheels / 2),//Front-Left

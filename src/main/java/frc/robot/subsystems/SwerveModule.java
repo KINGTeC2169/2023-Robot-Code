@@ -20,10 +20,11 @@ import static frc.robot.Constants.ModuleConstants.*;
 public class SwerveModule {
     private TalonFX driveMotor;
     private CANSparkMax turnMotor;
-    //private CANCoder absoluteEncoder;
+    private CANCoder absoluteEncoder;
 
     private final RelativeEncoder turnEncoder;
 
+    private double wantedSpeed;
 
     private PIDController drivePID;
     private PIDController turningPID;
@@ -35,6 +36,8 @@ public class SwerveModule {
 
         driveMotor = new TalonFX(driveMotorID);
         turnMotor = new CANSparkMax(turnMotorID, MotorType.kBrushless);
+
+        driveMotor.configFactoryDefault();
         driveMotor.setInverted(driveMotorReversed);
         turnMotor.setInverted(turnMotorReversed);
 
@@ -45,8 +48,8 @@ public class SwerveModule {
         config.sensorDirection = isCancoderReversed;
         config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
 
-        //absoluteEncoder = new CANCoder(canCoderID);
-        //absoluteEncoder.configAllSettings(config);
+        absoluteEncoder = new CANCoder(canCoderID);
+        absoluteEncoder.configAllSettings(config);
 
 
         turnEncoder = turnMotor.getEncoder();
@@ -57,16 +60,15 @@ public class SwerveModule {
         /* 
         driveEncoder.setPositionConversionFactor(driveEncoderToMeter);
         driveEncoder.setVelocityConversionFactor(driveEncoderRPMToMeterPerSec);
-        turnEncoder.setPositionConversionFactor(turnEncoderToRadian);
-        turnEncoder.setVelocityConversionFactor(turnEncoderRPMToRadPerSec);
         */
 
         //Creating and configuring PID controllers
         turningPID = new PIDController(PTurn, 0, 0);
         turningPID.enableContinuousInput(-Math.PI, Math.PI);
 
-        //driveMotor.config_kP(0, .25);
+        driveMotor.config_kP(0, 0.01);
         drivePID = new PIDController(PDrive, 0, 0);
+
 
         resetEncoders();
 
@@ -82,7 +84,8 @@ public class SwerveModule {
 
     
     public double getDriveVelocity() {
-        return driveMotor.getSelectedSensorVelocity() * driveEncoderRPMToMeterPerSec;
+        //return driveMotor.getSelectedSensorVelocity() * driveEncoderRPMToMeterPerSec;
+        return driveMotor.getSelectedSensorVelocity();
     }
 
     public double getTurnVelocity() {
@@ -91,8 +94,7 @@ public class SwerveModule {
     }
 
     public double getAbsoluteTurnPosition() {
-        //return absoluteEncoder.getAbsolutePosition();
-        return 0;
+        return absoluteEncoder.getAbsolutePosition();
     }
 
     public void resetEncoders() {
@@ -113,12 +115,19 @@ public class SwerveModule {
             return;
         }
         state = SwerveModuleState.optimize(state, getState().angle);
-        driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
+        //driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
+        wantedSpeed = state.speedMetersPerSecond / maxSpeed * 21731;
+        driveMotor.set(ControlMode.Velocity, wantedSpeed);
         turnMotor.set(turningPID.calculate(getTurnPosition(), state.angle.getRadians()));
 
     }
 
+    public double getWantedSpeed() {
+        return wantedSpeed;
+    }
+
     public void stop() {
+        wantedSpeed = 0;
         driveMotor.set(ControlMode.Velocity, 0);
         turnMotor.set(0);
     }
