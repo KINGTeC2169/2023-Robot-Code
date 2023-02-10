@@ -35,7 +35,7 @@ public class ApriltagFollow extends CommandBase {
 
     @Override
     public void execute() {
-       turningSpeed = pidTurn.calculate(NetworkTables.frontApriltagX(), 200);
+       turningSpeed = pidTurn.calculate(NetworkTables.frontApriltagYaw(), 0);
        chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
 
 
