@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.Ports;
+import frc.robot.commands.ApriltagFollow;
 import frc.robot.commands.GetCubone;
 import frc.robot.commands.Score;
 import frc.robot.commands.SwerveCommand;
@@ -71,6 +73,7 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     //controller.b().whileTrue(rotateToCone);
+    controller.b().whileTrue(new ApriltagFollow(swerveSubsystem));
     //controller.x().whileTrue(score);
     //controller.y().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));
     //controller.a().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));

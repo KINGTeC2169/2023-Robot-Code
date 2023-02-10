@@ -81,7 +81,7 @@ public class NetworkTables {
     public static double leftApriltagY() {
         return table.getEntry("Left-apriltag-Y").getDouble(-1);
     }
-    public static double centerApriltagY() {
+    public static double frontApriltagY() {
         return table.getEntry("Front-apriltag-Y").getDouble(-1);
     }
     
