@@ -43,8 +43,8 @@ public class SwerveCommand extends CommandBase {
         double turningSpeed = turningSpdFunction.get();
 
         // Deadband: unsure if necessary for our controllers
-        xSpeed = Math.abs(xSpeed) > .05 ? xSpeed : 0.0;
-        ySpeed = Math.abs(ySpeed) > .05 ? ySpeed : 0.0;
+        xSpeed = Math.abs(xSpeed) > .03 ? xSpeed : 0.0;
+        ySpeed = Math.abs(ySpeed) > .03 ? ySpeed : 0.0;
         turningSpeed = Math.abs(turningSpeed) > .02 ? turningSpeed : 0.0;
         
 

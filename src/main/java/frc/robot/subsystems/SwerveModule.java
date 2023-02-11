@@ -66,7 +66,8 @@ public class SwerveModule {
         turningPID = new PIDController(PTurn, 0, 0);
         turningPID.enableContinuousInput(-Math.PI, Math.PI);
 
-        driveMotor.config_kP(0, 0.01);
+        driveMotor.config_kP(0, 0.1);
+        
         drivePID = new PIDController(PDrive, 0, 0);
 
 
@@ -116,7 +117,7 @@ public class SwerveModule {
         }
         state = SwerveModuleState.optimize(state, getState().angle);
         //driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
-        wantedSpeed = state.speedMetersPerSecond / maxSpeed * 21731;
+        wantedSpeed = (state.speedMetersPerSecond / maxSpeed) * 21731;
         driveMotor.set(ControlMode.Velocity, wantedSpeed);
         turnMotor.set(turningPID.calculate(getTurnPosition(), state.angle.getRadians()));
 

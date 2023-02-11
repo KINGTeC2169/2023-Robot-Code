@@ -49,13 +49,13 @@ public class NetworkTables {
     }
 
     public static double frontApriltagYaw() {
-        return table.getEntry("Front-apriltag-Yaw").getDouble(-1);
+        return table.getEntry("front-apriltag-Yaw").getDouble(-1);
     }
     public static long frontApriltagId() {
-        return table.getEntry("Front-apriltag-Id").getInteger(-1);
+        return table.getEntry("front-apriltag-Id").getInteger(-1);
     }
     public static double frontApriltagX() {
-        return table.getEntry("Front-apriltag-X").getDouble(-1);
+        return table.getEntry("front-apriltag-X").getDouble(-1);
     }
     public static double leftApriltagYaw() {
         return table.getEntry("Left-apriltag-Yaw").getDouble(-1);
