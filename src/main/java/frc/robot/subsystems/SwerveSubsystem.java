@@ -99,6 +99,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Back Left speed", backLeft.getDriveVelocity());
         SmartDashboard.putNumber("Front Right speed", frontRight.getDriveVelocity());
         SmartDashboard.putNumber("Front left speed", frontLeft.getDriveVelocity());
+        SmartDashboard.putNumber("Error", backLeft.getError());
         SmartDashboard.putNumber("Error", Math.abs(backRight.getWantedSpeed() - backRight.getDrivePosition()));
     }
 
