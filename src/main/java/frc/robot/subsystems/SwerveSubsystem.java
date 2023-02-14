@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -72,6 +73,13 @@ public class SwerveSubsystem extends SubsystemBase {
     public Rotation2d getRotation2d() {
         return NavX.getRotation2d();
         //return Rotation2d.fromDegrees(getHeading());
+    }
+
+    public void resetPose() {
+        NavX.resetPose();
+    }
+    public Pose2d getPose() {
+        return NavX.getPose();
     }
 
     public void resetEncoders() {
