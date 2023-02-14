@@ -82,6 +82,13 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     
 
+    public void resetPose() {
+        NavX.resetPose();
+    }
+    public Pose2d getPose() {
+        return NavX.getPose();
+    }
+
     public void resetEncoders() {
         frontLeft.resetEncoders();
         frontRight.resetEncoders();
