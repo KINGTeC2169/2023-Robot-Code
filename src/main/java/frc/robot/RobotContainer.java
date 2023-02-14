@@ -4,6 +4,17 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
+
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -12,6 +23,7 @@ import frc.robot.commands.ApriltagFollow;
 import frc.robot.commands.GetCubone;
 import frc.robot.commands.Score;
 import frc.robot.commands.SwerveCommand;
+import frc.robot.commands.TurnToPosition;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.CuboneManager;
@@ -41,14 +53,37 @@ public class RobotContainer {
   //private final CuboneManager cuboneManager = new CuboneManager();
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   //private final NetworkTables tables = new NetworkTables();
-
-  //private final XboxController controller = new XboxController(Ports.controller);
+  private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  //private final XboxController controller = new XboxController(Ports.controller);
   //private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
   private final CommandXboxController controller = new CommandXboxController(Ports.controller);
   private final CommandJoystick joystick = new CommandJoystick(1);
-  //private final CommandGenericHID joystick1 = new CommandGenericHID(1);
   private final XboxController joystickButtons = new XboxController(1);
   private final Trigger button7 = new JoystickButton(joystickButtons, 7);
+
+  List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("FullAuto", new PathConstraints(4, 3));
+
+  // This is just an example event map. It would be better to have a constant, global event map
+  // in your code that will be used by all path following commands.
+  HashMap<String, Command> eventMap = new HashMap<>();
+  eventMap.put("marker1", new PrintCommand("Passed marker 1"));
+  eventMap.put("intakeDown", new IntakeDown());
+
+  
+  // Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
+  SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+      swerveSubsystem::getPose, // Pose2d supplier
+      swerveSubsystem::resetPose, // Pose2d consumer, used to reset odometry at the beginning of auto
+      swerveSubsystem.kinematics, // SwerveDriveKinematics
+      new PIDConstants(5.0, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+      new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+      swerveSubsystem::setModuleStates, // Module states consumer used to output to the drive subsystem
+      eventMap,
+      true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+      swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
+  );
+  
+  Command fullAuto = autoBuilder.fullAuto(pathGroup);
+  
  // private final CommandXboxController buttonBoard = new CommandXboxController(Ports.buttonBoard);
   //private final Score score = new Score(claw, swerve, arm, () -> 8);
 
@@ -69,6 +104,7 @@ public class RobotContainer {
           //() -> driverJoystick2.getX(),
 
       */
+    
     swerveSubsystem.setDefaultCommand(new SwerveCommand(swerveSubsystem, 
     () -> joystick.getY(), 
     () -> joystick.getX(), 
@@ -107,6 +143,7 @@ public class RobotContainer {
     controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistUpPos(), () -> claw.twistStopPos(),  claw).repeatedly());
     controller.povLeft().whileTrue(Commands.startEnd(() -> claw.twistDownPos(), () -> claw.twistStopPos(),  claw).repeatedly());
     button7.onTrue(Commands.runOnce(() -> NavX.reset()));
+    joystick.povUp().onTrue(turnToPosition);
     //controller.b().whileTrue(Commands.run(() -> arm.winchUp(), arm));
     //controller.x().whileTrue(RepeatCommand()))
 

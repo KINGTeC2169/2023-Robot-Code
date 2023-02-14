@@ -1,14 +1,19 @@
 package frc.robot.subsystems;
 
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Ports;
 import static frc.robot.Constants.ModuleConstants.*;
+
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.*;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -45,6 +50,8 @@ public class SwerveSubsystem extends SubsystemBase {
     DriveConstants.BRabsoluteOffset,
     false);
 
+    public SwerveDriveKinematics kinematics = DriveConstants.DRIVE_KINEMATICS;
+
     public SwerveSubsystem() {
         
         //Creates a new thread, which sleeps and then zeros out the gyro
@@ -73,6 +80,7 @@ public class SwerveSubsystem extends SubsystemBase {
         return NavX.getRotation2d();
         //return Rotation2d.fromDegrees(getHeading());
     }
+    
 
     public void resetEncoders() {
         frontLeft.resetEncoders();
@@ -127,4 +135,5 @@ public class SwerveSubsystem extends SubsystemBase {
         backLeft.activeStop(1);
         backRight.activeStop(-1);
     }
+
 }
