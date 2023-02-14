@@ -12,6 +12,8 @@ public class Arm extends SubsystemBase {
 
     private final TalonFX elevatorMotor = new TalonFX(Ports.elevatorMotor);
     private final TalonFX winchMotor = new TalonFX(Ports.winchMotor);
+    private double winchPos;
+    private double elevatorPos;
 
     /**
      * Creates a new ExampleSubsystem.
@@ -19,6 +21,8 @@ public class Arm extends SubsystemBase {
     public Arm() {
         elevatorMotor.config_kP(0, 0.5);
         winchMotor.config_kP(0, 0.5);
+        winchPos = winchMotor.getSelectedSensorPosition();
+        elevatorPos = elevatorMotor.getSelectedSensorPosition();
     }
 
     @Override
@@ -35,6 +39,15 @@ public class Arm extends SubsystemBase {
     public void retract(double power) {
         elevatorMotor.set(ControlMode.PercentOutput, -power);
     }
+    public void extendPos() {
+        elevatorPos += 50;
+        elevatorMotor.set(ControlMode.Position, elevatorPos);
+    }
+    public void retractPos() {
+        elevatorPos -= 50;
+        elevatorMotor.set(ControlMode.Position, elevatorPos);
+    }
+
 
     public void setElevatorPower(double power) {
         elevatorMotor.set(ControlMode.PercentOutput, power);
@@ -54,17 +67,32 @@ public class Arm extends SubsystemBase {
     public void winchUp() {
         winchMotor.set(ControlMode.PercentOutput, 0.3);
     }
+    public void winchUpPos() {
+        winchPos += 50;
+        winchMotor.set(ControlMode.Position, winchPos);
+    }
+    public void winchDownPos() {
+        winchPos -= 50;
+        winchMotor.set(ControlMode.Position, winchPos);
+    }
     public void winchDown() {
         winchMotor.set(ControlMode.PercentOutput, -0.3);
     }
     public void winchStop() {
         winchMotor.set(ControlMode.PercentOutput, 0);
     }
+    public void winchStopPos() {
+        winchMotor.set(ControlMode.Position, winchMotor.getSelectedSensorPosition());
+    }
+    public void elevatorStopPos() {
+        elevatorMotor.set(ControlMode.Position, elevatorMotor.getSelectedSensorPosition());
+    }
     public double setArmAngle(double angle) {
         //TODO: convert angle into encoder ticks
         winchMotor.set(ControlMode.Position, angle);
         return winchMotor.getClosedLoopError();
     }
+
 
 
     public double getLiftAngle() {

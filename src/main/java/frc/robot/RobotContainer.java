@@ -15,10 +15,17 @@ import frc.robot.commands.SwerveCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.CuboneManager;
+import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -29,8 +36,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   
-  //private final Claw claw = new Claw();
-  //private final Arm arm = new Arm();
+  private final Claw claw = new Claw();
+  private final Arm arm = new Arm();
   //private final CuboneManager cuboneManager = new CuboneManager();
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   //private final NetworkTables tables = new NetworkTables();
@@ -38,6 +45,10 @@ public class RobotContainer {
   //private final XboxController controller = new XboxController(Ports.controller);
   //private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
   private final CommandXboxController controller = new CommandXboxController(Ports.controller);
+  private final CommandJoystick joystick = new CommandJoystick(1);
+  //private final CommandGenericHID joystick1 = new CommandGenericHID(1);
+  private final XboxController joystickButtons = new XboxController(1);
+  private final Trigger button7 = new JoystickButton(joystickButtons, 7);
  // private final CommandXboxController buttonBoard = new CommandXboxController(Ports.buttonBoard);
   //private final Score score = new Score(claw, swerve, arm, () -> 8);
 
@@ -47,6 +58,7 @@ public class RobotContainer {
     //m_claw.setDefaultCommand(rotateToCone);
     // Configure the button bindings
 
+    /* 
     swerveSubsystem.setDefaultCommand(new SwerveCommand(
           swerveSubsystem,
           () -> controller.getLeftY(),
@@ -55,6 +67,16 @@ public class RobotContainer {
           () -> controller.getLeftX(),
           () -> controller.getRightX()));
           //() -> driverJoystick2.getX(),
+
+      */
+    swerveSubsystem.setDefaultCommand(new SwerveCommand(swerveSubsystem, 
+    () -> joystick.getY(), 
+    () -> joystick.getX(), 
+    () -> joystick.getTwist(), 
+    () -> joystick.getRawAxis(3),
+    () -> joystickButtons.getRawButton(2),
+    () -> joystickButtons.getRawButton(1)
+    ));
     configureButtonBindings();
   }
 
@@ -74,9 +96,20 @@ public class RobotContainer {
     // cancelling on release.
     //controller.b().whileTrue(rotateToCone);
     controller.b().whileTrue(new ApriltagFollow(swerveSubsystem));
+    
     //controller.x().whileTrue(score);
-    //controller.y().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));
-    //controller.a().whileTrue(Commands.startEnd(() -> arm.winchUp(), () -> arm.winchStop(), arm));
+    controller.y().whileTrue(Commands.startEnd(() -> arm.winchUpPos(), () -> arm.winchStopPos(), arm).repeatedly());
+    controller.a().whileTrue(Commands.startEnd(() -> arm.winchUpPos(), () -> arm.winchStopPos(), arm).repeatedly());
+    controller.b().whileTrue(Commands.startEnd(() -> arm.extendPos(), () -> arm.elevatorStopPos(), arm).repeatedly());
+    controller.x().whileTrue(Commands.startEnd(() -> arm.retractPos(), () -> arm.elevatorStopPos(), arm).repeatedly());
+    controller.povUp().whileTrue(Commands.startEnd(() -> claw.wristUpPos(), () -> claw.wristStopPos(),  claw).repeatedly());
+    controller.povDown().whileTrue(Commands.startEnd(() -> claw.wristDownPos(), () -> claw.wristStopPos(),  claw).repeatedly());
+    controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistUpPos(), () -> claw.twistStopPos(),  claw).repeatedly());
+    controller.povLeft().whileTrue(Commands.startEnd(() -> claw.twistDownPos(), () -> claw.twistStopPos(),  claw).repeatedly());
+    button7.onTrue(Commands.runOnce(() -> NavX.reset()));
+    //controller.b().whileTrue(Commands.run(() -> arm.winchUp(), arm));
+    //controller.x().whileTrue(RepeatCommand()))
+
   }
 
   /**

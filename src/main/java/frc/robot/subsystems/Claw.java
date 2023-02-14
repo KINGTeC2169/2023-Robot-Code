@@ -19,10 +19,14 @@ public class Claw extends SubsystemBase {
 	private final TalonFX wristMotor = new TalonFX(Ports.wristMotor);
 	private final TalonSRX clawTwist = new TalonSRX(Ports.clawTwist);
 	private final Solenoid grabber = new Solenoid(PneumaticsModuleType.REVPH, Ports.grabber);
+	private double wristPos;
+	private double twistPos;
 	/** Creates a new ExampleSubsystem. */
 	public Claw() {
 		wristMotor.config_kP(0, 0.5);
 		clawTwist.config_kP(0, 0.5);
+		wristPos = wristMotor.getSelectedSensorPosition();
+		twistPos = clawTwist.getSelectedSensorPosition();
 	}
 
 	@Override
@@ -30,6 +34,29 @@ public class Claw extends SubsystemBase {
 		// This method will be called once per scheduler run
 		SmartDashboard.putNumber("Wrist Encoder", getWristEncoder());
 		SmartDashboard.putNumber("ClawTwist", getTwistEncoder());
+	}
+
+	public void twistUpPos() {
+		twistPos += 50;
+		clawTwist.set(ControlMode.Position, twistPos);
+	}
+	public void twistDownPos() {
+		twistPos -= 50;
+		clawTwist.set(ControlMode.Position, twistPos);
+	}
+	public void wristUpPos() {
+		wristPos += 50;
+		wristMotor.set(ControlMode.Position, wristPos);
+	}
+	public void wristDownPos() {
+		wristPos -= 50;
+		wristMotor.set(ControlMode.Position, wristPos);
+	}
+	public void wristStopPos() {
+		wristMotor.set(ControlMode.Position, wristMotor.getSelectedSensorPosition());
+	}
+	public void twistStopPos() {
+		clawTwist.set(ControlMode.Position, clawTwist.getSelectedSensorPosition());
 	}
 
   	public void twistClaw(double power) {
