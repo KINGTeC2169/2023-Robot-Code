@@ -57,24 +57,12 @@ public class LineUp extends CommandBase {
     public void execute() {
 
         if(!centered) {
-            int divider = 2;
-            double average = 0;
-            if(CuboneManager.isConeInClaw()) {
-                if(NetworkTables.leftApriltagX() == -1 || NetworkTables.rightApriltagX() == -1)
-                    divider = 1;
-
-
-                average = (Math.abs(NetworkTables.leftApriltagX()) + Math.abs(NetworkTables.rightApriltagX())) / divider;
-            } else if(CuboneManager.isCubeInClaw()) {
-                    
-                //TODO: fix this, 0 is not the middle
-                average = (Math.abs(NetworkTables.frontApriltagX()));
-            }
+            
             
 
             
             
-            xSpeed = pidX.calculate(average, CuboneManager.isConeInClaw() ? Constants.Vision.apriltagOffset : 0);
+            xSpeed = pidX.calculate(NetworkTables.getFrontCenter()[0], 240);
 
             if(pidX.atSetpoint())
                 centered = true;
