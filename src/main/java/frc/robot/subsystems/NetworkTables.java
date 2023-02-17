@@ -15,7 +15,7 @@ public class NetworkTables {
     }
 
     public static double getPalmAngle(String coneOrCube) {
-        return table.getEntry("Palm-" + coneOrCube + "-Angle").getDouble(0);
+        return table.getEntry("Palm-" + coneOrCube + "-Angle").getDouble(-1);
     }
 
     public static double[] getFrontCenter(String coneOrCube) {
@@ -29,7 +29,7 @@ public class NetworkTables {
 
     public static double[] closestObject() {
         if(getFrontCenter("Cube")[1] != 0 || getFrontCenter("Cone")[1] != 0) {
-            return table.getEntry("Front-Cone-Center").getDoubleArray(arr)[1] < table.getEntry("Front-Cone-Center").getDoubleArray(arr)[1] ? 
+            return table.getEntry("front-Cone-Center").getDoubleArray(arr)[1] < table.getEntry("front-Cone-Center").getDoubleArray(arr)[1] ? 
         getFrontCenter("Cone") : getFrontCenter("Cube");
         }
         else
@@ -45,6 +45,16 @@ public class NetworkTables {
             return "Cone";
         else
             return "None";
+            
+    }
+
+    public static boolean isThereObjectPalm() {
+        if(getPalmCenter("Cube") == arr || getPalmCenter("Cone") == arr) {
+            return false;
+        } else {
+            return true;
+        }
+
             
     }
 
