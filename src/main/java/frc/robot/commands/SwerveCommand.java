@@ -1,5 +1,8 @@
 package frc.robot.commands;
 
+import static frc.robot.Constants.ModuleConstants.maxNeoRadPerSec;
+import static frc.robot.Constants.ModuleConstants.maxSpeed;
+
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -7,15 +10,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SwerveSubsystem;
-import static frc.robot.Constants.ModuleConstants.*;
-
 import frc.robot.Constants.DriveConstants;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class SwerveCommand extends CommandBase {
 
     private final SwerveSubsystem swerveSubsystem;
-    private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction, slider;
+    private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction, slider, direction;
     private final Supplier<Boolean> sideButton, trigger;
     private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
     private boolean isFieldOriented, isSlowMode;
@@ -30,7 +31,24 @@ public class SwerveCommand extends CommandBase {
         this.slider = slider;
         this.sideButton = sideButton;
         this.trigger = trigger;
+        this.direction = null;
         //this.fieldOrientedFunction = fieldOrientedFunction;
+
+        this.xLimiter = new SlewRateLimiter(5);
+        this.yLimiter = new SlewRateLimiter(5);
+        this.turningLimiter = new SlewRateLimiter(5);
+        addRequirements(swerveSubsystem);
+    }
+    public SwerveCommand(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, 
+    Supplier<Double> turningSpdFunction, Supplier<Double> direction) {
+        this.swerveSubsystem = swerveSubsystem;
+        this.xSpdFunction = xSpdFunction;
+        this.ySpdFunction = ySpdFunction;
+        this.turningSpdFunction = turningSpdFunction;
+        this.slider = null;
+        this.sideButton = null;
+        this.trigger = null;
+        this.direction = direction;
 
         this.xLimiter = new SlewRateLimiter(5);
         this.yLimiter = new SlewRateLimiter(5);
