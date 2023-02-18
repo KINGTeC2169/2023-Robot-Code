@@ -39,11 +39,11 @@ public class Arm extends SubsystemBase {
         elevatorMotor.set(ControlMode.PercentOutput, -power);
     }
     public void extendPos() {
-        elevatorPos += 50;
+        elevatorPos = elevatorMotor.getSelectedSensorPosition() + 5000;
         elevatorMotor.set(ControlMode.Position, elevatorPos);
     }
     public void retractPos() {
-        elevatorPos -= 50;
+        elevatorPos = elevatorMotor.getSelectedSensorPosition() - 5000;
         elevatorMotor.set(ControlMode.Position, elevatorPos);
     }
 
@@ -67,11 +67,11 @@ public class Arm extends SubsystemBase {
         winchMotor.set(ControlMode.PercentOutput, 0.3);
     }
     public void winchUpPos() {
-        winchPos += 50;
+        winchPos = winchMotor.getSelectedSensorPosition() + 10000;
         winchMotor.set(ControlMode.Position, winchPos);
     }
     public void winchDownPos() {
-        winchPos -= 50;
+        winchPos = winchMotor.getSelectedSensorPosition() - 10000;
         winchMotor.set(ControlMode.Position, winchPos);
     }
     public void winchDown() {

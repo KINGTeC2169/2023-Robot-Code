@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,15 +18,16 @@ import frc.robot.Constants.Ports;
 public class Claw extends SubsystemBase {
 	private final TalonFX wristMotor = new TalonFX(Ports.wristMotor);
 	private final TalonSRX clawTwist = new TalonSRX(Ports.clawTwist);
-	private final Solenoid grabber = new Solenoid(PneumaticsModuleType.REVPH, Ports.grabber);
+	private final DoubleSolenoid grabber = new DoubleSolenoid(PneumaticsModuleType.REVPH, Ports.grabberOne, Ports.grabberTwo);
 	private double wristPos;
 	private double twistPos;
 	/** Creates a new ExampleSubsystem. */
 	public Claw() {
-		wristMotor.config_kP(0, 0.5);
+		wristMotor.config_kP(0, 0.3);
 		clawTwist.config_kP(0, 0.5);
 		wristPos = wristMotor.getSelectedSensorPosition();
 		twistPos = clawTwist.getSelectedSensorPosition();
+		wristMotor.configAllowableClosedloopError(0, 100);
 	}
 
 	@Override
@@ -44,11 +46,11 @@ public class Claw extends SubsystemBase {
 		clawTwist.set(ControlMode.Position, twistPos);
 	}
 	public void wristUpPos() {
-		wristPos += 50;
+		wristPos = wristMotor.getSelectedSensorPosition() + 3000;
 		wristMotor.set(ControlMode.Position, wristPos);
 	}
 	public void wristDownPos() {
-		wristPos -= 50;
+		wristPos = wristMotor.getSelectedSensorPosition() - 3000;
 		wristMotor.set(ControlMode.Position, wristPos);
 	}
 	public void wristStopPos() {
@@ -67,14 +69,18 @@ public class Claw extends SubsystemBase {
   	}
 
 	public void grab() {
-		grabber.set(true);
+		//grabber.set(true);
+		
 	}
 	public void unGrab() {
-		grabber.set(false);
+		//grabber.set(false);
 	}
 	public void setGrab(Boolean isGrab) {
-		grabber.set(isGrab);
+		//grabber.set(isGrab);
 	} 
+	public void toggleGrab() {
+		grabber.toggle();
+	}
 
 	public double getWristEncoder() {
 		return wristMotor.getSelectedSensorPosition();

@@ -152,16 +152,17 @@ public class RobotContainer {
     //controller.b().whileTrue(rotateToCone);
     
     //controller.x().whileTrue(score);
-    controller.y().whileTrue(Commands.startEnd(() -> arm.winchUpPos(), () -> arm.winchStopPos(), arm).repeatedly());
-    controller.a().whileTrue(Commands.startEnd(() -> arm.winchUpPos(), () -> arm.winchStopPos(), arm).repeatedly());
-    controller.b().whileTrue(Commands.startEnd(() -> arm.extendPos(), () -> arm.elevatorStopPos(), arm).repeatedly());
-    controller.x().whileTrue(Commands.startEnd(() -> arm.retractPos(), () -> arm.elevatorStopPos(), arm).repeatedly());
-    controller.leftBumper().whileTrue(new GetCubone(claw, swerveSubsystem, arm));
-    controller.povUp().whileTrue(Commands.startEnd(() -> claw.wristUpPos(), () -> claw.wristStopPos(),  claw).repeatedly());
-    controller.povDown().whileTrue(Commands.startEnd(() -> claw.wristDownPos(), () -> claw.wristStopPos(),  claw).repeatedly());
-    controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistUpPos(), () -> claw.twistStopPos(),  claw).repeatedly());
-    controller.povLeft().whileTrue(Commands.startEnd(() -> claw.twistDownPos(), () -> claw.twistStopPos(),  claw).repeatedly());
-    leftStick.button(0/*TODO: find the button that i can use*/).whileTrue(new LineUp(swerveSubsystem));
+    controller.y().whileTrue(Commands.run(() -> arm.winchUpPos(), arm));
+    controller.a().whileTrue(Commands.run(() -> arm.winchDownPos(), arm));
+    controller.b().whileTrue(Commands.run(() -> arm.extendPos(), arm));
+    controller.x().whileTrue(Commands.run(() -> arm.retractPos(), arm));
+    controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab(), claw));
+    controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos(), claw));
+    controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos(), claw));
+    controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(.2), () -> claw.twistClaw(0),  claw).repeatedly());
+    controller.povLeft().whileTrue(Commands.startEnd(() -> claw.twistClaw(-.2), () -> claw.twistClaw(0),  claw).repeatedly());
+    leftStick.button(1/*TODO: find the button that i can use*/).whileTrue(new LineUp(swerveSubsystem));
+    
 
     //button7.onTrue(Commands.runOnce(() -> NavX.reset()));
     //joystick.povUp().onTrue(turnToPosition);

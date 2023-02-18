@@ -24,10 +24,11 @@ public final class Constants {
         public static final int wristMotor = 15;
         public static final int controller = 0;
         public static final int buttonBoard = 10;
-        public static final int clawTwist = 16;
+        public static final int clawTwist = 9;
         public static final int colorSensorClaw = 1;
 
-        public static final int grabber = 0;
+        public static final int grabberOne = 9;
+        public static final int grabberTwo = 10;
 
         //Swervedrive ports
         public static final int frontRightDrive = 8;
@@ -37,7 +38,7 @@ public final class Constants {
         public static final int frontLeftTurn = 5;
         public static final int frontLeftAbsolute = 13;
         public static final int backRightDrive = 2;
-        public static final int backRightTurn = 1;
+        public static final int backRightTurn = 20;
         public static final int backRightAbsolute = 12;
         public static final int backLeftDrive = 4;
         public static final int backLeftTurn = 3;
