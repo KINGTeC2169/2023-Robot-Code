@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.ApriltagFollow;
 import frc.robot.commands.GetCubone;
+import frc.robot.commands.LineUp;
 import frc.robot.commands.Score;
 import frc.robot.commands.SwerveCommand;
 import frc.robot.commands.TurnToPosition;
@@ -152,17 +153,19 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     //controller.b().whileTrue(rotateToCone);
-    controller.b().whileTrue(new ApriltagFollow(swerveSubsystem));
     
     //controller.x().whileTrue(score);
     controller.y().whileTrue(Commands.startEnd(() -> arm.winchUpPos(), () -> arm.winchStopPos(), arm).repeatedly());
     controller.a().whileTrue(Commands.startEnd(() -> arm.winchUpPos(), () -> arm.winchStopPos(), arm).repeatedly());
     controller.b().whileTrue(Commands.startEnd(() -> arm.extendPos(), () -> arm.elevatorStopPos(), arm).repeatedly());
     controller.x().whileTrue(Commands.startEnd(() -> arm.retractPos(), () -> arm.elevatorStopPos(), arm).repeatedly());
+    controller.leftBumper().whileTrue(new GetCubone(claw, swerveSubsystem, arm));
     controller.povUp().whileTrue(Commands.startEnd(() -> claw.wristUpPos(), () -> claw.wristStopPos(),  claw).repeatedly());
     controller.povDown().whileTrue(Commands.startEnd(() -> claw.wristDownPos(), () -> claw.wristStopPos(),  claw).repeatedly());
     controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistUpPos(), () -> claw.twistStopPos(),  claw).repeatedly());
     controller.povLeft().whileTrue(Commands.startEnd(() -> claw.twistDownPos(), () -> claw.twistStopPos(),  claw).repeatedly());
+    leftStick.button(0/*TODO: find the button that i can use*/).whileTrue(new LineUp(swerveSubsystem));
+
     //button7.onTrue(Commands.runOnce(() -> NavX.reset()));
     //joystick.povUp().onTrue(turnToPosition);
     //controller.b().whileTrue(Commands.run(() -> arm.winchUp(), arm));

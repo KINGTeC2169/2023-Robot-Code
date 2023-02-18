@@ -11,7 +11,6 @@ public class CuboneManager extends SubsystemBase {
     private static boolean cubeInClaw;
     private static boolean coneInFront;
     private static boolean cubeInFront;
-    private static ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
     public CuboneManager() {}
 
@@ -35,10 +34,6 @@ public class CuboneManager extends SubsystemBase {
             case "Both": cubeInFront = true;
             coneInFront = true;
             break;
-        }
-        if(colorSensor.getProximity() >= 100) {
-            coneInClaw = false;
-            cubeInClaw = false;
         }
 	}
 

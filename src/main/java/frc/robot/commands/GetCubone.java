@@ -66,8 +66,8 @@ public class GetCubone extends CommandBase {
 		//}
 		if(!itemCentered) {
 			if(CuboneManager.isConeInClaw()) {
-				xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 0);
-				ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 0);
+				xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 240);
+				ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 240);
 				claw.twistClaw(pidTurn.calculate(NetworkTables.getPalmAngle("Cone"), 0));
 				itemCentered = pidX.atSetpoint() && pidY.atSetpoint() && pidTurn.atSetpoint();
 			}
@@ -76,9 +76,9 @@ public class GetCubone extends CommandBase {
 				ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 0);
 				itemCentered = pidX.atSetpoint() && pidY.atSetpoint();
 			}
-			else if(CuboneManager.isSomethingInFront()) {
-				turningSpeed = pidX.calculate(NetworkTables.closestObject()[0]);
-				ySpeed = pidY.calculate(NetworkTables.closestObject()[1]);
+			else if(CuboneManager.isSomethingInFront() || !NetworkTables.isThereObjectPalm()) {
+				turningSpeed = pidX.calculate(NetworkTables.closestObject()[0], 240);
+				ySpeed = pidY.calculate(NetworkTables.closestObject()[1], 0);
 			}
 		}
 		else {
