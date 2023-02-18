@@ -66,6 +66,8 @@ public class RobotContainer {
   private final CommandJoystick rightStick = new CommandJoystick(3);
 
   private Command autoBot;
+
+  private final RepeatCommand armOut = new RepeatCommand(Commands.run(() -> arm.extendPos()));
  
   
  // private final CommandXboxController buttonBoard = new CommandXboxController(Ports.buttonBoard);
@@ -119,7 +121,8 @@ public class RobotContainer {
     () -> joystick.getTwist(), 
     () -> joystick.getRawAxis(3),
     () -> joystickButtons.getRawButton(2),
-    () -> joystickButtons.getRawButton(1)
+    () -> joystickButtons.getRawButton(1),
+    5
     ));
     */
     
@@ -129,7 +132,8 @@ public class RobotContainer {
       () -> leftStick.getX(), 
       () -> leftStick.getTwist(),
       () -> rightStick.getX(),
-      () -> rightStick.getY()
+      () -> rightStick.getY(),
+      () -> leftStick.button(1).getAsBoolean()
       ));
 
       configureButtonBindings();
@@ -153,6 +157,7 @@ public class RobotContainer {
     
     //controller.x().whileTrue(score);
     controller.y().whileTrue(Commands.run(() -> arm.winchUpPos(), arm));
+    //controller.y().whileTrue())
     controller.a().whileTrue(Commands.run(() -> arm.winchDownPos(), arm));
     controller.b().whileTrue(Commands.run(() -> arm.extendPos(), arm));
     controller.x().whileTrue(Commands.run(() -> arm.retractPos(), arm));
@@ -161,7 +166,9 @@ public class RobotContainer {
     controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos(), claw));
     controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(.2), () -> claw.twistClaw(0),  claw).repeatedly());
     controller.povLeft().whileTrue(Commands.startEnd(() -> claw.twistClaw(-.2), () -> claw.twistClaw(0),  claw).repeatedly());
-    leftStick.button(1/*TODO: find the button that i can use*/).whileTrue(new LineUp(swerveSubsystem));
+    //leftStick.button(1/*TODO: find the button that i can use*/).whileTrue(new LineUp(swerveSubsystem));
+    leftStick.button(2).onTrue(Commands.runOnce(() -> NavX.reset()));
+    rightStick.button(1).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders()));
     
 
     //button7.onTrue(Commands.runOnce(() -> NavX.reset()));

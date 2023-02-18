@@ -19,7 +19,7 @@ public class SwerveCommand extends CommandBase {
 
     private final SwerveSubsystem swerveSubsystem;
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction, slider, rightX, rightY;
-    private final Supplier<Boolean> sideButton, trigger;
+    private final Supplier<Boolean> sideButton, trigger, fieldButton;
     private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
     private boolean isFieldOriented, isSlowMode;
     private final int controlMode;
@@ -28,7 +28,7 @@ public class SwerveCommand extends CommandBase {
     
     public SwerveCommand(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction, 
     Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction, Supplier<Double> slider, Supplier<Boolean> sideButton,
-    Supplier<Boolean> trigger) {
+    Supplier<Boolean> trigger, int balls) {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
@@ -39,6 +39,7 @@ public class SwerveCommand extends CommandBase {
         this.rightX = null;
         this.rightY = null;
         this.controlMode = 0;
+        this.fieldButton = null;
         //this.fieldOrientedFunction = fieldOrientedFunction;
 
         this.xLimiter = new SlewRateLimiter(5);
@@ -49,7 +50,7 @@ public class SwerveCommand extends CommandBase {
         addRequirements(swerveSubsystem);
     }
     public SwerveCommand(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, 
-    Supplier<Double> turningSpdFunction, Supplier<Double> rightX, Supplier<Double> rightY) {
+    Supplier<Double> turningSpdFunction, Supplier<Double> rightX, Supplier<Double> rightY, Supplier<Boolean> fieldButton) {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
@@ -60,6 +61,7 @@ public class SwerveCommand extends CommandBase {
         this.rightX = rightX;
         this.rightY = rightY;
         this.controlMode = 1;
+        this.fieldButton = fieldButton;
 
         this.xLimiter = new SlewRateLimiter(5);
         this.yLimiter = new SlewRateLimiter(5);
@@ -78,7 +80,7 @@ public class SwerveCommand extends CommandBase {
 
         double xSpeed = xSpdFunction.get();
         double ySpeed = ySpdFunction.get();
-        double turningSpeed = turningSpdFunction.get();
+        double turningSpeed = -turningSpdFunction.get();
 
         if(controlMode == 0) {
             isSlowMode = sideButton.get();
@@ -132,6 +134,7 @@ public class SwerveCommand extends CommandBase {
                 
                 turningSpeed = turnPID.calculate(NavX.getAngle(), angle);
             }
+            isFieldOriented = !fieldButton.get();
         }
 
 
@@ -140,7 +143,7 @@ public class SwerveCommand extends CommandBase {
         xSpeed = xLimiter.calculate(xSpeed) *  maxSpeed;
         ySpeed = yLimiter.calculate(ySpeed) *  maxSpeed;
         turningSpeed = turningLimiter.calculate(turningSpeed) * maxNeoRadPerSec;
-
+        SmartDashboard.putNumber("Turn Speed", turningSpeed);
 
         ChassisSpeeds chassisSpeeds;
         //if(fieldOrientedFunction.get()) {
