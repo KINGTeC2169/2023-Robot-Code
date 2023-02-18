@@ -18,10 +18,9 @@ public class Arm extends SubsystemBase {
      * Creates a new ExampleSubsystem.
      */
     public Arm() {
-        elevatorMotor.config_kP(0, 0.5);
-        winchMotor.config_kP(0, 0.5);
+        elevatorMotor.config_kP(0, 0.1);
+        winchMotor.config_kP(0, 0.1);
         winchPos = winchMotor.getSelectedSensorPosition();
-        elevatorPos = elevatorMotor.getSelectedSensorPosition();
     }
 
     @Override
@@ -39,11 +38,11 @@ public class Arm extends SubsystemBase {
         elevatorMotor.set(ControlMode.PercentOutput, -power);
     }
     public void extendPos() {
-        elevatorPos = elevatorMotor.getSelectedSensorPosition() + 5000;
+        elevatorPos = elevatorMotor.getSelectedSensorPosition() + 20000;
         elevatorMotor.set(ControlMode.Position, elevatorPos);
     }
     public void retractPos() {
-        elevatorPos = elevatorMotor.getSelectedSensorPosition() - 5000;
+        elevatorPos = elevatorMotor.getSelectedSensorPosition() - 20000;
         elevatorMotor.set(ControlMode.Position, elevatorPos);
     }
 
@@ -67,11 +66,11 @@ public class Arm extends SubsystemBase {
         winchMotor.set(ControlMode.PercentOutput, 0.3);
     }
     public void winchUpPos() {
-        winchPos = winchMotor.getSelectedSensorPosition() + 10000;
+        winchPos = winchMotor.getSelectedSensorPosition() + 30000;
         winchMotor.set(ControlMode.Position, winchPos);
     }
     public void winchDownPos() {
-        winchPos = winchMotor.getSelectedSensorPosition() - 10000;
+        winchPos = winchMotor.getSelectedSensorPosition() - 30000;
         winchMotor.set(ControlMode.Position, winchPos);
     }
     public void winchDown() {

@@ -80,7 +80,7 @@ public class SwerveCommand extends CommandBase {
 
         double xSpeed = xSpdFunction.get();
         double ySpeed = ySpdFunction.get();
-        double turningSpeed = -turningSpdFunction.get();
+        double turningSpeed = turningSpdFunction.get();
 
         if(controlMode == 0) {
             isSlowMode = sideButton.get();

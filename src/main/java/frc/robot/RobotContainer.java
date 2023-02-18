@@ -18,6 +18,7 @@ import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.ApriltagFollow;
@@ -61,6 +62,7 @@ public class RobotContainer {
   private final CommandJoystick joystick = new CommandJoystick(1);
   private final XboxController joystickButtons = new XboxController(1);
   private final Trigger button7 = new JoystickButton(joystickButtons, 7);
+  private final Trigger button14 = new JoystickButton(joystickButtons, 14);
 
   private final CommandJoystick leftStick = new CommandJoystick(2);
   private final CommandJoystick rightStick = new CommandJoystick(3);
@@ -114,7 +116,7 @@ public class RobotContainer {
 
       */
     
-    /*
+    
     swerveSubsystem.setDefaultCommand(new SwerveCommand(swerveSubsystem, 
     () -> joystick.getY(), 
     () -> joystick.getX(), 
@@ -124,9 +126,9 @@ public class RobotContainer {
     () -> joystickButtons.getRawButton(1),
     5
     ));
-    */
     
-
+    
+    /* 
     swerveSubsystem.setDefaultCommand(new SwerveCommand(swerveSubsystem,
       () -> leftStick.getY(), 
       () -> leftStick.getX(), 
@@ -135,7 +137,7 @@ public class RobotContainer {
       () -> rightStick.getY(),
       () -> leftStick.button(1).getAsBoolean()
       ));
-
+    */
       configureButtonBindings();
   }
 
@@ -167,11 +169,12 @@ public class RobotContainer {
     controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(.2), () -> claw.twistClaw(0),  claw).repeatedly());
     controller.povLeft().whileTrue(Commands.startEnd(() -> claw.twistClaw(-.2), () -> claw.twistClaw(0),  claw).repeatedly());
     //leftStick.button(1/*TODO: find the button that i can use*/).whileTrue(new LineUp(swerveSubsystem));
-    leftStick.button(2).onTrue(Commands.runOnce(() -> NavX.reset()));
-    rightStick.button(1).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders()));
+    //leftStick.button(2).onTrue(Commands.runOnce(() -> NavX.reset()));
+    ///rightStick.button(1).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders()));
     
 
-    //button7.onTrue(Commands.runOnce(() -> NavX.reset()));
+    button7.onTrue(Commands.runOnce(() -> NavX.reset()));
+    button14.onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders(), swerveSubsystem));
     //joystick.povUp().onTrue(turnToPosition);
     //controller.b().whileTrue(Commands.run(() -> arm.winchUp(), arm));
     //controller.x().whileTrue(RepeatCommand()))
