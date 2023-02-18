@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
@@ -79,7 +80,11 @@ public class Claw extends SubsystemBase {
 		//grabber.set(isGrab);
 	} 
 	public void toggleGrab() {
-		grabber.toggle();
+		if(grabber.get() == Value.kOff)
+			grabber.set(Value.kForward);
+		else
+			grabber.toggle();
+		
 	}
 
 	public double getWristEncoder() {
