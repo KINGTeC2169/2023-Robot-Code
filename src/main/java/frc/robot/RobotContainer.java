@@ -55,8 +55,7 @@ public class RobotContainer {
   private final Arm arm = new Arm();
   //private final CuboneManager cuboneManager = new CuboneManager();
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-  //private final NetworkTables tables = new NetworkTables();
-  private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  //private final XboxController controller = new XboxController(Ports.controller);
+  private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  
   //private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
   private final CommandXboxController controller = new CommandXboxController(Ports.controller);
   private final CommandJoystick joystick = new CommandJoystick(1);
@@ -101,9 +100,6 @@ public class RobotContainer {
     
     autoBot = autoBuilder.fullAuto(path);
 
-    //m_claw.setDefaultCommand(rotateToCone);
-    // Configure the button bindings
-
     /* 
     swerveSubsystem.setDefaultCommand(new SwerveCommand(
           swerveSubsystem,
@@ -116,7 +112,7 @@ public class RobotContainer {
 
       */
     
-    
+    /*
     swerveSubsystem.setDefaultCommand(new SwerveCommand(swerveSubsystem, 
     () -> joystick.getY(), 
     () -> joystick.getX(), 
@@ -125,6 +121,7 @@ public class RobotContainer {
     () -> joystickButtons.getRawButton(2),
     () -> joystickButtons.getRawButton(1)
     ));
+    */
     
 
     swerveSubsystem.setDefaultCommand(new SwerveCommand(swerveSubsystem,
