@@ -20,11 +20,11 @@ public final class Constants {
 
     public static final class Ports {
         public static final int winchMotor = 3;
-        public static final int elevatorMotor = 2;
-        public static final int wristMotor = 9;
+        public static final int elevatorMotor = 14;
+        public static final int wristMotor = 15;
         public static final int controller = 0;
         public static final int buttonBoard = 10;
-        public static final int clawTwist = 2;
+        public static final int clawTwist = 16;
         public static final int colorSensorClaw = 1;
 
         public static final int grabber = 0;
