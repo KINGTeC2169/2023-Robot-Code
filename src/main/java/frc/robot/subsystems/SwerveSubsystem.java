@@ -100,7 +100,20 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Front Right Absolute", frontRight.getAbsoluteTurnPosition());
         SmartDashboard.putNumber("Back Left Absolute", backLeft.getAbsoluteTurnPosition());
         SmartDashboard.putNumber("Back Right Absolute", backRight.getAbsoluteTurnPosition());
+        SmartDashboard.putNumber("Front Right Drive Current", frontRight.getDriveCurrent());
+        SmartDashboard.putNumber("Front Left Drive Current", frontLeft.getDriveCurrent());
 
+        SmartDashboard.putNumber("Back Right Drive Current", backRight.getDriveCurrent());
+        SmartDashboard.putNumber("Back Left Drive Current", backLeft.getDriveCurrent());
+
+        SmartDashboard.putNumber("Front Right Turn Current", frontRight.getTurnCurrent());
+        SmartDashboard.putNumber("Front Left Turn Current", frontLeft.getTurnCurrent());
+
+        SmartDashboard.putNumber("Back Right Turn Current", backRight.getTurnCurrent());
+        SmartDashboard.putNumber("Back Left Turn Current", backLeft.getTurnCurrent());
+
+
+        /*
         SmartDashboard.putNumber("Front Left", frontLeft.getTurnPosition());
         SmartDashboard.putNumber("Front Right", frontRight.getTurnPosition());
         SmartDashboard.putNumber("Back Left", backLeft.getTurnPosition());
@@ -112,6 +125,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Front left speed", frontLeft.getDriveVelocity());
         SmartDashboard.putNumber("Error", backLeft.getError());
         SmartDashboard.putNumber("Error", Math.abs(backRight.getWantedSpeed() - backRight.getDrivePosition()));
+        */
     }
 
     public void stopModules() {

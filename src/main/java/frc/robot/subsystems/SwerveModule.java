@@ -98,6 +98,14 @@ public class SwerveModule {
         return absoluteEncoder.getAbsolutePosition();
     }
 
+    public double getDriveCurrent() {
+        return driveMotor.getSupplyCurrent();
+    }
+
+    public double getTurnCurrent() {
+        return turnMotor.getOutputCurrent();
+    }
+
     public void resetEncoders() {
         driveMotor.setSelectedSensorPosition(0);
         turnEncoder.setPosition(getAbsoluteTurnPosition());
@@ -118,8 +126,8 @@ public class SwerveModule {
         state = SwerveModuleState.optimize(state, getState().angle);
         //driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
         wantedSpeed = (state.speedMetersPerSecond / maxSpeed) * 21731;
-        driveMotor.set(ControlMode.Velocity, wantedSpeed * 3 / 2);
-        //driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
+        //driveMotor.set(ControlMode.Velocity, wantedSpeed * 3 / 2);
+        driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
         turnMotor.set(turningPID.calculate(getTurnPosition(), state.angle.getRadians()));
 
     }
@@ -134,7 +142,8 @@ public class SwerveModule {
 
     public void stop() {
         wantedSpeed = 0;
-        driveMotor.set(ControlMode.Velocity, 0);
+        //driveMotor.set(ControlMode.Velocity, 0);
+        driveMotor.set(ControlMode.PercentOutput, 0);
         turnMotor.set(0);
     }
 
