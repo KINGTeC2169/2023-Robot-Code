@@ -23,12 +23,13 @@ public class LineUp extends CommandBase {
 
     private final PIDController pidX;
     private final PIDController pidY;
+    private final PIDController pidRotate;
     private double xSpeed;
     private double ySpeed;
     private double turningSpeed;
     private ChassisSpeeds chassisSpeeds;
+    private boolean rotated;
     private boolean centered;
-    private double average;
     private boolean wallBanged;
     private boolean finished;
 
@@ -43,6 +44,7 @@ public class LineUp extends CommandBase {
         addRequirements(swerve);
         pidX = new PIDController(0.5, 0, 0);
         pidY = new PIDController(0.5, 0, 0);
+        pidRotate = new PIDController(0.5, 0, 0);
 
     }
 
@@ -56,29 +58,23 @@ public class LineUp extends CommandBase {
     @Override
     public void execute() {
 
-        if(!centered) {
-            
-            
-
-            
-            
-            xSpeed = pidX.calculate(NetworkTables.getFrontCenter()[0], 240);
-
-            if(pidX.atSetpoint())
+        if(!rotated) {
+            turningSpeed = pidRotate.calculate(NetworkTables.leftApriltagYaw(), 0);
+            if(pidRotate.atSetpoint()){
+                rotated = true;
+            }
+        } else if(!centered) {
+            xSpeed = pidX.calculate(NetworkTables.leftApriltagCenter()[0], 400);
+            if(pidX.atSetpoint()){
                 centered = true;
-
+            }
             
 
         } else if(!wallBanged) {
-            int divider = 2;
-            if(NetworkTables.leftApriltagY() == -1 || NetworkTables.rightApriltagY() == -1)
-                divider = 1;
-
-            double average = (Math.abs(NetworkTables.leftApriltagY()) + Math.abs(NetworkTables.rightApriltagY())) / divider;
-            
-            ySpeed = pidY.calculate(average, 0);
-            if(pidY.atSetpoint())
+            ySpeed = pidY.calculate(NetworkTables.leftApriltagY(), 0);
+            if(pidY.atSetpoint()){
                 wallBanged = true;
+            }
             
         } else {
             finished = true;
@@ -106,8 +102,6 @@ public class LineUp extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-//time.getUsClock()() > 1 && Math.abs(NetworkTable.getAngle()) < 5?
-//return isAngle;
         return finished;
     }
 }
