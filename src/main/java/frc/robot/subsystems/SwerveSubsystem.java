@@ -4,6 +4,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -48,6 +49,7 @@ public class SwerveSubsystem extends SubsystemBase {
     false);
 
     public SwerveDriveKinematics kinematics = DriveConstants.DRIVE_KINEMATICS;
+    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), null);
 
     public SwerveSubsystem() {
         
@@ -74,8 +76,8 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getRotation2d() {
-        return NavX.getRotation2d();
-        //return Rotation2d.fromDegrees(getHeading());
+        //return NavX.getRotation2d();
+        return Rotation2d.fromDegrees(getHeading());
     }
     
 
@@ -142,6 +144,13 @@ public class SwerveSubsystem extends SubsystemBase {
         frontRight.setDesiredState(states[1]);
         backLeft.setDesiredState(states[2]);
         backRight.setDesiredState(states[3]);
+    }
+
+    public SwerveModuleState[] getModuleStates() {
+        return new SwerveModuleState[] {frontLeft.getState(),
+                frontRight.getState(),
+                backLeft.getState(),
+                backRight.getState()};
     }
 
     /**Puts wheels in 'X' position and sets driving to a velocity-PID loop set at 0m/s */

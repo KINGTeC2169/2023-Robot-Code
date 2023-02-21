@@ -118,8 +118,6 @@ public class SwerveModule {
 
     public void setDesiredState(SwerveModuleState state) {
         if (Math.abs(state.speedMetersPerSecond) < 0.001) {
-            //TODO: this causes an aggresive stop, need to test with more weight on bot
-            //semiAutoStop();
             stop();
             return;
         }
