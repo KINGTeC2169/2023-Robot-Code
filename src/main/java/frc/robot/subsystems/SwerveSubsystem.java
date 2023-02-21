@@ -5,7 +5,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
@@ -49,7 +51,8 @@ public class SwerveSubsystem extends SubsystemBase {
     false);
 
     public SwerveDriveKinematics kinematics = DriveConstants.DRIVE_KINEMATICS;
-    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), null);
+    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions());
+    public Field2d field = new Field2d();
 
     public SwerveSubsystem() {
         
@@ -64,6 +67,15 @@ public class SwerveSubsystem extends SubsystemBase {
         }).start();
         
         
+    }
+
+    public SwerveModulePosition[] getModulePositions() {
+        return new SwerveModulePosition[] {
+        frontLeft.getModulePosition(),
+        frontRight.getModulePosition(),
+        backLeft.getModulePosition(),
+        backRight.getModulePosition()
+        };
     }
 
     public void zeroHeading() {
@@ -83,9 +95,16 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void resetPose(Pose2d pose) {
     }
+
     public Pose2d getPose() {
-        return NavX.getPose();
+        //return NavX.getPose();
+        return odometer.getPoseMeters();
     }
+
+    public void resetOdometry(Pose2d pose) {
+        odometer.resetPosition(getRotation2d(), getModulePositions(), pose);
+    }
+
 
     public void resetEncoders() {
         frontLeft.resetEncoders();
@@ -96,6 +115,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        odometer.update(getRotation2d(), getModulePositions());
+        
         //Runs during robot periodic, displays shuffleboard data for this subsystem
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putNumber("Front Left Absolute", frontLeft.getAbsoluteTurnPosition());
@@ -147,10 +168,11 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public SwerveModuleState[] getModuleStates() {
-        return new SwerveModuleState[] {frontLeft.getState(),
-                frontRight.getState(),
-                backLeft.getState(),
-                backRight.getState()};
+        return new SwerveModuleState[] {
+            frontLeft.getState(),
+            frontRight.getState(),
+            backLeft.getState(),
+            backRight.getState()};
     }
 
     /**Puts wheels in 'X' position and sets driving to a velocity-PID loop set at 0m/s */

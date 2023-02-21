@@ -42,9 +42,9 @@ public class SwerveCommand extends CommandBase {
         this.fieldButton = null;
         //this.fieldOrientedFunction = fieldOrientedFunction;
 
-        this.xLimiter = new SlewRateLimiter(5);
-        this.yLimiter = new SlewRateLimiter(5);
-        this.turningLimiter = new SlewRateLimiter(5);
+        this.xLimiter = new SlewRateLimiter(1);
+        this.yLimiter = new SlewRateLimiter(1);
+        this.turningLimiter = new SlewRateLimiter(1);
         turnPID = new PIDController(0.09, 0, 0);
         turnPID.setTolerance(5);
         addRequirements(swerveSubsystem);
