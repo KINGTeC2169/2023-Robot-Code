@@ -163,6 +163,7 @@ public class RobotContainer {
     controller.a().whileTrue(Commands.run(() -> arm.winchDownPos(), arm));
     controller.b().whileTrue(Commands.run(() -> arm.extendPos(), arm));
     controller.x().whileTrue(Commands.run(() -> arm.retractPos(), arm));
+    controller.start().whileTrue(new LineUp(swerveSubsystem));
     controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab(), claw));
     controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos(), claw));
     controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos(), claw));

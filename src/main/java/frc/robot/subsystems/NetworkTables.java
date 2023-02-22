@@ -100,7 +100,7 @@ public class NetworkTables {
     public static double[] rightApriltagCenter() {
         return table.getEntry("Right-apriltag-Center").getDoubleArray(arr);
     }
-    public static double[] FrontApriltagCenter() {
+    public static double[] frontApriltagCenter() {
         return table.getEntry("Front-apriltag-Center").getDoubleArray(arr);
     }
 

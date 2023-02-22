@@ -12,18 +12,22 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 
 public class LineUp extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final SwerveSubsystem swerve;
 
-    private final PIDController pidX;
-    private final PIDController pidY;
-    private final PIDController pidRotate;
+    private final ProfiledPIDController pidX;
+    private final ProfiledPIDController pidY;
+    private final ProfiledPIDController pidRotate;
     private double xSpeed;
     private double ySpeed;
     private double turningSpeed;
@@ -42,45 +46,48 @@ public class LineUp extends CommandBase {
         this.swerve = swerve;
 
         addRequirements(swerve);
-        pidX = new PIDController(0.5, 0, 0);
-        pidY = new PIDController(0.5, 0, 0);
-        pidRotate = new PIDController(0.5, 0, 0);
+        pidX = new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(5, 10));
+        pidY = new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(5, 10));
+        pidRotate = new ProfiledPIDController(0.05, 0, 0, new TrapezoidProfile.Constraints(5, 10));
 
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        pidRotate.setTolerance(4);
+        
         
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-
-        if(!rotated) {
-            turningSpeed = pidRotate.calculate(NetworkTables.leftApriltagYaw(), 0);
+        xSpeed = 0;
+        ySpeed = 0;
+        turningSpeed = 0;
+        
+        if(!rotated && NetworkTables.frontApriltagYaw() != -2169) {
+            turningSpeed = MathUtil.clamp(pidRotate.calculate(NetworkTables.frontApriltagYaw(), 0), -0.3, 0.3);
+            System.out.println(turningSpeed);
             if(pidRotate.atSetpoint()){
                 rotated = true;
             }
-        } else if(!centered) {
-            xSpeed = pidX.calculate(NetworkTables.leftApriltagCenter()[0], 400);
+        } else if(!centered && NetworkTables.frontApriltagCenter()[0] != -2169) {
+            xSpeed = pidX.calculate(NetworkTables.frontApriltagCenter()[0], 240);
             if(pidX.atSetpoint()){
                 centered = true;
             }
             
 
-        } else if(!wallBanged) {
-            ySpeed = pidY.calculate(NetworkTables.leftApriltagY(), 0);
+        } else if(!wallBanged && NetworkTables.frontApriltagY() != -2169) {
+            ySpeed = pidY.calculate(NetworkTables.frontApriltagY(), 0);
             if(pidY.atSetpoint()){
                 wallBanged = true;
             }
-            
-        } else {
+        } else if(rotated && centered && wallBanged){
             finished = true;
         }
-
-        
 
         chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
 
@@ -88,6 +95,7 @@ public class LineUp extends CommandBase {
         SwerveModuleState[] moduleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
 
         swerve.setModuleStates(moduleStates);
+    
 
 
 
