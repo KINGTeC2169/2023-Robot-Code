@@ -10,7 +10,6 @@ public class NetworkTables {
     public NetworkTables() {}
 
     public static double[] getPalmCenter(String coneOrCube) {
-        //returns in a array with [x,y]
         return table.getEntry("Palm-" + coneOrCube + "-Center").getDoubleArray(arr);
     }
 
@@ -102,6 +101,52 @@ public class NetworkTables {
     }
     public static double[] frontApriltagCenter() {
         return table.getEntry("Front-apriltag-Center").getDoubleArray(arr);
+    }
+
+
+    //These are custom methods that combine all the cameras to get the most information possible
+
+    
+
+    private static String closestApriltag() {
+
+        //TODO: add and subtract from the left and right based on the angle
+        double closest = -2169;
+        String closestString = null;
+        if(frontApriltagYaw() != -2169 && Math.abs(closest) > Math.abs(frontApriltagYaw()) ) {
+            closest = frontApriltagYaw();
+            closestString = "Front";
+        }
+        if(leftApriltagYaw() != -2169 && Math.abs(closest) > Math.abs(leftApriltagYaw()) ) {
+            closest = leftApriltagYaw();
+            closestString = "Left";
+        }
+        if(rightApriltagYaw() != -2169 && Math.abs(closest) > Math.abs(rightApriltagYaw()) ) {
+            closest = rightApriltagYaw();
+            closestString = "Right";
+        }
+        
+        return closestString;
+    }
+
+    public static double apriltagId() {
+        return table.getEntry("" + closestApriltag() + "-apriltag-Id").getDouble(-2169);
+    }
+
+    public static double[] apriltagCenter() {
+        return table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr);
+    }
+
+    public static double apriltagYaw() {
+        return table.getEntry("" + closestApriltag() + "-apriltag-Yaw").getDouble(-2169);
+    }
+
+    public static double apriltagX() {
+        return table.getEntry("" + closestApriltag() + "-apriltag-X").getDouble(-2169);
+    }
+
+    public static double apriltagY() {
+        return table.getEntry("" + closestApriltag() + "-apriltag-Y").getDouble(-2169);
     }
 
         

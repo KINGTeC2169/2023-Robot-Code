@@ -48,7 +48,7 @@ public class LineUp extends CommandBase {
         addRequirements(swerve);
         pidX = new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(5, 10));
         pidY = new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(5, 10));
-        pidRotate = new ProfiledPIDController(0.05, 0, 0, new TrapezoidProfile.Constraints(5, 10));
+        pidRotate = new ProfiledPIDController(0.05, 0, 0, new TrapezoidProfile.Constraints(2, 4));
 
     }
 
@@ -68,19 +68,19 @@ public class LineUp extends CommandBase {
         turningSpeed = 0;
         
         if(!rotated && NetworkTables.frontApriltagYaw() != -2169) {
-            turningSpeed = MathUtil.clamp(pidRotate.calculate(NetworkTables.frontApriltagYaw(), 0), -0.3, 0.3);
+            turningSpeed = MathUtil.clamp(pidRotate.calculate(NetworkTables.apriltagYaw(), 0), -0.3, 0.3);
             System.out.println(turningSpeed);
             if(pidRotate.atSetpoint()){
                 rotated = true;
             }
-        } else if(!centered && NetworkTables.frontApriltagCenter()[0] != -2169) {
+        } else if(!centered && NetworkTables.apriltagCenter()[0] != -2169) {
             xSpeed = pidX.calculate(NetworkTables.frontApriltagCenter()[0], 240);
             if(pidX.atSetpoint()){
                 centered = true;
             }
             
 
-        } else if(!wallBanged && NetworkTables.frontApriltagY() != -2169) {
+        } else if(!wallBanged && NetworkTables.apriltagY() != -2169) {
             ySpeed = pidY.calculate(NetworkTables.frontApriltagY(), 0);
             if(pidY.atSetpoint()){
                 wallBanged = true;
