@@ -28,7 +28,7 @@ public class NetworkTables {
 
     public static double[] closestObject() {
         if(getFrontCenter("Cube")[1] != -2169 || getFrontCenter("Cone")[1] != -2169) {
-            return table.getEntry("front-Cone-Center").getDoubleArray(arr)[1] < table.getEntry("front-Cone-Center").getDoubleArray(arr)[1] ? 
+            return Math.abs(table.getEntry("Front-Cone-Center").getDoubleArray(arr)[1]) < Math.abs(table.getEntry("Front-Cube-Center").getDoubleArray(arr)[1]) ? 
         getFrontCenter("Cone") : getFrontCenter("Cube");
         }
         else
@@ -109,8 +109,6 @@ public class NetworkTables {
     
 
     private static String closestApriltag() {
-
-        //TODO: add and subtract from the left and right based on the angle
         double closest = -2169;
         String closestString = null;
         if(frontApriltagYaw() != -2169 && Math.abs(closest) > Math.abs(frontApriltagYaw()) ) {
@@ -130,21 +128,73 @@ public class NetworkTables {
     }
 
     public static double apriltagId() {
-        return table.getEntry("" + closestApriltag() + "-apriltag-Id").getDouble(-2169);
+        if(closestApriltag().equals(null)) {
+            return table.getEntry("" + closestApriltag() + "-apriltag-Id").getDouble(-2169);
+        }
+        return -2169;
     }
 
     public static double[] apriltagCenter() {
-        return table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr);
+        double adder = 0;
+        if(!closestApriltag().equals(null)) {
+            
+            if(closestApriltag().equals("Front")) {
+                adder = -320;
+            } else if(closestApriltag().equals("Left")) {
+                adder = -1120;
+            } else if(closestApriltag().equals("Right")) {
+                adder = 320;
+            }
+            if(table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr) != arr) {
+                double[] cringe = {table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr)[0] + adder, (table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr)[1])};
+                return cringe;
+            }
+        }
+        return arr;
     }
 
+
+    //TODO: FIX the 20 degree difference here
+    //The Y value of the center might not work, but i dont think we use it so it should be good 
     public static double apriltagYaw() {
-        return table.getEntry("" + closestApriltag() + "-apriltag-Yaw").getDouble(-2169);
+        double adder = 0;
+        if(!closestApriltag().equals(null)) {
+            
+            if(closestApriltag().equals("Front")) {
+                adder = 0;
+            } else if(closestApriltag().equals("Left")) {
+                adder = -20;
+            } else if(closestApriltag().equals("Right")) {
+                adder = 20;
+            }
+            if(table.getEntry("" + closestApriltag() + "-apriltag-Yaw").getDouble(-2169) != -2169) {
+                return table.getEntry("" + closestApriltag() + "-apriltag-Yaw").getDouble(-2169) + adder;
+            }
+        }
+        return -2169;
     }
 
+    //im cringe, think about this
+    //on second thought, check how the angle effect the X distance, maybe its epic
     public static double apriltagX() {
-        return table.getEntry("" + closestApriltag() + "-apriltag-X").getDouble(-2169);
+        double adder = 0;
+        if(!closestApriltag().equals(null)) {
+            
+            if(closestApriltag().equals("Front")) {
+                adder = -320;
+            } else if(closestApriltag().equals("Left")) {
+                adder = -1120;
+            } else if(closestApriltag().equals("Right")) {
+                adder = 320;
+            }
+            if(table.getEntry("" + closestApriltag() + "-apriltag-X").getDouble(-2169) != -2169) {
+                return table.getEntry("" + closestApriltag() + "-apriltag-X").getDouble(-2169) + adder;
+            }
+        }
+        return -2169;
     }
 
+    
     public static double apriltagY() {
         return table.getEntry("" + closestApriltag() + "-apriltag-Y").getDouble(-2169);
     }
