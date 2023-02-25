@@ -72,6 +72,12 @@ public class SwerveSubsystem extends SubsystemBase {
         tab.addDouble("Front Right", () -> frontRight.getDriveCurrent());
         tab.addDouble("Back Left", () -> backLeft.getDriveCurrent());
         tab.addDouble("Back Right", () -> backRight.getDriveCurrent());
+        
+        tab.addDouble("Abs Front Left", () -> frontLeft.getAbsoluteTurnPosition());
+        tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition());
+        tab.addDouble("Abs Back Left", () -> backLeft.getAbsoluteTurnPosition());
+        tab.addDouble("Abs Back Right", () -> backRight.getAbsoluteTurnPosition());
+
 
         //Creates a new thread, which sleeps and then zeros out the gyro
         //Uses a new thread so that it doesn't pause all other code running
@@ -152,11 +158,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Front Right Absolute", frontRight.getAbsoluteTurnPosition());
         SmartDashboard.putNumber("Back Left Absolute", backLeft.getAbsoluteTurnPosition());
         SmartDashboard.putNumber("Back Right Absolute", backRight.getAbsoluteTurnPosition());
-        SmartDashboard.putNumber("Front Right Drive Current", frontRight.getDriveCurrent());
-        SmartDashboard.putNumber("Front Left Drive Current", frontLeft.getDriveCurrent());
-
-        SmartDashboard.putNumber("Back Right Drive Current", backRight.getDriveCurrent());
-        SmartDashboard.putNumber("Back Left Drive Current", backLeft.getDriveCurrent());
 
         SmartDashboard.putNumber("Front Right Turn Current", frontRight.getTurnCurrent());
         SmartDashboard.putNumber("Front Left Turn Current", frontLeft.getTurnCurrent());

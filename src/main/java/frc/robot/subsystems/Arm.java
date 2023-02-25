@@ -20,7 +20,7 @@ public class Arm extends SubsystemBase {
     private ShuffleboardTab tab = Shuffleboard.getTab("Arm");
     private GenericEntry elevatorUpperLimit = tab.addPersistent("Elevator Upper Limit", 200000).getEntry();
     private GenericEntry elevatorLowerLimit = tab.addPersistent("Elevator Lower Limit", 0).getEntry();
-    private GenericEntry winchUpperLimit = tab.addPersistent("Elevator Upper Limit", 200000).getEntry();
+    private GenericEntry winchUpperLimit = tab.addPersistent("Winch Upper Limit", 200000).getEntry();
     private GenericEntry winchLowerLimit = tab.addPersistent("Winch Lower Limit", 0).getEntry();
 
     
