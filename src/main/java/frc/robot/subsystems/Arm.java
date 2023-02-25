@@ -31,6 +31,8 @@ public class Arm extends SubsystemBase {
         elevatorMotor.config_kP(0, 0.1);
         winchMotor.config_kP(0, 0.1);
         winchPos = winchMotor.getSelectedSensorPosition();
+        tab.addDouble("Elevator Position", () -> getElevatorEncoder());
+        tab.addDouble("Winch Position", () -> getLiftAngle());
     }
 
     @Override
