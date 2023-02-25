@@ -28,6 +28,7 @@ public class Arm extends SubsystemBase {
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Elevator Encoder", getElevatorEncoder());
         SmartDashboard.putNumber("Lift Encoder", getLiftAngle());
+        SmartDashboard.putNumber("Current", getWinchCurrent());
     }
 
     public void extend(double power) {
@@ -81,6 +82,9 @@ public class Arm extends SubsystemBase {
     }
     public void winchStopPos() {
         winchMotor.set(ControlMode.Position, winchMotor.getSelectedSensorPosition());
+    }
+    public double getWinchCurrent() {
+        return winchMotor.getSupplyCurrent();
     }
     public void elevatorStopPos() {
         elevatorMotor.set(ControlMode.Position, elevatorMotor.getSelectedSensorPosition());

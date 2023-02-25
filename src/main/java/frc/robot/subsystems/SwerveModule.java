@@ -77,7 +77,8 @@ public class SwerveModule {
     }
 
     public double getDrivePosition() {
-        return driveMotor.getSelectedSensorPosition() * driveEncoderToMeter;
+        //return driveMotor.getSelectedSensorPosition() * driveEncoderToMeter;
+        return driveMotor.getSelectedSensorPosition() * (0.32 / 13824);
     }
 
     public double getTurnPosition() {

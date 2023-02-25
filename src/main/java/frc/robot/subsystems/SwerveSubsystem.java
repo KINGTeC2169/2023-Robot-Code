@@ -55,6 +55,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public Field2d field = new Field2d();
 
     public SwerveSubsystem() {
+        SmartDashboard.putData("Field", field);
         
         //Creates a new thread, which sleeps and then zeros out the gyro
         //Uses a new thread so that it doesn't pause all other code running
@@ -89,7 +90,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public Rotation2d getRotation2d() {
         //return NavX.getRotation2d();
-        return Rotation2d.fromDegrees(getHeading());
+        return Rotation2d.fromDegrees(-getHeading());
     }
     
 
@@ -116,6 +117,13 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), getModulePositions());
+        //field.setRobotPose(odometer.getPoseMeters());
+        field.setRobotPose(odometer.getPoseMeters().getX(), odometer.getPoseMeters().getY(), odometer.getPoseMeters().getRotation());
+        SmartDashboard.putNumber("X", odometer.getPoseMeters().getX());
+        SmartDashboard.putNumber("Y", odometer.getPoseMeters().getY());
+        SmartDashboard.putNumber("Pose angle", odometer.getPoseMeters().getRotation().getDegrees());
+
+        //SmartDashboard.putData("Field", field);
         
         //Runs during robot periodic, displays shuffleboard data for this subsystem
         SmartDashboard.putNumber("Robot Heading", getHeading());
@@ -165,6 +173,7 @@ public class SwerveSubsystem extends SubsystemBase {
         frontRight.setDesiredState(states[1]);
         backLeft.setDesiredState(states[2]);
         backRight.setDesiredState(states[3]);
+
     }
 
     public SwerveModuleState[] getModuleStates() {

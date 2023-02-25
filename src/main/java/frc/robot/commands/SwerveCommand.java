@@ -42,9 +42,9 @@ public class SwerveCommand extends CommandBase {
         this.fieldButton = null;
         //this.fieldOrientedFunction = fieldOrientedFunction;
 
-        this.xLimiter = new SlewRateLimiter(1);
-        this.yLimiter = new SlewRateLimiter(1);
-        this.turningLimiter = new SlewRateLimiter(1);
+        this.xLimiter = new SlewRateLimiter(2);
+        this.yLimiter = new SlewRateLimiter(2);
+        this.turningLimiter = new SlewRateLimiter(2);
         turnPID = new PIDController(0.09, 0, 0);
         turnPID.setTolerance(5);
         addRequirements(swerveSubsystem);
@@ -108,9 +108,9 @@ public class SwerveCommand extends CommandBase {
             }
 
             if(isSlowMode) {
-                xSpeed *= 0.2;
-                ySpeed *= 0.2;
-                turningSpeed *= 0.2;
+                xSpeed *= 0.4;
+                ySpeed *= 0.4;
+                turningSpeed *= 0.4;
             }
         }
         else if(controlMode == 1) {

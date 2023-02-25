@@ -124,7 +124,7 @@ public class RobotContainer {
 
 		*/
 		
-		
+		/*
 		swerveSubsystem.setDefaultCommand(new SwerveCommand(swerveSubsystem, 
 		() -> joystick.getY(), 
 		() -> joystick.getX(), 
@@ -134,9 +134,9 @@ public class RobotContainer {
 		() -> joystickButtons.getRawButton(1),
 		5
 		));
+		*/
 		
 		
-		/* 
 		swerveSubsystem.setDefaultCommand(new SwerveCommand(swerveSubsystem,
 		() -> leftStick.getY(), 
 		() -> leftStick.getX(), 
@@ -145,7 +145,7 @@ public class RobotContainer {
 		() -> rightStick.getY(),
 		() -> leftStick.button(1).getAsBoolean()
 		));
-		*/
+		
 		configureButtonBindings();
 	}
 
