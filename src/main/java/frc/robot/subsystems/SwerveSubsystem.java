@@ -7,10 +7,15 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.Ports;
 import static frc.robot.Constants.ModuleConstants.*;
 
@@ -53,9 +58,14 @@ public class SwerveSubsystem extends SubsystemBase {
     public SwerveDriveKinematics kinematics = DriveConstants.DRIVE_KINEMATICS;
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions());
     public Field2d field = new Field2d();
+    private final ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
+    GenericEntry maxSpeed = tab.add("Max Speed", 1.0).getEntry();
+
 
     public SwerveSubsystem() {
+        
         SmartDashboard.putData("Field", field);
+        tab.addDouble("Robot Heading", () -> getHeading());
         
         //Creates a new thread, which sleeps and then zeros out the gyro
         //Uses a new thread so that it doesn't pause all other code running
@@ -77,6 +87,7 @@ public class SwerveSubsystem extends SubsystemBase {
         backLeft.getModulePosition(),
         backRight.getModulePosition()
         };
+        
     }
 
     public void zeroHeading() {
@@ -85,7 +96,8 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public double getHeading() {
-        return Math.IEEEremainder(NavX.getAngle(), 360);
+        //return Math.IEEEremainder(NavX.getAngle(), 360);
+        return NavX.getAngle() % 360;
     }
 
     public Rotation2d getRotation2d() {
@@ -117,12 +129,15 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), getModulePositions());
+
         //field.setRobotPose(odometer.getPoseMeters());
         field.setRobotPose(odometer.getPoseMeters().getX(), odometer.getPoseMeters().getY(), odometer.getPoseMeters().getRotation());
+        System.out.println(maxSpeed.getDouble(1.0));
+
         SmartDashboard.putNumber("X", odometer.getPoseMeters().getX());
         SmartDashboard.putNumber("Y", odometer.getPoseMeters().getY());
         SmartDashboard.putNumber("Pose angle", odometer.getPoseMeters().getRotation().getDegrees());
-
+        
         //SmartDashboard.putData("Field", field);
         
         //Runs during robot periodic, displays shuffleboard data for this subsystem
@@ -142,6 +157,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("Back Right Turn Current", backRight.getTurnCurrent());
         SmartDashboard.putNumber("Back Left Turn Current", backLeft.getTurnCurrent());
+        SmartDashboard.putNumber("NavX", NavX.getAngle());
+        SmartDashboard.putNumber("Rotation2D", NavX.getRotation2d().getDegrees());
 
 
         /*
@@ -168,7 +185,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
      /**Takes an array of SwerveModuleStates and sets each SwerveModule to its respective state */
      public void setModuleStates(SwerveModuleState[] states) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, maxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, ModuleConstants.maxSpeed);
         frontLeft.setDesiredState(states[0]);
         frontRight.setDesiredState(states[1]);
         backLeft.setDesiredState(states[2]);

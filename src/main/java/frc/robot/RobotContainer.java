@@ -179,10 +179,11 @@ public class RobotContainer {
 		//leftStick.button(1/*TODO: find the button that i can use*/).whileTrue(new LineUp(swerveSubsystem));
 		//leftStick.button(2).onTrue(Commands.runOnce(() -> NavX.reset()));
 		///rightStick.button(1).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders()));
-		
+		leftStick.button(1).onTrue(Commands.runOnce(() -> NavX.reset()));
+		leftStick.button(2).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders(), swerveSubsystem));
 
-		button7.onTrue(Commands.runOnce(() -> NavX.reset()));
-		button14.onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders(), swerveSubsystem));
+		//button7.onTrue(Commands.runOnce(() -> NavX.reset()));
+		//button14.onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders(), swerveSubsystem));
 		//joystick.povUp().onTrue(turnToPosition);
 		//controller.b().whileTrue(Commands.run(() -> arm.winchUp(), arm));
 		//controller.x().whileTrue(RepeatCommand()))

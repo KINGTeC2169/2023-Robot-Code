@@ -6,11 +6,16 @@ import static frc.robot.Constants.ModuleConstants.maxSpeed;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -25,6 +30,11 @@ public class SwerveCommand extends CommandBase {
     private final int controlMode;
     private double angle;
     private PIDController turnPID;
+    private Constraints constraints = new Constraints(300, 500);
+    private ProfiledPIDController turnPID2 = new ProfiledPIDController(0.01, 0, 0, constraints);
+    private final double kPTurn = 0.009;
+    private ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
+    
     
     public SwerveCommand(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction, 
     Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction, Supplier<Double> slider, Supplier<Boolean> sideButton,
@@ -40,12 +50,13 @@ public class SwerveCommand extends CommandBase {
         this.rightY = null;
         this.controlMode = 0;
         this.fieldButton = null;
+        
         //this.fieldOrientedFunction = fieldOrientedFunction;
 
         this.xLimiter = new SlewRateLimiter(2);
         this.yLimiter = new SlewRateLimiter(2);
         this.turningLimiter = new SlewRateLimiter(2);
-        turnPID = new PIDController(0.09, 0, 0);
+        turnPID = new PIDController(kPTurn, 0, 0);
         turnPID.setTolerance(5);
         addRequirements(swerveSubsystem);
     }
@@ -62,6 +73,10 @@ public class SwerveCommand extends CommandBase {
         this.rightY = rightY;
         this.controlMode = 1;
         this.fieldButton = fieldButton;
+
+        turnPID = new PIDController(kPTurn, 0, 0);
+        turnPID.setTolerance(5);
+        turnPID2.enableContinuousInput(0, 360);
 
         this.xLimiter = new SlewRateLimiter(5);
         this.yLimiter = new SlewRateLimiter(5);
@@ -80,7 +95,7 @@ public class SwerveCommand extends CommandBase {
 
         double xSpeed = xSpdFunction.get();
         double ySpeed = ySpdFunction.get();
-        double turningSpeed = turningSpdFunction.get();
+        double turningSpeed = -turningSpdFunction.get();
 
         if(controlMode == 0) {
             isSlowMode = sideButton.get();
@@ -116,8 +131,8 @@ public class SwerveCommand extends CommandBase {
         else if(controlMode == 1) {
             double x = rightX.get();
             double y = rightY.get();
-            x = Math.abs(x) > .03 ? x : 0.0;
-            y = Math.abs(y) > .03 ? y : 0.0;
+            x = Math.abs(x) > .3 ? x : 0.0;
+            y = Math.abs(y) > .3 ? y : 0.0;
 
             xSpeed = Math.abs(xSpeed) > .03 ? xSpeed : 0.0;
             ySpeed = Math.abs(ySpeed) > .03 ? ySpeed : 0.0;
@@ -128,11 +143,15 @@ public class SwerveCommand extends CommandBase {
             turningSpeed = Math.pow(turningSpeed, 3);
 
             if(x != 0 || y != 0) {
-                angle = Math.abs(Math.atan2(y, x));
+                //angle = Math.abs(Math.atan2(x, -y));
+                angle = Math.atan2(x, -y);
+
                 angle = Math.toDegrees(angle);
                 angle = (angle + 360) % 360;
                 
-                turningSpeed = turnPID.calculate(NavX.getAngle(), angle);
+                SmartDashboard.putNumber("Control angle", angle);
+
+               turningSpeed = turnPID2.calculate(swerveSubsystem.getHeading(), angle);
             }
             isFieldOriented = !fieldButton.get();
         }
