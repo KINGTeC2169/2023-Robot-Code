@@ -3,6 +3,9 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
@@ -14,6 +17,13 @@ public class Arm extends SubsystemBase {
     private double winchPos;
     private double elevatorPos;
 
+    private ShuffleboardTab tab = Shuffleboard.getTab("Arm");
+    private GenericEntry elevatorUpperLimit = tab.addPersistent("Elevator Upper Limit", 200000).getEntry();
+    private GenericEntry elevatorLowerLimit = tab.addPersistent("Elevator Lower Limit", 0).getEntry();
+    private GenericEntry winchUpperLimit = tab.addPersistent("Elevator Upper Limit", 200000).getEntry();
+    private GenericEntry winchLowerLimit = tab.addPersistent("Winch Lower Limit", 0).getEntry();
+
+    
     /**
      * Creates a new ExampleSubsystem.
      */
@@ -26,9 +36,11 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+        /*
         SmartDashboard.putNumber("Elevator Encoder", getElevatorEncoder());
         SmartDashboard.putNumber("Lift Encoder", getLiftAngle());
         SmartDashboard.putNumber("Current", getWinchCurrent());
+        */
     }
 
     public void extend(double power) {
@@ -38,6 +50,7 @@ public class Arm extends SubsystemBase {
     public void retract(double power) {
         elevatorMotor.set(ControlMode.PercentOutput, -power);
     }
+
     public void extendPos() {
         elevatorPos = elevatorMotor.getSelectedSensorPosition() + 20000;
         elevatorMotor.set(ControlMode.Position, elevatorPos);

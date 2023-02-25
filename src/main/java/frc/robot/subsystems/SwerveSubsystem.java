@@ -58,15 +58,21 @@ public class SwerveSubsystem extends SubsystemBase {
     public SwerveDriveKinematics kinematics = DriveConstants.DRIVE_KINEMATICS;
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions());
     public Field2d field = new Field2d();
-    private final ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
-    GenericEntry maxSpeed = tab.add("Max Speed", 1.0).getEntry();
+
+    private ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
+    private GenericEntry maxSpeed = tab.add("Max Speed", 1.0).getEntry();
 
 
     public SwerveSubsystem() {
         
         SmartDashboard.putData("Field", field);
         tab.addDouble("Robot Heading", () -> getHeading());
-        
+
+        tab.addDouble("Front Left", () -> frontLeft.getDriveCurrent());
+        tab.addDouble("Front Right", () -> frontRight.getDriveCurrent());
+        tab.addDouble("Back Left", () -> backLeft.getDriveCurrent());
+        tab.addDouble("Back Right", () -> backRight.getDriveCurrent());
+
         //Creates a new thread, which sleeps and then zeros out the gyro
         //Uses a new thread so that it doesn't pause all other code running
         new Thread(() -> {
