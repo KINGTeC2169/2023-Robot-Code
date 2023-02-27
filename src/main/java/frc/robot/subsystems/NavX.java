@@ -28,9 +28,14 @@ public class NavX {
     public static double getYaw() {
         return gyro.getYaw();
     }
+
+    /**Don't use!
+     * Get pose from Swerve Subsytem instead
+     */
     public static Pose2d getPose() {
         return new Pose2d(getX(), getY(), getRotation2d());
     }
+
     public static void resetPose() {
         gyro.resetDisplacement();
         gyro.reset();

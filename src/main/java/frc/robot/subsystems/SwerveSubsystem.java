@@ -113,8 +113,8 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getRotation2d() {
-        //return NavX.getRotation2d();
-        return Rotation2d.fromDegrees(-getHeading());
+        return NavX.getRotation2d();
+        //return Rotation2d.fromDegrees(-getHeading());
     }
     
 
@@ -151,23 +151,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Pose angle", odometer.getPoseMeters().getRotation().getDegrees());
         
         //SmartDashboard.putData("Field", field);
-        
-        //Runs during robot periodic, displays shuffleboard data for this subsystem
-        SmartDashboard.putNumber("Robot Heading", getHeading());
-        SmartDashboard.putNumber("Front Left Absolute", frontLeft.getAbsoluteTurnPosition());
-        SmartDashboard.putNumber("Front Right Absolute", frontRight.getAbsoluteTurnPosition());
-        SmartDashboard.putNumber("Back Left Absolute", backLeft.getAbsoluteTurnPosition());
-        SmartDashboard.putNumber("Back Right Absolute", backRight.getAbsoluteTurnPosition());
-
-        SmartDashboard.putNumber("Front Right Turn Current", frontRight.getTurnCurrent());
-        SmartDashboard.putNumber("Front Left Turn Current", frontLeft.getTurnCurrent());
-
-        SmartDashboard.putNumber("Back Right Turn Current", backRight.getTurnCurrent());
-        SmartDashboard.putNumber("Back Left Turn Current", backLeft.getTurnCurrent());
-        SmartDashboard.putNumber("NavX", NavX.getAngle());
-        SmartDashboard.putNumber("Rotation2D", NavX.getRotation2d().getDegrees());
-
-
+    
         /*
         SmartDashboard.putNumber("Front Left", frontLeft.getTurnPosition());
         SmartDashboard.putNumber("Front Right", frontRight.getTurnPosition());
