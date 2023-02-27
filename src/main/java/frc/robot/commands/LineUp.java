@@ -5,7 +5,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Motors;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Claw;th
 import frc.robot.subsystems.CuboneManager;
 import frc.robot.subsystems.NetworkTables;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 public class LineUp extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final SwerveSubsystem swerve;
+
 
     private final ProfiledPIDController pidX;
     private final ProfiledPIDController pidY;
@@ -56,8 +57,6 @@ public class LineUp extends CommandBase {
     @Override
     public void initialize() {
         pidRotate.setTolerance(4);
-        
-        
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -95,7 +94,6 @@ public class LineUp extends CommandBase {
         SwerveModuleState[] moduleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
 
         swerve.setModuleStates(moduleStates);
-    
 
 
 

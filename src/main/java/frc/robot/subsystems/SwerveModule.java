@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 
@@ -76,11 +77,15 @@ public class SwerveModule {
     }
 
     public double getDrivePosition() {
-        return driveMotor.getSelectedSensorPosition() * driveEncoderToMeter;
+        //return driveMotor.getSelectedSensorPosition() * driveEncoderToMeter;
+        return driveMotor.getSelectedSensorPosition() * (0.32 / 13824);
     }
 
     public double getTurnPosition() {
         return turnEncoder.getPosition();
+    }
+    public Rotation2d getRotation2d() {
+        return Rotation2d.fromDegrees(getTurnPosition());
     }
 
     
@@ -115,11 +120,12 @@ public class SwerveModule {
     public SwerveModuleState getState() {
         return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurnPosition()));
     }
+    public SwerveModulePosition getModulePosition() {
+        return new SwerveModulePosition(getDrivePosition(), getRotation2d());
+    }
 
     public void setDesiredState(SwerveModuleState state) {
         if (Math.abs(state.speedMetersPerSecond) < 0.001) {
-            //TODO: this causes an aggresive stop, need to test with more weight on bot
-            //semiAutoStop();
             stop();
             return;
         }

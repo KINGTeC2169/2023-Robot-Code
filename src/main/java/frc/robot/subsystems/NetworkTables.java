@@ -199,5 +199,42 @@ public class NetworkTables {
         return table.getEntry("" + closestApriltag() + "-apriltag-Y").getDouble(-2169);
     }
 
+        return table.getEntry("front-apriltag-Yaw").getDouble(-1);
+    }
+    public static long frontApriltagId() {
+        return table.getEntry("front-apriltag-Id").getInteger(-1);
+    }
+    public static double frontApriltagX() {
+        return table.getEntry("front-apriltag-X").getDouble(-1);
+    }
+    public static double leftApriltagYaw() {
+        return table.getEntry("Left-apriltag-Yaw").getDouble(-1);
+    }
+    public static long leftApriltagId() {
+        return table.getEntry("Left-apriltag-Id").getInteger(-1);
+    }
+    public static double leftApriltagX() {
+        return table.getEntry("Left-apriltag-X").getDouble(-1);
+    }
+    public static double rightApriltagYaw() {
+        return table.getEntry("Right-apriltag-Yaw").getDouble(-1);
+    }
+    public static long rightApriltagId() {
+        return table.getEntry("Right-apriltag-Id").getInteger(-1);
+    }
+    public static double rightApriltagX() {
+        return table.getEntry("Right-apriltag-X").getDouble(-1);
+    }
+    public static double rightApriltagY() {
+        return table.getEntry("Right-apriltag-Y").getDouble(-1);
+    }
+    public static double leftApriltagY() {
+        return table.getEntry("Left-apriltag-Y").getDouble(-1);
+    }
+    public static double frontApriltagY() {
+        return table.getEntry("Front-apriltag-Y").getDouble(-1);
+    }
+    
+
         
 }
