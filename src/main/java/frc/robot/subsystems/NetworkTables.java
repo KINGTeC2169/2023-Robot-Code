@@ -67,40 +67,40 @@ public class NetworkTables {
         return table.getEntry("front-apriltag-X").getDouble(-2169);
     }
     public static double leftApriltagYaw() {
-        return table.getEntry("Left-apriltag-Yaw").getDouble(-2169);
+        return table.getEntry("left-apriltag-Yaw").getDouble(-2169);
     }
     public static long leftApriltagId() {
-        return table.getEntry("Left-apriltag-Id").getInteger(-2169);
+        return table.getEntry("left-apriltag-Id").getInteger(-2169);
     }
     public static double leftApriltagX() {
-        return table.getEntry("Left-apriltag-X").getDouble(-2169);
+        return table.getEntry("left-apriltag-X").getDouble(-2169);
     }
     public static double rightApriltagYaw() {
-        return table.getEntry("Right-apriltag-Yaw").getDouble(-2169);
+        return table.getEntry("right-apriltag-Yaw").getDouble(-2169);
     }
     public static long rightApriltagId() {
-        return table.getEntry("Right-apriltag-Id").getInteger(-2169);
+        return table.getEntry("right-apriltag-Id").getInteger(-2169);
     }
     public static double rightApriltagX() {
-        return table.getEntry("Right-apriltag-X").getDouble(-2169);
+        return table.getEntry("right-apriltag-X").getDouble(-2169);
     }
     public static double rightApriltagY() {
-        return table.getEntry("Right-apriltag-Y").getDouble(-2169);
+        return table.getEntry("right-apriltag-Y").getDouble(-2169);
     }
     public static double leftApriltagY() {
-        return table.getEntry("Left-apriltag-Y").getDouble(-2169);
+        return table.getEntry("left-apriltag-Y").getDouble(-2169);
     }
     public static double frontApriltagY() {
-        return table.getEntry("Front-apriltag-Y").getDouble(-2169);
+        return table.getEntry("front-apriltag-Y").getDouble(-2169);
     }
     public static double[] leftApriltagCenter() {
-        return table.getEntry("Left-apriltag-Center").getDoubleArray(arr);
+        return table.getEntry("left-apriltag-Center").getDoubleArray(arr);
     }
     public static double[] rightApriltagCenter() {
-        return table.getEntry("Right-apriltag-Center").getDoubleArray(arr);
+        return table.getEntry("right-apriltag-Center").getDoubleArray(arr);
     }
     public static double[] frontApriltagCenter() {
-        return table.getEntry("Front-apriltag-Center").getDoubleArray(arr);
+        return table.getEntry("front-apriltag-Center").getDoubleArray(arr);
     }
 
 
@@ -108,20 +108,20 @@ public class NetworkTables {
 
     
 
-    private static String closestApriltag() {
+    public static String closestApriltag() {
         double closest = -2169;
         String closestString = null;
         if(frontApriltagYaw() != -2169 && Math.abs(closest) > Math.abs(frontApriltagYaw()) ) {
             closest = frontApriltagYaw();
-            closestString = "Front";
+            closestString = "front";
         }
         if(leftApriltagYaw() != -2169 && Math.abs(closest) > Math.abs(leftApriltagYaw()) ) {
             closest = leftApriltagYaw();
-            closestString = "Left";
+            closestString = "left";
         }
         if(rightApriltagYaw() != -2169 && Math.abs(closest) > Math.abs(rightApriltagYaw()) ) {
             closest = rightApriltagYaw();
-            closestString = "Right";
+            closestString = "right";
         }
         
         return closestString;
@@ -136,13 +136,13 @@ public class NetworkTables {
 
     public static double[] apriltagCenter() {
         double adder = 0;
-        if(!closestApriltag().equals(null)) {
+        if(closestApriltag() != null) {
             
-            if(closestApriltag().equals("Front")) {
+            if(closestApriltag().equals("front")) {
                 adder = -320;
-            } else if(closestApriltag().equals("Left")) {
+            } else if(closestApriltag().equals("left")) {
                 adder = -1120;
-            } else if(closestApriltag().equals("Right")) {
+            } else if(closestApriltag().equals("right")) {
                 adder = 320;
             }
             if(table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr) != arr) {
@@ -158,13 +158,13 @@ public class NetworkTables {
     //The Y value of the center might not work, but i dont think we use it so it should be good 
     public static double apriltagYaw() {
         double adder = 0;
-        if(!closestApriltag().equals(null)) {
+        if(closestApriltag() != null) {
             
-            if(closestApriltag().equals("Front")) {
+            if(closestApriltag().equals("front")) {
                 adder = 0;
-            } else if(closestApriltag().equals("Left")) {
+            } else if(closestApriltag().equals("left")) {
                 adder = -20;
-            } else if(closestApriltag().equals("Right")) {
+            } else if(closestApriltag().equals("right")) {
                 adder = 20;
             }
             if(table.getEntry("" + closestApriltag() + "-apriltag-Yaw").getDouble(-2169) != -2169) {
@@ -178,7 +178,7 @@ public class NetworkTables {
     //on second thought, check how the angle effect the X distance, maybe its epic
     public static double apriltagX() {
         double adder = 0;
-        if(!closestApriltag().equals(null)) {
+        if(closestApriltag() != null) {
             
             if(closestApriltag().equals("Front")) {
                 adder = -320;
@@ -198,43 +198,6 @@ public class NetworkTables {
     public static double apriltagY() {
         return table.getEntry("" + closestApriltag() + "-apriltag-Y").getDouble(-2169);
     }
-
-        return table.getEntry("front-apriltag-Yaw").getDouble(-1);
-    }
-    public static long frontApriltagId() {
-        return table.getEntry("front-apriltag-Id").getInteger(-1);
-    }
-    public static double frontApriltagX() {
-        return table.getEntry("front-apriltag-X").getDouble(-1);
-    }
-    public static double leftApriltagYaw() {
-        return table.getEntry("Left-apriltag-Yaw").getDouble(-1);
-    }
-    public static long leftApriltagId() {
-        return table.getEntry("Left-apriltag-Id").getInteger(-1);
-    }
-    public static double leftApriltagX() {
-        return table.getEntry("Left-apriltag-X").getDouble(-1);
-    }
-    public static double rightApriltagYaw() {
-        return table.getEntry("Right-apriltag-Yaw").getDouble(-1);
-    }
-    public static long rightApriltagId() {
-        return table.getEntry("Right-apriltag-Id").getInteger(-1);
-    }
-    public static double rightApriltagX() {
-        return table.getEntry("Right-apriltag-X").getDouble(-1);
-    }
-    public static double rightApriltagY() {
-        return table.getEntry("Right-apriltag-Y").getDouble(-1);
-    }
-    public static double leftApriltagY() {
-        return table.getEntry("Left-apriltag-Y").getDouble(-1);
-    }
-    public static double frontApriltagY() {
-        return table.getEntry("Front-apriltag-Y").getDouble(-1);
-    }
     
-
-        
 }
+    

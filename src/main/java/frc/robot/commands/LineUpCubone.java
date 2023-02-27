@@ -25,8 +25,8 @@ public class LineUpCubone extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final SwerveSubsystem swerve;
 
-    private final ProfiledPIDController pidY;
-    private final ProfiledPIDController pidRotate;
+    private final PIDController pidY;
+    private final PIDController pidRotate;
     private double ySpeed;
     private double turningSpeed;
     private ChassisSpeeds chassisSpeeds;
@@ -43,8 +43,8 @@ public class LineUpCubone extends CommandBase {
         this.swerve = swerve;
 
         addRequirements(swerve);
-        pidY = new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(5, 10));
-        pidRotate = new ProfiledPIDController(0.05, 0, 0, new TrapezoidProfile.Constraints(2, 4));
+        pidY = new PIDController(0.05, 0, 0);
+        pidRotate = new PIDController(0.03, 0, 0);
 
     }
 
@@ -62,23 +62,20 @@ public class LineUpCubone extends CommandBase {
         ySpeed = 0;
         turningSpeed = 0;
         
-        if(!rotated && NetworkTables.closestObject()[0] != -2169) {
-            turningSpeed = MathUtil.clamp(pidRotate.calculate(NetworkTables.closestObject()[0], 320), -0.3, 0.3);
-            System.out.println(turningSpeed);
-            if(pidRotate.atSetpoint()){
-                rotated = true;
-            }
-        } else if(!cuboneBanged) {
-            ySpeed = .3;
-            if(NetworkTables.isThereObjectPalm()){
-                ySpeed = 0;
-                cuboneBanged = true;
-            }
-        } else if(rotated && cuboneBanged){
+        if(!NetworkTables.isThereObjectPalm() && NetworkTables.getFrontCenter()[0] != -2169) {
+
+        
+            turningSpeed = pidRotate.calculate(-NetworkTables.getFrontCenter()[0], -320) * .2;
+            System.out.print(NetworkTables.getFrontCenter()[0]);
+            //if(NetworkTables.apriltagCenter()[0] -240 < 10)
+                //ySpeed = pidY.calculate(NetworkTables.getFrontCenter()[1], 240);
+            
+
+        } else if(NetworkTables.isThereObjectPalm()){
             finished = true;
         }
 
-        chassisSpeeds = new ChassisSpeeds(0, ySpeed, turningSpeed);
+        chassisSpeeds = new ChassisSpeeds(ySpeed, 0, turningSpeed);
 
 
         SwerveModuleState[] moduleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
