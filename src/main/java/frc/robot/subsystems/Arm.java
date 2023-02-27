@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
 
@@ -17,11 +16,17 @@ public class Arm extends SubsystemBase {
     private double winchPos;
     private double elevatorPos;
 
+
+    private final double ELEVATOR_UPPER_LIMIT = 200000;
+    private final double ELEVATOR_LOWER_LIMIT = 0;
+    private final double WINCH_UPPER_LIMIT = 200000;
+    private final double WINCH_LOWER_LIMIT = 0;
+
     private ShuffleboardTab tab = Shuffleboard.getTab("Arm");
-    private GenericEntry elevatorUpperLimit = tab.addPersistent("Elevator Upper Limit", 200000).getEntry();
-    private GenericEntry elevatorLowerLimit = tab.addPersistent("Elevator Lower Limit", 0).getEntry();
-    private GenericEntry winchUpperLimit = tab.addPersistent("Elevator Upper Limit", 200000).getEntry();
-    private GenericEntry winchLowerLimit = tab.addPersistent("Winch Lower Limit", 0).getEntry();
+    private GenericEntry elevatorUpperLimit = tab.addPersistent("Elevator Upper Limit", ELEVATOR_UPPER_LIMIT).getEntry();
+    private GenericEntry elevatorLowerLimit = tab.addPersistent("Elevator Lower Limit", ELEVATOR_LOWER_LIMIT).getEntry();
+    private GenericEntry winchUpperLimit = tab.addPersistent("Elevator Upper Limit", WINCH_UPPER_LIMIT).getEntry();
+    private GenericEntry winchLowerLimit = tab.addPersistent("Winch Lower Limit", WINCH_LOWER_LIMIT).getEntry();
 
     
     /**
@@ -33,6 +38,8 @@ public class Arm extends SubsystemBase {
         winchPos = winchMotor.getSelectedSensorPosition();
         tab.addDouble("Elevator Position", () -> getElevatorEncoder());
         tab.addDouble("Winch Position", () -> getLiftAngle());
+        tab.addDouble("Winch Current", () -> getWinchCurrent());
+        tab.addDouble("Elevator Current", () -> getElevatorCurrent());
     }
 
     @Override
@@ -53,13 +60,20 @@ public class Arm extends SubsystemBase {
         elevatorMotor.set(ControlMode.PercentOutput, -power);
     }
 
+
     public void extendPos() {
-        elevatorPos = elevatorMotor.getSelectedSensorPosition() + 20000;
-        elevatorMotor.set(ControlMode.Position, elevatorPos);
+        if(elevatorMotor.getSelectedSensorPosition() + 20000 < elevatorUpperLimit.getDouble(ELEVATOR_UPPER_LIMIT)) {
+            elevatorPos = elevatorMotor.getSelectedSensorPosition() + 20000;
+            elevatorMotor.set(ControlMode.Position, elevatorPos);
+        }
     }
+
     public void retractPos() {
-        elevatorPos = elevatorMotor.getSelectedSensorPosition() - 20000;
-        elevatorMotor.set(ControlMode.Position, elevatorPos);
+        if(elevatorMotor.getSelectedSensorPosition() - 20000 > elevatorLowerLimit.getDouble(ELEVATOR_LOWER_LIMIT)) {
+            elevatorPos = elevatorMotor.getSelectedSensorPosition() - 20000;
+            elevatorMotor.set(ControlMode.Position, elevatorPos);
+        }
+        
     }
 
 
@@ -75,6 +89,10 @@ public class Arm extends SubsystemBase {
         return winchMotor.getClosedLoopError();
     }
 
+    public double getElevatorCurrent() {
+        return elevatorMotor.getSupplyCurrent();
+    }
+
     public void setWinch(double power) {
         winchMotor.set(ControlMode.PercentOutput, power);
     }
@@ -82,13 +100,20 @@ public class Arm extends SubsystemBase {
         winchMotor.set(ControlMode.PercentOutput, 0.3);
     }
     public void winchUpPos() {
-        winchPos = winchMotor.getSelectedSensorPosition() + 30000;
-        winchMotor.set(ControlMode.Position, winchPos);
+        if(winchMotor.getSelectedSensorPosition() + 30000 < winchUpperLimit.getDouble(WINCH_UPPER_LIMIT)) {
+            winchPos = winchMotor.getSelectedSensorPosition() + 30000;
+            winchMotor.set(ControlMode.Position, winchPos);
+        }
+        
     }
     public void winchDownPos() {
-        winchPos = winchMotor.getSelectedSensorPosition() - 30000;
-        winchMotor.set(ControlMode.Position, winchPos);
+        if(winchMotor.getSelectedSensorPosition() - 30000 > winchLowerLimit.getDouble(WINCH_LOWER_LIMIT)) {
+            winchPos = winchMotor.getSelectedSensorPosition() - 30000;
+            winchMotor.set(ControlMode.Position, winchPos);
+        }
     }
+
+
     public void winchDown() {
         winchMotor.set(ControlMode.PercentOutput, -0.3);
     }
