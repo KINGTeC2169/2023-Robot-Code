@@ -60,30 +60,30 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   	// The robot's subsystems and commands are defined here...
   
-	private final Claw claw = new Claw();
-	private final Arm arm = new Arm();
-	//private final CuboneManager cuboneManager = new CuboneManager();
-	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-	private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  
-	//private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
-	private final CommandXboxController controller = new CommandXboxController(Ports.controller);
-	private final CommandJoystick joystick = new CommandJoystick(1);
-	private final XboxController joystickButtons = new XboxController(1);
-	private final Trigger button7 = new JoystickButton(joystickButtons, 7);
-	private final Trigger button14 = new JoystickButton(joystickButtons, 14);
+  private final Claw claw = new Claw();
+  private final Arm arm = new Arm();
+  //private final CuboneManager cuboneManager = new CuboneManager();
+  private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+  private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  
+  //private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
+  private final CommandXboxController controller = new CommandXboxController(Ports.controller);
+  private final CommandJoystick joystick = new CommandJoystick(1);
+  private final XboxController joystickButtons = new XboxController(1);
+  private final Trigger button7 = new JoystickButton(joystickButtons, 7);
+  private final Trigger button14 = new JoystickButton(joystickButtons, 14);
 
-  	private final CommandJoystick leftStick = new CommandJoystick(2);
-  	private final CommandJoystick rightStick = new CommandJoystick(3);
+  private final CommandJoystick leftStick = new CommandJoystick(2);
+  private final CommandJoystick rightStick = new CommandJoystick(3);
 
-	private Command autoBot;
+  private Command autoBot;
 
-	private final RepeatCommand armOut = new RepeatCommand(Commands.run(() -> arm.extendPos()));
  
   
  // private final CommandXboxController buttonBoard = new CommandXboxController(Ports.buttonBoard);
   //private final Score score = new Score(claw, swerve, arm, () -> 8);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
+
 	public RobotContainer() {
 
 		PathPlannerTrajectory path = PathPlanner.loadPath("epic", new PathConstraints(4, 3));
@@ -172,6 +172,7 @@ public class RobotContainer {
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos(), arm));
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos(), arm));
 		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab(), claw));
+    controller.start().whileTrue(new LineUp(swerveSubsystem));
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos(), claw));
 		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos(), claw));
 		controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(.2), () -> claw.twistClaw(0),  claw).repeatedly());
