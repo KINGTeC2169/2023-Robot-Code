@@ -72,7 +72,7 @@ public class LineUp extends CommandBase {
         
         if(!centered && NetworkTables.frontApriltagCenter()[0] != -2169) {
 
-            turningSpeed = pidRotate.calculate(-NetworkTables.frontApriltagYaw(), 0) * .2;
+            turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0) * .2;
             
             xSpeed = pidX.calculate(-NetworkTables.frontApriltagCenter()[0], -320);
             
