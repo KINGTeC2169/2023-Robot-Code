@@ -68,7 +68,6 @@ public class SwerveSubsystem extends SubsystemBase {
     private ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
     private GenericEntry maxSpeed = tab.add("Max Speed", 1.0).getEntry();
 
-
     public SwerveSubsystem() {
         odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
         
@@ -80,11 +79,14 @@ public class SwerveSubsystem extends SubsystemBase {
         currentGrid.addDouble("Back Left", () -> backLeft.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
         currentGrid.addDouble("Back Right", () -> backRight.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
 
+        tab.add("Test", "Balls").withWidget(BuiltInWidgets.kComboBoxChooser);
+
         tab.addDouble("Robot Heading", () -> getHeading()).withWidget(BuiltInWidgets.kGyro).withSize(3, 3).withPosition(7, 0);
 
         tab.addDouble("Rotation 2D", () -> getRotation2d().getDegrees());
         tab.addDouble("Front Right Turn Degrees", () -> frontRight.getTurnPosition());
         tab.addDouble("Back Right Meters", () -> backRight.getDrivePosition());
+
         tab.addDouble("Abs Front Left", () -> frontLeft.getAbsoluteTurnPosition());
         tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition()).withSize(2, 2);
         tab.addDouble("Abs Back Left", () -> backLeft.getAbsoluteTurnPosition());
@@ -101,8 +103,10 @@ public class SwerveSubsystem extends SubsystemBase {
             } catch (Exception e) {
             }
         }).start();
-        
-        
+    }
+
+    public Field2d getField() {
+        return field;
     }
 
     public SwerveModulePosition[] getModulePositions() {
