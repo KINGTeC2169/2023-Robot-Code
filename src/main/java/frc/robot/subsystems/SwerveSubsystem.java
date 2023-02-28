@@ -62,7 +62,7 @@ public class SwerveSubsystem extends SubsystemBase {
     false);
 
     public SwerveDriveKinematics kinematics = DriveConstants.DRIVE_KINEMATICS;
-    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions());
+    private final SwerveDriveOdometry odometer;
     public Field2d field = new Field2d();
 
     private ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
@@ -70,9 +70,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
     public SwerveSubsystem() {
+        odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
         
-        SmartDashboard.putData("Field", field);
-
+        //SmartDashboard.putData("Field", field);
+        tab.add(field);
         ShuffleboardLayout currentGrid = tab.getLayout("Drive Currents", BuiltInLayouts.kGrid).withSize(2, 3).withProperties(Map.of("Number of rows", 2)).withPosition(0, 0);
         currentGrid.addDouble("Front Left", () -> frontLeft.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
         currentGrid.addDouble("Front Right", () -> frontRight.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
@@ -81,7 +82,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
         tab.addDouble("Robot Heading", () -> getHeading()).withWidget(BuiltInWidgets.kGyro).withSize(3, 3).withPosition(7, 0);
 
-        
+        tab.addDouble("Rotation 2D", () -> getRotation2d().getDegrees());
+        tab.addDouble("Front Right Turn Degrees", () -> frontRight.getTurnPosition());
+        tab.addDouble("Back Right Meters", () -> backRight.getDrivePosition());
         tab.addDouble("Abs Front Left", () -> frontLeft.getAbsoluteTurnPosition());
         tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition()).withSize(2, 2);
         tab.addDouble("Abs Back Left", () -> backLeft.getAbsoluteTurnPosition());

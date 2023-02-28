@@ -81,11 +81,13 @@ public class SwerveModule {
         return driveMotor.getSelectedSensorPosition() * (0.32 / 13824);
     }
 
+    /**Returns position of turn encoder in radians. Counterclockwise is positive, accumulates. */
     public double getTurnPosition() {
         return turnEncoder.getPosition();
     }
     public Rotation2d getRotation2d() {
-        return Rotation2d.fromDegrees(getTurnPosition());
+        //return Rotation2d.fromDegrees(getTurnPosition());
+        return Rotation2d.fromRadians(getTurnPosition());
     }
 
     
