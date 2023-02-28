@@ -66,18 +66,28 @@ public class SwerveSubsystem extends SubsystemBase {
     public Field2d field = new Field2d();
 
     private ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
-    private GenericEntry maxSpeed = tab.add("Max Speed", 1.0).getEntry();
+    private GenericEntry fastSpeed = tab.add("Fast Speed", 1.0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
+    private GenericEntry mediumSpeed = tab.add("Medium Speed", 0.5).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
+    private GenericEntry slowSpeed = tab.add("Slow Speed", 0.2).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
 
     public SwerveSubsystem() {
         odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
         
         //SmartDashboard.putData("Field", field);
         tab.add(field);
-        ShuffleboardLayout currentGrid = tab.getLayout("Drive Currents", BuiltInLayouts.kGrid).withSize(2, 3).withProperties(Map.of("Number of rows", 2)).withPosition(0, 0);
-        currentGrid.addDouble("Front Left", () -> frontLeft.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
-        currentGrid.addDouble("Front Right", () -> frontRight.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
-        currentGrid.addDouble("Back Left", () -> backLeft.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
-        currentGrid.addDouble("Back Right", () -> backRight.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        ShuffleboardLayout driveCurrents = tab.getLayout("Drive Currents", BuiltInLayouts.kGrid).withSize(2, 3).withProperties(Map.of("Number of rows", 2)).withPosition(0, 0);
+        ShuffleboardLayout turnCurrents = tab.getLayout("Turn Currents", BuiltInLayouts.kGrid).withSize(2, 3).withProperties(Map.of("Number of rows", 2)).withPosition(0, 3);
+
+        driveCurrents.addDouble("Front Left", () -> frontLeft.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        driveCurrents.addDouble("Front Right", () -> frontRight.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        driveCurrents.addDouble("Back Left", () -> backLeft.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        driveCurrents.addDouble("Back Right", () -> backRight.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+
+        turnCurrents.addDouble("Front Left", () -> frontLeft.getTurnCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        turnCurrents.addDouble("Front Right", () -> frontRight.getTurnCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        turnCurrents.addDouble("Back Left", () -> backLeft.getTurnCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        turnCurrents.addDouble("Back Right", () -> backRight.getTurnCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+
 
         tab.add("Test", "Balls").withWidget(BuiltInWidgets.kComboBoxChooser);
 
@@ -109,6 +119,18 @@ public class SwerveSubsystem extends SubsystemBase {
         return field;
     }
 
+    public double getFastSpeed() {
+        return fastSpeed.getDouble(1.0);
+    }
+
+    public double getMediumSpeed() {
+        return mediumSpeed.getDouble(0.5);
+    }
+
+    public double getSlowSpeed() {
+        return slowSpeed.getDouble(0.2);
+    }
+    
     public SwerveModulePosition[] getModulePositions() {
         return new SwerveModulePosition[] {
         frontLeft.getModulePosition(),

@@ -136,14 +136,15 @@ public class RobotContainer {
 		));
 		*/
 		
-		
 		swerveSubsystem.setDefaultCommand(new SwerveCommand(swerveSubsystem,
 		() -> leftStick.getY(), 
 		() -> leftStick.getX(), 
-		() -> leftStick.getTwist(),
+		() -> rightStick.getTwist(),
 		() -> rightStick.getX(),
 		() -> rightStick.getY(),
-		() -> leftStick.button(1).getAsBoolean()
+		() -> rightStick.button(1).getAsBoolean(),
+		() -> leftStick.button(1).getAsBoolean(),
+		() -> leftStick.button(2).getAsBoolean()
 		));
 		
 		configureButtonBindings();
@@ -180,8 +181,8 @@ public class RobotContainer {
 		//leftStick.button(1/*TODO: find the button that i can use*/).whileTrue(new LineUp(swerveSubsystem));
 		//leftStick.button(2).onTrue(Commands.runOnce(() -> NavX.reset()));
 		///rightStick.button(1).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders()));
-		leftStick.button(1).onTrue(Commands.runOnce(() -> NavX.reset()));
-		leftStick.button(2).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders(), swerveSubsystem));
+		rightStick.button(1).onTrue(Commands.runOnce(() -> NavX.reset()));
+		rightStick.button(2).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders(), swerveSubsystem));
 
 		//button7.onTrue(Commands.runOnce(() -> NavX.reset()));
 		//button14.onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders(), swerveSubsystem));
