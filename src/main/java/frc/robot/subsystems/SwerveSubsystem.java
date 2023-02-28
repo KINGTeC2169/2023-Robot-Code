@@ -9,8 +9,12 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,6 +22,8 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.Ports;
 import static frc.robot.Constants.ModuleConstants.*;
+
+import java.util.Map;
 
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -66,18 +72,22 @@ public class SwerveSubsystem extends SubsystemBase {
     public SwerveSubsystem() {
         
         SmartDashboard.putData("Field", field);
-        tab.addDouble("Robot Heading", () -> getHeading());
 
-        tab.addDouble("Front Left", () -> frontLeft.getDriveCurrent());
-        tab.addDouble("Front Right", () -> frontRight.getDriveCurrent());
-        tab.addDouble("Back Left", () -> backLeft.getDriveCurrent());
-        tab.addDouble("Back Right", () -> backRight.getDriveCurrent());
+        ShuffleboardLayout currentGrid = tab.getLayout("Drive Currents", BuiltInLayouts.kGrid).withSize(2, 3).withProperties(Map.of("Number of rows", 2)).withPosition(0, 0);
+        currentGrid.addDouble("Front Left", () -> frontLeft.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        currentGrid.addDouble("Front Right", () -> frontRight.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        currentGrid.addDouble("Back Left", () -> backLeft.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        currentGrid.addDouble("Back Right", () -> backRight.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+
+        tab.addDouble("Robot Heading", () -> getHeading()).withWidget(BuiltInWidgets.kGyro).withSize(3, 3).withPosition(7, 0);
+
         
         tab.addDouble("Abs Front Left", () -> frontLeft.getAbsoluteTurnPosition());
-        tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition());
+        tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition()).withSize(2, 2);
         tab.addDouble("Abs Back Left", () -> backLeft.getAbsoluteTurnPosition());
         tab.addDouble("Abs Back Right", () -> backRight.getAbsoluteTurnPosition());
-
+        tab.addDouble("X", () -> odometer.getPoseMeters().getX());
+        tab.addDouble("Y", () -> odometer.getPoseMeters().getY());
 
         //Creates a new thread, which sleeps and then zeros out the gyro
         //Uses a new thread so that it doesn't pause all other code running
@@ -144,7 +154,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
         //field.setRobotPose(odometer.getPoseMeters());
         field.setRobotPose(odometer.getPoseMeters().getX(), odometer.getPoseMeters().getY(), odometer.getPoseMeters().getRotation());
-        System.out.println(maxSpeed.getDouble(1.0));
 
         SmartDashboard.putNumber("X", odometer.getPoseMeters().getX());
         SmartDashboard.putNumber("Y", odometer.getPoseMeters().getY());
