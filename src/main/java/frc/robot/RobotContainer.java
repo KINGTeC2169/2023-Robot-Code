@@ -25,6 +25,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -43,8 +44,11 @@ import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -212,12 +216,27 @@ public class RobotContainer {
 			trajectoryConfig
 		);
     
+		PathPlannerTrajectory examplePath = PathPlanner.loadPath("Test Path", new PathConstraints(3, 3));
+		Constraints angleConstraints = new Constraints(1.2, 1.2);
 		PIDController xPID = new PIDController(0.5, 0, 0);
 		PIDController yPID = new PIDController(0.5, 0, 0);
-		ProfiledPIDController anglePID = new ProfiledPIDController(0.5, 0, 0, null);
+		ProfiledPIDController anglePID = new ProfiledPIDController(5, 0, 0, angleConstraints);
 		anglePID.enableContinuousInput(-Math.PI, Math.PI);
 
+		SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+			examplePath, 
+			swerveSubsystem::getPose,
+			Constants.DriveConstants.DRIVE_KINEMATICS, 
+			xPID, yPID, anglePID, 
+			swerveSubsystem::setModuleStates, 
+			swerveSubsystem);
+
 		
-    return null;
+    return new SequentialCommandGroup(
+			//new InstantCommand(() -> swerveSubsystem.resetOdometry(trajectory.getInitialPose())),
+			new InstantCommand(() -> swerveSubsystem.resetOdometry(examplePath.getInitialHolonomicPose())),
+			swerveControllerCommand,
+			new InstantCommand(() -> swerveSubsystem.stopModules())
+		);
 	}
 }

@@ -66,17 +66,17 @@ public class SwerveSubsystem extends SubsystemBase {
     public Field2d field = new Field2d();
 
     private ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
-    private GenericEntry fastSpeed = tab.add("Fast Speed", 1.0).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
-    private GenericEntry mediumSpeed = tab.add("Medium Speed", 0.5).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
-    private GenericEntry slowSpeed = tab.add("Slow Speed", 0.2).withWidget(BuiltInWidgets.kNumberSlider).getEntry();
+    private GenericEntry fastSpeed = tab.add("Fast Speed", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", 0)).withPosition(6, 3).getEntry();
+    private GenericEntry mediumSpeed = tab.add("Medium Speed", 0.5).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", 0)).withPosition(4, 3).getEntry();
+    private GenericEntry slowSpeed = tab.add("Slow Speed", 0.2).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", 0)).withPosition(2, 3).getEntry();
 
     public SwerveSubsystem() {
         odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
         
         //SmartDashboard.putData("Field", field);
-        tab.add(field);
-        ShuffleboardLayout driveCurrents = tab.getLayout("Drive Currents", BuiltInLayouts.kGrid).withSize(2, 3).withProperties(Map.of("Number of rows", 2)).withPosition(0, 0);
-        ShuffleboardLayout turnCurrents = tab.getLayout("Turn Currents", BuiltInLayouts.kGrid).withSize(2, 3).withProperties(Map.of("Number of rows", 2)).withPosition(0, 3);
+        
+        ShuffleboardLayout driveCurrents = tab.getLayout("Drive Currents", BuiltInLayouts.kGrid).withSize(2, 2).withProperties(Map.of("Number of rows", 2)).withPosition(0, 0);
+        ShuffleboardLayout turnCurrents = tab.getLayout("Turn Currents", BuiltInLayouts.kGrid).withSize(2, 2).withProperties(Map.of("Number of rows", 2)).withPosition(0, 2);
 
         driveCurrents.addDouble("Front Left", () -> frontLeft.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
         driveCurrents.addDouble("Front Right", () -> frontRight.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
@@ -89,20 +89,20 @@ public class SwerveSubsystem extends SubsystemBase {
         turnCurrents.addDouble("Back Right", () -> backRight.getTurnCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
 
 
-        tab.add("Test", "Balls").withWidget(BuiltInWidgets.kComboBoxChooser);
+        //tab.add("Test", "Balls").withWidget(BuiltInWidgets.kComboBoxChooser);
 
         tab.addDouble("Robot Heading", () -> getHeading()).withWidget(BuiltInWidgets.kGyro).withSize(3, 3).withPosition(7, 0);
 
         tab.addDouble("Rotation 2D", () -> getRotation2d().getDegrees());
-        tab.addDouble("Front Right Turn Degrees", () -> frontRight.getTurnPosition());
-        tab.addDouble("Back Right Meters", () -> backRight.getDrivePosition());
 
-        tab.addDouble("Abs Front Left", () -> frontLeft.getAbsoluteTurnPosition());
-        tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition()).withSize(2, 2);
-        tab.addDouble("Abs Back Left", () -> backLeft.getAbsoluteTurnPosition());
-        tab.addDouble("Abs Back Right", () -> backRight.getAbsoluteTurnPosition());
-        tab.addDouble("X", () -> odometer.getPoseMeters().getX());
-        tab.addDouble("Y", () -> odometer.getPoseMeters().getY());
+        //tab.addDouble("Abs Front Left", () -> frontLeft.getAbsoluteTurnPosition());
+        //tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition());
+        //tab.addDouble("Abs Back Left", () -> backLeft.getAbsoluteTurnPosition());
+        //tab.addDouble("Abs Back Right", () -> backRight.getAbsoluteTurnPosition());
+        tab.addDouble("X", () -> odometer.getPoseMeters().getX()).withPosition(8, 3);
+        tab.addDouble("Y", () -> odometer.getPoseMeters().getY()).withPosition(9, 3);
+
+        tab.add(field).withPosition(2, 0).withSize(5, 3);
 
         //Creates a new thread, which sleeps and then zeros out the gyro
         //Uses a new thread so that it doesn't pause all other code running
