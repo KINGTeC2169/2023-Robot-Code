@@ -25,7 +25,7 @@ public class Arm extends SubsystemBase {
     private ShuffleboardTab tab = Shuffleboard.getTab("Arm");
     private GenericEntry elevatorUpperLimit = tab.addPersistent("Elevator Upper Limit", ELEVATOR_UPPER_LIMIT).getEntry();
     private GenericEntry elevatorLowerLimit = tab.addPersistent("Elevator Lower Limit", ELEVATOR_LOWER_LIMIT).getEntry();
-    private GenericEntry winchUpperLimit = tab.addPersistent("Elevator Upper Limit", WINCH_UPPER_LIMIT).getEntry();
+    private GenericEntry winchUpperLimit = tab.addPersistent("Winch Upper Limit", WINCH_UPPER_LIMIT).getEntry();
     private GenericEntry winchLowerLimit = tab.addPersistent("Winch Lower Limit", WINCH_LOWER_LIMIT).getEntry();
 
     
@@ -125,6 +125,11 @@ public class Arm extends SubsystemBase {
     }
     public double getWinchCurrent() {
         return winchMotor.getSupplyCurrent();
+    }
+    public void setWinchPos(double degrees) {
+        //TODO: make this work
+        //winchMotor.set(ControlMode.Position, degrees /*TODO:constant*/);
+
     }
     public void elevatorStopPos() {
         elevatorMotor.set(ControlMode.Position, elevatorMotor.getSelectedSensorPosition());

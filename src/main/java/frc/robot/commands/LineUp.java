@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 public class LineUp extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final SwerveSubsystem swerve;
+    private final Claw claw;
+    private final Arm arm;
 
 
     private final PIDController pidX;
@@ -35,23 +37,31 @@ public class LineUp extends CommandBase {
     private double ySpeed;
     private double turningSpeed;
     private ChassisSpeeds chassisSpeeds;
-    private boolean rotated;
     private boolean centered;
-    private boolean wallBanged;
     private boolean finished;
+    private boolean extended;
+    private int scorePos;
 
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public LineUp(SwerveSubsystem swerve) {
+    public LineUp(SwerveSubsystem swerve, Arm arm, Claw claw) {
         this.swerve = swerve;
+        this.arm = arm;
+        this.claw = claw;
+        this.scorePos = 2;
+        SmartDashboard.putNumber("P-X", 0.003);
+        SmartDashboard.putNumber("P-Y", 0.03);
+        SmartDashboard.putNumber("P-Rotate", 0.2);
 
+        addRequirements(claw);
         addRequirements(swerve);
-        pidX = new PIDController(0.003, 0, 0);
-        pidY = new PIDController(0.03, 0, 0);
-        pidRotate = new PIDController(0.2, 0, 0);
+        addRequirements(arm);
+        pidX = new PIDController(SmartDashboard.getNumber("P-X", 0.003), 0, 0);
+        pidY = new PIDController(SmartDashboard.getNumber("P-Y", 0.03), 0, 0);
+        pidRotate = new PIDController(SmartDashboard.getNumber("P-Rotate", 0.2), 0, 0);
 
     }
 
@@ -60,6 +70,9 @@ public class LineUp extends CommandBase {
     public void initialize() {
         pidRotate.setTolerance(10);
         pidX.setTolerance(30);
+        pidX.setP(SmartDashboard.getNumber("P-X", 0.0052));
+        pidRotate.setP(SmartDashboard.getNumber("P-Rotate", 0.2));
+        pidY.setP(SmartDashboard.getNumber("P-Y", 0.03));
         
     }
 
@@ -70,18 +83,52 @@ public class LineUp extends CommandBase {
         ySpeed = 0;
         turningSpeed = 0;
         
-        if(!centered && NetworkTables.frontApriltagCenter()[0] != -2169) {
+        if(!centered && NetworkTables.apriltagYaw()[0] != -2169) {
 
             turningSpeed = pidRotate.calculate(-NetworkTables.frontApriltagYaw(), 0) * .2;
+            if(NetworkTables.frontApriltagCenter()[0] != -2169) {
+                xSpeed = pidX.calculate(-NetworkTables.frontApriltagCenter()[0], -320);
             
-            xSpeed = pidX.calculate(-NetworkTables.frontApriltagCenter()[0], -320);
-            
-            //ySpeed = pidY.calculate(NetworkTables.frontApriltagY() * 39, 0);
-            
+                ySpeed = pidY.calculate(NetworkTables.frontApriltagY() * 39, 1);
+            }
+           
 
-        } else if(centered){
-            finished = true;
+            switch(scorePos) {
+                case 0: 
+                
+                break;
+                case 1: 
+                
+                break;
+                case 2:
+                
+                break;
+                case 3:
+                
+                break;
+                case 4:
+                
+                break;
+                case 5:
+                
+                break;
+                case 6:
+                
+                break;
+                case 7:
+                
+                break;
+                case 8:
+                
+                break;
+            }
+            
+            if(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint()){
+                claw.unGrab();
+            }
         }
+
+        
         chassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, turningSpeed);
 
 
