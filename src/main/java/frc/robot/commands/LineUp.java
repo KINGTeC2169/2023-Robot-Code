@@ -12,12 +12,14 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 import java.util.function.Supplier;
 
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -30,9 +32,9 @@ public class LineUp extends CommandBase {
     private final Arm arm;
 
 
-    private final PIDController pidX;
-    private final PIDController pidY;
-    private final PIDController pidRotate;
+    private final ProfiledPIDController pidX;
+    private final ProfiledPIDController pidY;
+    private final ProfiledPIDController pidRotate;
     private double xSpeed;
     private double ySpeed;
     private double turningSpeed;
@@ -52,16 +54,16 @@ public class LineUp extends CommandBase {
         this.arm = arm;
         this.claw = claw;
         this.scorePos = 2;
-        SmartDashboard.putNumber("P-X", 0.003);
-        SmartDashboard.putNumber("P-Y", 0.03);
-        SmartDashboard.putNumber("P-Rotate", 0.2);
+        SmartDashboard.putNumber("P-X", 0.0012);
+        SmartDashboard.putNumber("P-Y", 1.535);
+        SmartDashboard.putNumber("P-Rotate", 0.05);
 
         addRequirements(claw);
         addRequirements(swerve);
         addRequirements(arm);
-        pidX = new PIDController(SmartDashboard.getNumber("P-X", 0.003), 0, 0);
-        pidY = new PIDController(SmartDashboard.getNumber("P-Y", 0.03), 0, 0);
-        pidRotate = new PIDController(SmartDashboard.getNumber("P-Rotate", 0.2), 0, 0);
+        pidX = new ProfiledPIDController(0.0012, 0, 0, new Constraints(1, 2));
+        pidY = new ProfiledPIDController(1.535, 0, 0, new Constraints(1, 2));
+        pidRotate = new ProfiledPIDController(0.05, 0, 0, new Constraints(1, 1));
 
     }
 
@@ -70,9 +72,9 @@ public class LineUp extends CommandBase {
     public void initialize() {
         pidRotate.setTolerance(10);
         pidX.setTolerance(30);
-        pidX.setP(SmartDashboard.getNumber("P-X", 0.0052));
-        pidRotate.setP(SmartDashboard.getNumber("P-Rotate", 0.2));
-        pidY.setP(SmartDashboard.getNumber("P-Y", 0.03));
+        pidX.setP(SmartDashboard.getNumber("P-X", 0.0012));
+        pidRotate.setP(SmartDashboard.getNumber("P-Rotate", 0.15));
+        pidY.setP(SmartDashboard.getNumber("P-Y", 1.535));
         
     }
 
@@ -83,14 +85,15 @@ public class LineUp extends CommandBase {
         ySpeed = 0;
         turningSpeed = 0;
         
-        if(!centered && NetworkTables.apriltagYaw()[0] != -2169) {
+        if(!centered && NetworkTables.apriltagYaw() != -2169) {
 
-            turningSpeed = pidRotate.calculate(-NetworkTables.frontApriltagYaw(), 0) * .2;
-            if(NetworkTables.frontApriltagCenter()[0] != -2169) {
-                xSpeed = pidX.calculate(-NetworkTables.frontApriltagCenter()[0], -320);
+            System.out.println(NetworkTables.apriltagCenter()[0]);
+            turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0) * .2;
+            xSpeed = pidX.calculate(-NetworkTables.apriltagCenter()[0], 0);
             
-                ySpeed = pidY.calculate(NetworkTables.frontApriltagY() * 39, 1);
-            }
+            
+                ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
+            
            
 
             switch(scorePos) {
