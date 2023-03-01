@@ -24,7 +24,7 @@ public class SwerveCommand extends CommandBase {
 
     private final SwerveSubsystem swerveSubsystem;
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction, slider, rightX, rightY;
-    private final Supplier<Boolean> sideButton, trigger, fieldButton, leftTop, leftBottom;
+    private final Supplier<Boolean> sideButton, trigger, fieldButton;
     private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
     private boolean isFieldOriented, isSlowMode;
     private final int controlMode;
@@ -50,8 +50,6 @@ public class SwerveCommand extends CommandBase {
         this.rightY = null;
         this.controlMode = 0;
         this.fieldButton = null;
-        this.leftTop = null;
-        this.leftBottom = null;
         
         //this.fieldOrientedFunction = fieldOrientedFunction;
 
@@ -63,8 +61,7 @@ public class SwerveCommand extends CommandBase {
         addRequirements(swerveSubsystem);
     }
     public SwerveCommand(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, 
-    Supplier<Double> turningSpdFunction, Supplier<Double> rightX, Supplier<Double> rightY, Supplier<Boolean> fieldButton, 
-    Supplier<Boolean> leftTop,Supplier<Boolean> leftBottom) {
+    Supplier<Double> turningSpdFunction, Supplier<Double> rightX, Supplier<Double> rightY, Supplier<Boolean> fieldButton) {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
@@ -76,9 +73,6 @@ public class SwerveCommand extends CommandBase {
         this.rightY = rightY;
         this.controlMode = 1;
         this.fieldButton = fieldButton;
-        this.leftTop = leftTop;
-        this.leftBottom = leftBottom;
-
 
         turnPID = new PIDController(kPTurn, 0, 0);
         turnPID.setTolerance(5);
@@ -158,22 +152,6 @@ public class SwerveCommand extends CommandBase {
                 SmartDashboard.putNumber("Control angle", angle);
 
                turningSpeed = turnPID2.calculate(swerveSubsystem.getHeading(), angle);
-            }
-
-            if(leftBottom.get()) {
-                xSpeed *= swerveSubsystem.getSlowSpeed();
-                ySpeed *= swerveSubsystem.getSlowSpeed();
-                turningSpeed *= swerveSubsystem.getSlowSpeed();
-            }
-            else if(leftTop.get()) {
-                xSpeed *= swerveSubsystem.getFastSpeed();
-                ySpeed *= swerveSubsystem.getFastSpeed();
-                turningSpeed *= swerveSubsystem.getFastSpeed();
-            }
-            else {
-                xSpeed *= swerveSubsystem.getMediumSpeed();
-                ySpeed *= swerveSubsystem.getMediumSpeed();
-                turningSpeed *= swerveSubsystem.getMediumSpeed();
             }
             isFieldOriented = !fieldButton.get();
         }

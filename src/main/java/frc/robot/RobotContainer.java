@@ -33,6 +33,7 @@ import frc.robot.Constants.Ports;
 import frc.robot.commands.ApriltagFollow;
 import frc.robot.commands.GetCubone;
 import frc.robot.commands.LineUp;
+import frc.robot.commands.LineUpCubone;
 import frc.robot.commands.Score;
 import frc.robot.commands.SwerveCommand;
 import frc.robot.commands.TurnToPosition;
@@ -68,7 +69,9 @@ public class RobotContainer {
   private final Arm arm = new Arm();
   //private final CuboneManager cuboneManager = new CuboneManager();
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-  private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  
+  private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90); 
+  private final LineUp lineUp = new LineUp(swerveSubsystem, arm, claw);
+  private final LineUpCubone lineUpCubone = new LineUpCubone(swerveSubsystem); 
   //private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
   private final CommandXboxController controller = new CommandXboxController(Ports.controller);
   private final CommandJoystick joystick = new CommandJoystick(1);
@@ -140,15 +143,14 @@ public class RobotContainer {
 		));
 		*/
 		
+		
 		swerveSubsystem.setDefaultCommand(new SwerveCommand(swerveSubsystem,
 		() -> leftStick.getY(), 
 		() -> leftStick.getX(), 
-		() -> rightStick.getTwist(),
+		() -> leftStick.getTwist(),
 		() -> rightStick.getX(),
 		() -> rightStick.getY(),
-		() -> rightStick.button(1).getAsBoolean(),
-		() -> leftStick.button(1).getAsBoolean(),
-		() -> leftStick.button(2).getAsBoolean()
+		() -> leftStick.button(1).getAsBoolean()
 		));
 		
 		configureButtonBindings();
@@ -177,7 +179,10 @@ public class RobotContainer {
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos(), arm));
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos(), arm));
 		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab(), claw));
-    controller.start().whileTrue(new LineUp(swerveSubsystem));
+    	controller.start().whileTrue(lineUp);
+		controller.back().whileTrue(lineUpCubone);
+		controller.rightBumper().whileTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders()));
+		controller.rightBumper().onTrue(Commands.run(() -> swerveSubsystem.resetEncoders()));
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos(), claw));
 		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos(), claw));
 		controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(.2), () -> claw.twistClaw(0),  claw).repeatedly());
@@ -185,8 +190,8 @@ public class RobotContainer {
 		//leftStick.button(1/*TODO: find the button that i can use*/).whileTrue(new LineUp(swerveSubsystem));
 		//leftStick.button(2).onTrue(Commands.runOnce(() -> NavX.reset()));
 		///rightStick.button(1).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders()));
-		rightStick.button(1).onTrue(Commands.runOnce(() -> NavX.reset()));
-		rightStick.button(2).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders(), swerveSubsystem));
+		leftStick.button(1).onTrue(Commands.runOnce(() -> NavX.reset()));
+		leftStick.button(2).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders(), swerveSubsystem));
 
 		//button7.onTrue(Commands.runOnce(() -> NavX.reset()));
 		//button14.onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders(), swerveSubsystem));

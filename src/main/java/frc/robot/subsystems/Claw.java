@@ -10,9 +10,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
 
@@ -22,27 +22,20 @@ public class Claw extends SubsystemBase {
 	private final DoubleSolenoid grabber = new DoubleSolenoid(PneumaticsModuleType.REVPH, Ports.grabberOne, Ports.grabberTwo);
 	private double wristPos;
 	private double twistPos;
-
-	private ShuffleboardTab tab = Shuffleboard.getTab("Arm");
-
 	/** Creates a new ExampleSubsystem. */
 	public Claw() {
-		
 		wristMotor.config_kP(0, 0.3);
 		clawTwist.config_kP(0, 0.5);
 		wristPos = wristMotor.getSelectedSensorPosition();
 		twistPos = clawTwist.getSelectedSensorPosition();
 		wristMotor.configAllowableClosedloopError(0, 100);
-
-		//tab.addDouble("Twist Encoder", () -> getTwistEncoder());
-		tab.addDouble("Wrist Encoder", () -> getWristEncoder());
-
-		tab.addDouble("Twist Current", () -> getTwistCurrent());
-		tab.addDouble("Wrist Current", () -> getWristCurrent());
 	}
 
 	@Override
 	public void periodic() {
+		// This method will be called once per scheduler run
+		SmartDashboard.putNumber("Wrist Encoder", getWristEncoder());
+		SmartDashboard.putNumber("ClawTwist", getTwistEncoder());
 	}
 
 	public void twistUpPos() {
@@ -92,14 +85,6 @@ public class Claw extends SubsystemBase {
 		else
 			grabber.toggle();
 		
-	}
-
-	public double getWristCurrent() {
-		return wristMotor.getSupplyCurrent();
-	}
-	
-	public double getTwistCurrent() {
-		return clawTwist.getSupplyCurrent();
 	}
 
 	public double getWristEncoder() {

@@ -145,9 +145,9 @@ public class NetworkTables {
             if(closestApriltag().equals("front")) {
                 adder = 0;
             } else if(closestApriltag().equals("left")) {
-                adder = -20;
+                adder = -60;
             } else if(closestApriltag().equals("right")) {
-                adder = 20;
+                adder = 60;
             }
             if(table.getEntry("" + closestApriltag() + "-apriltag-Yaw").getDouble(-2169) != -2169) {
                 return table.getEntry("" + closestApriltag() + "-apriltag-Yaw").getDouble(-2169) + adder;
@@ -174,6 +174,25 @@ public class NetworkTables {
             }
         }
         return -2169;
+    }
+
+    public static double[] apriltagCenter() {
+        double adder = 0;
+        if(closestApriltag() != null) {
+            
+            if(closestApriltag().equals("front")) {
+                adder = -320;
+            } else if(closestApriltag().equals("left")) {
+                adder = -1120;
+            } else if(closestApriltag().equals("right")) {
+                adder = 320;
+            }
+            if(table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr) != arr) {
+                double[] cringe = {table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr)[0] + adder, (table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr)[1])};
+                return cringe;
+            }
+        }
+        return arr;
     }
 
     

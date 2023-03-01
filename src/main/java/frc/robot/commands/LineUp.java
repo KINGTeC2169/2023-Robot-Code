@@ -12,12 +12,14 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 import java.util.function.Supplier;
 
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -26,32 +28,42 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 public class LineUp extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final SwerveSubsystem swerve;
+    private final Claw claw;
+    private final Arm arm;
 
 
-    private final PIDController pidX;
-    private final PIDController pidY;
-    private final PIDController pidRotate;
+    private final ProfiledPIDController pidX;
+    private final ProfiledPIDController pidY;
+    private final ProfiledPIDController pidRotate;
     private double xSpeed;
     private double ySpeed;
     private double turningSpeed;
     private ChassisSpeeds chassisSpeeds;
-    private boolean rotated;
     private boolean centered;
-    private boolean wallBanged;
     private boolean finished;
+    private boolean extended;
+    private int scorePos;
 
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public LineUp(SwerveSubsystem swerve) {
+    public LineUp(SwerveSubsystem swerve, Arm arm, Claw claw) {
         this.swerve = swerve;
+        this.arm = arm;
+        this.claw = claw;
+        this.scorePos = 2;
+        SmartDashboard.putNumber("P-X", 0.0012);
+        SmartDashboard.putNumber("P-Y", 1.535);
+        SmartDashboard.putNumber("P-Rotate", 0.05);
 
+        addRequirements(claw);
         addRequirements(swerve);
-        pidX = new PIDController(0.003, 0, 0);
-        pidY = new PIDController(0.03, 0, 0);
-        pidRotate = new PIDController(0.2, 0, 0);
+        addRequirements(arm);
+        pidX = new ProfiledPIDController(0.0012, 0, 0, new Constraints(1, 2));
+        pidY = new ProfiledPIDController(1.535, 0, 0, new Constraints(1, 2));
+        pidRotate = new ProfiledPIDController(0.05, 0, 0, new Constraints(1, 1));
 
     }
 
@@ -60,6 +72,9 @@ public class LineUp extends CommandBase {
     public void initialize() {
         pidRotate.setTolerance(10);
         pidX.setTolerance(30);
+        pidX.setP(SmartDashboard.getNumber("P-X", 0.0012));
+        pidRotate.setP(SmartDashboard.getNumber("P-Rotate", 0.15));
+        pidY.setP(SmartDashboard.getNumber("P-Y", 1.535));
         
     }
 
@@ -70,18 +85,53 @@ public class LineUp extends CommandBase {
         ySpeed = 0;
         turningSpeed = 0;
         
-        if(!centered && NetworkTables.frontApriltagCenter()[0] != -2169) {
+        if(!centered && NetworkTables.apriltagYaw() != -2169) {
 
+            System.out.println(NetworkTables.apriltagCenter()[0]);
             turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0) * .2;
+            xSpeed = pidX.calculate(-NetworkTables.apriltagCenter()[0], 0);
             
-            xSpeed = pidX.calculate(-NetworkTables.frontApriltagCenter()[0], -320);
             
-            //ySpeed = pidY.calculate(NetworkTables.frontApriltagY() * 39, 0);
+                ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
             
+           
 
-        } else if(centered){
-            finished = true;
+            switch(scorePos) {
+                case 0: 
+                
+                break;
+                case 1: 
+                
+                break;
+                case 2:
+                
+                break;
+                case 3:
+                
+                break;
+                case 4:
+                
+                break;
+                case 5:
+                
+                break;
+                case 6:
+                
+                break;
+                case 7:
+                
+                break;
+                case 8:
+                
+                break;
+            }
+            
+            if(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint()){
+                claw.unGrab();
+            }
         }
+
+        
         chassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, turningSpeed);
 
 
