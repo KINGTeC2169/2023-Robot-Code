@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -61,7 +62,7 @@ public class SwerveSubsystem extends SubsystemBase {
     false);
 
     public SwerveDriveKinematics kinematics = DriveConstants.DRIVE_KINEMATICS;
-    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions());
+    private final SwerveDriveOdometry odometer;
     public Field2d field = new Field2d();
 
     private ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
@@ -70,6 +71,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private GenericEntry slowSpeed = tab.add("Slow Speed", 0.2).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", 0)).withPosition(2, 3).getEntry();
 
     public SwerveSubsystem() {
+        odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
         
         //SmartDashboard.putData("Field", field);
         
@@ -111,10 +113,24 @@ public class SwerveSubsystem extends SubsystemBase {
             } catch (Exception e) {
             }
         }).start();
-        
-        
     }
 
+    public Field2d getField() {
+        return field;
+    }
+
+    public double getFastSpeed() {
+        return fastSpeed.getDouble(1.0);
+    }
+
+    public double getMediumSpeed() {
+        return mediumSpeed.getDouble(0.5);
+    }
+
+    public double getSlowSpeed() {
+        return slowSpeed.getDouble(0.2);
+    }
+    
     public SwerveModulePosition[] getModulePositions() {
         return new SwerveModulePosition[] {
         frontLeft.getModulePosition(),
