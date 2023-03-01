@@ -134,24 +134,6 @@ public class NetworkTables {
         return -2169;
     }
 
-    public static double[] apriltagCenter() {
-        double adder = 0;
-        if(closestApriltag() != null) {
-            
-            if(closestApriltag().equals("front")) {
-                adder = -320;
-            } else if(closestApriltag().equals("left")) {
-                adder = -1120;
-            } else if(closestApriltag().equals("right")) {
-                adder = 320;
-            }
-            if(table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr) != arr) {
-                double[] cringe = {table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr)[0] + adder, (table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr)[1])};
-                return cringe;
-            }
-        }
-        return arr;
-    }
 
 
     //TODO: FIX the 20 degree difference here

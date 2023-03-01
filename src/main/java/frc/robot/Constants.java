@@ -68,8 +68,8 @@ public final class Constants {
 
     public static final class DriveConstants {
         //These will need to be in meters
-        public static final double rightLeftWheels = Units.inchesToMeters(21.5);
-        public static final double frontBackWheels = Units.inchesToMeters(21.5);
+        public static final double rightLeftWheels = Units.inchesToMeters(19.5);
+        public static final double frontBackWheels = Units.inchesToMeters(19.5);
 
         public static final double FRabsoluteOffset = -0.893;
         public static final double FLabsoluteOffset = -1.33609;
