@@ -56,7 +56,13 @@ public class LineUp extends CommandBase {
         this.scorePos = 2;
         SmartDashboard.putNumber("P-X", 0.0012);
         SmartDashboard.putNumber("P-Y", 1.535);
-        SmartDashboard.putNumber("P-Rotate", 0.05);
+        SmartDashboard.putNumber("P-Rotate", 0.045);
+        SmartDashboard.putNumber("D-X", 0);
+        SmartDashboard.putNumber("D-Y", 0);
+        SmartDashboard.putNumber("D-Rotate", 0);
+        SmartDashboard.putNumber("I-X", 0);
+        SmartDashboard.putNumber("I-Y", 0);
+        SmartDashboard.putNumber("I-Rotate", 0);
 
         addRequirements(claw);
         addRequirements(swerve);
@@ -73,8 +79,15 @@ public class LineUp extends CommandBase {
         pidRotate.setTolerance(10);
         pidX.setTolerance(30);
         pidX.setP(SmartDashboard.getNumber("P-X", 0.0012));
-        pidRotate.setP(SmartDashboard.getNumber("P-Rotate", 0.15));
+        pidX.setI(SmartDashboard.getNumber("I-X", 0));
+        pidX.setD(SmartDashboard.getNumber("D-X", 0));
+        pidRotate.setP(SmartDashboard.getNumber("P-Rotate", 0.045));
+        pidRotate.setI(SmartDashboard.getNumber("I-Rotate", 0));
+        pidRotate.setD(SmartDashboard.getNumber("D-Rotate", 0));
         pidY.setP(SmartDashboard.getNumber("P-Y", 1.535));
+        pidY.setI(SmartDashboard.getNumber("I-Y", 0));
+        pidY.setD(SmartDashboard.getNumber("D-Y", 0));
+        
         
     }
 
@@ -89,10 +102,8 @@ public class LineUp extends CommandBase {
 
             System.out.println(NetworkTables.apriltagCenter()[0]);
             turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0) * .2;
-            xSpeed = pidX.calculate(-NetworkTables.apriltagCenter()[0], 0);
-            
-            
-                ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
+            //xSpeed = pidX.calculate(-NetworkTables.apriltagCenter()[0], 0);
+            //ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
             
            
 
