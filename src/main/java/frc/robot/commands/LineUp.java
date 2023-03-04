@@ -28,8 +28,6 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 public class LineUp extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final SwerveSubsystem swerve;
-    private final Claw claw;
-    private final Arm arm;
 
 
     private final ProfiledPIDController pidX;
@@ -49,24 +47,23 @@ public class LineUp extends CommandBase {
      *
      * @param subsystem The subsystem used by this command.
      */
-    public LineUp(SwerveSubsystem swerve, Arm arm, Claw claw) {
+    public LineUp(SwerveSubsystem swerve) {
         this.swerve = swerve;
-        this.arm = arm;
-        this.claw = claw;
-        this.scorePos = 2;
-        SmartDashboard.putNumber("P-X", 0.0012);
-        SmartDashboard.putNumber("P-Y", 1.535);
-        SmartDashboard.putNumber("P-Rotate", 0.045);
-        SmartDashboard.putNumber("D-X", 0);
-        SmartDashboard.putNumber("D-Y", 0);
-        SmartDashboard.putNumber("D-Rotate", 0);
+        SmartDashboard.putNumber("P-X", 0.012);
         SmartDashboard.putNumber("I-X", 0);
-        SmartDashboard.putNumber("I-Y", 0);
+        SmartDashboard.putNumber("D-X", 0.00012);
+        SmartDashboard.putNumber("P-Rotate", 0.14);
         SmartDashboard.putNumber("I-Rotate", 0);
+        SmartDashboard.putNumber("D-Rotate", 0.0014);
+        SmartDashboard.putNumber("P-Y", 1.535);
+        SmartDashboard.putNumber("I-Y", 0);
+        SmartDashboard.putNumber("D-Y", 0);
+       
+        
+        
+       
 
-        addRequirements(claw);
         addRequirements(swerve);
-        addRequirements(arm);
         pidX = new ProfiledPIDController(0.0012, 0, 0, new Constraints(1, 2));
         pidY = new ProfiledPIDController(1.535, 0, 0, new Constraints(1, 2));
         pidRotate = new ProfiledPIDController(0.05, 0, 0, new Constraints(1, 1));
@@ -76,14 +73,15 @@ public class LineUp extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        pidRotate.setTolerance(10);
-        pidX.setTolerance(30);
-        pidX.setP(SmartDashboard.getNumber("P-X", 0.0012));
+        //pidRotate.setTolerance(5);
+        //pidX.setTolerance(10);
+        //pidY.setTolerance(10);
+        pidX.setP(SmartDashboard.getNumber("P-X", 0.012));
         pidX.setI(SmartDashboard.getNumber("I-X", 0));
-        pidX.setD(SmartDashboard.getNumber("D-X", 0));
-        pidRotate.setP(SmartDashboard.getNumber("P-Rotate", 0.045));
+        pidX.setD(SmartDashboard.getNumber("D-X", 0.00012));
+        pidRotate.setP(SmartDashboard.getNumber("P-Rotate", 0.14));
         pidRotate.setI(SmartDashboard.getNumber("I-Rotate", 0));
-        pidRotate.setD(SmartDashboard.getNumber("D-Rotate", 0));
+        pidRotate.setD(SmartDashboard.getNumber("D-Rotate", 0.0014));
         pidY.setP(SmartDashboard.getNumber("P-Y", 1.535));
         pidY.setI(SmartDashboard.getNumber("I-Y", 0));
         pidY.setD(SmartDashboard.getNumber("D-Y", 0));
@@ -102,43 +100,12 @@ public class LineUp extends CommandBase {
 
             System.out.println(NetworkTables.apriltagCenter()[0]);
             turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0) * .2;
-            //xSpeed = pidX.calculate(-NetworkTables.apriltagCenter()[0], 0);
-            //ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
+            xSpeed = pidX.calculate(-NetworkTables.apriltagCenter()[0], 0);
+            ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
             
-           
-
-            switch(scorePos) {
-                case 0: 
-                
-                break;
-                case 1: 
-                
-                break;
-                case 2:
-                
-                break;
-                case 3:
-                
-                break;
-                case 4:
-                
-                break;
-                case 5:
-                
-                break;
-                case 6:
-                
-                break;
-                case 7:
-                
-                break;
-                case 8:
-                
-                break;
-            }
             
             if(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint()){
-                claw.unGrab();
+                end(false);
             }
         }
 
