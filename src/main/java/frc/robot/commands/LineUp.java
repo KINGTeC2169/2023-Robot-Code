@@ -41,6 +41,9 @@ public class LineUp extends CommandBase {
     private boolean finished;
     private boolean extended;
     private int scorePos;
+    private boolean x = true;
+    private boolean y = true;
+    private boolean turn = true;
 
     /**
      * Creates a new ExampleCommand.
@@ -49,13 +52,13 @@ public class LineUp extends CommandBase {
      */
     public LineUp(SwerveSubsystem swerve) {
         this.swerve = swerve;
-        SmartDashboard.putNumber("P-X", 0.012);
+        SmartDashboard.putNumber("P-X", 0.0012);
         SmartDashboard.putNumber("I-X", 0);
-        SmartDashboard.putNumber("D-X", 0.00012);
-        SmartDashboard.putNumber("P-Rotate", 0.14);
+        SmartDashboard.putNumber("D-X", 0);
+        SmartDashboard.putNumber("P-Rotate", .05);
         SmartDashboard.putNumber("I-Rotate", 0);
-        SmartDashboard.putNumber("D-Rotate", 0.0014);
-        SmartDashboard.putNumber("P-Y", 1.535);
+        SmartDashboard.putNumber("D-Rotate", 0);
+        SmartDashboard.putNumber("P-Y", .7);
         SmartDashboard.putNumber("I-Y", 0);
         SmartDashboard.putNumber("D-Y", 0);
        
@@ -64,25 +67,25 @@ public class LineUp extends CommandBase {
        
 
         addRequirements(swerve);
-        pidX = new ProfiledPIDController(0.0012, 0, 0, new Constraints(1, 2));
-        pidY = new ProfiledPIDController(1.535, 0, 0, new Constraints(1, 2));
-        pidRotate = new ProfiledPIDController(0.05, 0, 0, new Constraints(1, 1));
+        pidX = new ProfiledPIDController(0.0012, 0, 0, new Constraints(.0000001, 2));
+        pidY = new ProfiledPIDController(0.7, 0, 0, new Constraints(.0000001, 2));
+        pidRotate = new ProfiledPIDController(0.05, 0, 0, new Constraints(.00001, 1));
 
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        //pidRotate.setTolerance(5);
-        //pidX.setTolerance(10);
-        //pidY.setTolerance(10);
-        pidX.setP(SmartDashboard.getNumber("P-X", 0.012));
+        pidRotate.setTolerance(2);
+        pidX.setTolerance(5);
+        pidY.setTolerance(.5);
+        pidX.setP(SmartDashboard.getNumber("P-X", 0.0012));
         pidX.setI(SmartDashboard.getNumber("I-X", 0));
-        pidX.setD(SmartDashboard.getNumber("D-X", 0.00012));
+        pidX.setD(SmartDashboard.getNumber("D-X", 0));
         pidRotate.setP(SmartDashboard.getNumber("P-Rotate", 0.14));
         pidRotate.setI(SmartDashboard.getNumber("I-Rotate", 0));
-        pidRotate.setD(SmartDashboard.getNumber("D-Rotate", 0.0014));
-        pidY.setP(SmartDashboard.getNumber("P-Y", 1.535));
+        pidRotate.setD(SmartDashboard.getNumber("D-Rotate", 0));
+        pidY.setP(SmartDashboard.getNumber("P-Y", .7));
         pidY.setI(SmartDashboard.getNumber("I-Y", 0));
         pidY.setD(SmartDashboard.getNumber("D-Y", 0));
         
@@ -98,13 +101,29 @@ public class LineUp extends CommandBase {
         
         if(!centered && NetworkTables.apriltagYaw() != -2169) {
 
-            System.out.println(NetworkTables.apriltagCenter()[0]);
-            turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0) * .2;
-            xSpeed = pidX.calculate(-NetworkTables.apriltagCenter()[0], 0);
-            ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
+            if(turn) {
+                turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0) * .2;
+            } else if(pidRotate.atGoal()) {
+                turn = false;
+            }
             
+           
+
+            if(x) {
+                pidX.setGoal(960);
+                xSpeed = pidX.calculate(-NetworkTables.apriltagCenter()[0], 0);
+            } else if(pidX.atGoal()) {
+                x = false;
+            }
+            if(y) {
+                
+                ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
+                
+            } else if(pidY.atGoal()) {
+                y = false;
+            }
             
-            if(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint()){
+            if(pidRotate.atGoal() && pidX.atGoal() && pidY.atGoal()){
                 end(false);
             }
         }
