@@ -28,10 +28,10 @@ public class Arm extends SubsystemBase {
 
     private final double ELEVATOR_UPPER_LIMIT = 320000;
     private final double ELEVATOR_LOWER_LIMIT = 0;
-    private final double WINCH_UPPER_LIMIT = 200000;
-    private final double WINCH_LOWER_LIMIT = 0;
+    private final double WINCH_UPPER_LIMIT = 80;
+    private final double WINCH_LOWER_LIMIT = 20;
     private final double ELEVATOR_SPEED = 20000;
-    private final double WINCH_SPEED = 30000;
+    private final double WINCH_SPEED = 1;
 
     private ShuffleboardTab tab = Shuffleboard.getTab("Arm");
     private GenericEntry elevatorUpperLimit = tab.addPersistent("Elevator Upper Limit", ELEVATOR_UPPER_LIMIT).withSize(2, 1).withPosition(4, 0).getEntry();
@@ -56,7 +56,7 @@ public class Arm extends SubsystemBase {
         tab.addDouble("Elevator Position", () -> getElevatorEncoder()).withPosition(7, 0);
 
         tab.addDouble("Winch Position", () -> getLiftAngle()).withPosition(7, 1);
-        tab.addDouble("Absolute Angle", () -> angleEncoder.getAbsolutePosition());
+        tab.addDouble("Absolute Angle", () -> getAngleAbsolute());
 
         currents.addDouble("Winch Current", () -> getWinchCurrent()).withWidget(BuiltInWidgets.kVoltageView);
         currents.addDouble("Elevator Current", () -> getElevatorCurrent()).withWidget(BuiltInWidgets.kVoltageView);
@@ -65,6 +65,7 @@ public class Arm extends SubsystemBase {
         tab.add("Reset Winch Position",Commands.runOnce(() -> resetWinchEncoder())).withPosition(8, 1).withSize(2, 1);
 
 
+        resetWinchEncoder();
     }
 
     @Override
@@ -91,25 +92,28 @@ public class Arm extends SubsystemBase {
             elevatorMotor.set(ControlMode.Position, elevatorPos);
         }
     }
+    public void setWinch(double angle) {
+        winchMotor.set(ControlMode.Position, angle * 13540.4526);
+    }
     /**Lifts arm by winch speed value from shuffleboard. ControlMode.Position */
     public void winchUpPos() {
-        double pos = winchMotor.getSelectedSensorPosition();
+        double pos = getLiftAngle();
         double speed = winchSpeed.getDouble(WINCH_SPEED);
 
         if(pos + speed < winchUpperLimit.getDouble(WINCH_UPPER_LIMIT)) {
             winchPos = pos + speed;
-            winchMotor.set(ControlMode.Position, winchPos);
+            setWinch(winchPos);
         }
         
     }
     /**Lowers arm by winch speed value from shuffleboard. ControlMode.Position */
     public void winchDownPos() {
-        double pos = winchMotor.getSelectedSensorPosition();
+        double pos = getLiftAngle();
         double speed = winchSpeed.getDouble(WINCH_SPEED);
 
         if(pos - speed > winchLowerLimit.getDouble(WINCH_LOWER_LIMIT)) {
             winchPos = pos - speed;
-            winchMotor.set(ControlMode.Position, winchPos);
+            setWinch(winchPos);
         }
     }
 
@@ -138,7 +142,7 @@ public class Arm extends SubsystemBase {
     }
 
     
-    public void resetWinchEncoder() {
+    public void zeroWinchEncoder() {
         System.out.println("reset winch");
         winchMotor.setSelectedSensorPosition(0);
         winchMotor.set(ControlMode.Position, 0);
@@ -149,9 +153,6 @@ public class Arm extends SubsystemBase {
         elevatorMotor.set(ControlMode.Position, 0);
         }
 
-    public void setWinch(double power) {
-        winchMotor.set(ControlMode.PercentOutput, power);
-    }
     public void winchUp() {
         winchMotor.set(ControlMode.PercentOutput, 0.3);
     }
@@ -171,19 +172,18 @@ public class Arm extends SubsystemBase {
     public void elevatorStopPos() {
         elevatorMotor.set(ControlMode.Position, elevatorMotor.getSelectedSensorPosition());
     }
-    public double setArmAngle(double angle) {
-        //TODO: convert angle into encoder ticks
-        winchMotor.set(ControlMode.Position, angle);
-        return winchMotor.getClosedLoopError();
-    }
 
     public double getAngleAbsolute() {
-        return angleEncoder.getAbsolutePosition() * 360;
+        return angleEncoder.getAbsolutePosition() * 360 - 267;
     }
 
     public double getLiftAngle() {
-        return winchMotor.getSelectedSensorPosition();//TODO: convert to degrees
+        return winchMotor.getSelectedSensorPosition() / 13540.4526;
         
+    }
+
+    public void resetWinchEncoder() {
+        winchMotor.setSelectedSensorPosition(getAngleAbsolute() * 13540.4526);
     }
 
     
