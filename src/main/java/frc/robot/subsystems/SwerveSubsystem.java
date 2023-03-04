@@ -108,8 +108,9 @@ public class SwerveSubsystem extends SubsystemBase {
         //Uses a new thread so that it doesn't pause all other code running
         new Thread(() -> {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(2000);
                 zeroHeading();
+                resetEncoders();
             } catch (Exception e) {
             }
         }).start();

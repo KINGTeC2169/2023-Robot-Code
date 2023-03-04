@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.sound.sampled.LineEvent;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -44,6 +46,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -63,24 +66,29 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   	// The robot's subsystems and commands are defined here...
   
-  private final Claw claw = new Claw();
-  private final Arm arm = new Arm();
-  //private final CuboneManager cuboneManager = new CuboneManager();
-  private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-  private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  
-  private final LineUp lineUp = new LineUp(swerveSubsystem);
-  private final LineUpCubone lineUpCubone = new LineUpCubone(swerveSubsystem); 
-  //private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
-  private final CommandXboxController controller = new CommandXboxController(Ports.controller);
-  private final CommandJoystick joystick = new CommandJoystick(1);
-  private final XboxController joystickButtons = new XboxController(1);
-  private final Trigger button7 = new JoystickButton(joystickButtons, 7);
-  private final Trigger button14 = new JoystickButton(joystickButtons, 14);
+	private final Claw claw = new Claw();
+	private final Arm arm = new Arm();
+	//private final CuboneManager cuboneManager = new CuboneManager();
+	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
 
-  private final CommandJoystick leftStick = new CommandJoystick(2);
-  private final CommandJoystick rightStick = new CommandJoystick(3);
 
-  private Command autoBot;
+	private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  
+	private final LineUp lineUp = new LineUp(swerveSubsystem, arm, claw);
+	private final LineUpCubone lineUpCubone = new LineUpCubone(swerveSubsystem); 
+	//private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
+	private final CommandXboxController controller = new CommandXboxController(Ports.controller);
+	private final CommandJoystick joystick = new CommandJoystick(1);
+	private final XboxController joystickButtons = new XboxController(1);
+	private final Trigger button7 = new JoystickButton(joystickButtons, 7);
+	private final Trigger button14 = new JoystickButton(joystickButtons, 14);
+
+	//private final SequentialCommandGroup scoreCommand = new SequentialCommandGroup(lineUp, lineUp);
+	//private final ParallelCommandGroup scoreParallel = new ParallelCommandGroup(lineUp, lineUp);
+
+	private final CommandJoystick leftStick = new CommandJoystick(2);
+	private final CommandJoystick rightStick = new CommandJoystick(3);
+
+	private Command autoBot;
 
  
   
@@ -91,7 +99,7 @@ public class RobotContainer {
 
 	public RobotContainer() {
 
-		PathPlannerTrajectory path = PathPlanner.loadPath("epic", new PathConstraints(4, 3));
+		PathPlannerTrajectory path = PathPlanner.loadPath("epic", new PathConstraints(3, 3));
 
 
 		// This is just an example event map. It would be better to have a constant, global event map
@@ -100,15 +108,18 @@ public class RobotContainer {
 	
 	
 		eventMap.put("marker1", new PrintCommand("Passed marker 1"));
+		eventMap.put("pickUp", new PrintCommand("Picking up object"));
+		eventMap.put("lineUp", lineUp);
+		eventMap.put("score", new PrintCommand("Scoring"));
 	
 		
 		// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
 		SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
 			swerveSubsystem::getPose, // Pose2d supplier
-			swerveSubsystem::resetPose, // Pose2d consumer, used to reset odometry at the beginning of auto
+			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
 			swerveSubsystem.kinematics, // SwerveDriveKinematics
-			new PIDConstants(5.0, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+			new PIDConstants(2.0, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
 			swerveSubsystem::setModuleStates, // Module states consumer used to output to the drive subsystem
 			eventMap,
 			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
@@ -171,11 +182,11 @@ public class RobotContainer {
 		//controller.b().whileTrue(rotateToCone);
 		
 		//controller.x().whileTrue(score);
-		controller.y().whileTrue(Commands.run(() -> arm.winchUpPos(), arm));
+		controller.y().whileTrue(Commands.run(() -> arm.winchUpPos()));
 		//controller.y().whileTrue())
-		controller.a().whileTrue(Commands.run(() -> arm.winchDownPos(), arm));
-		controller.b().whileTrue(Commands.run(() -> arm.extendPos(), arm));
-		controller.x().whileTrue(Commands.run(() -> arm.retractPos(), arm));
+		controller.a().whileTrue(Commands.run(() -> arm.winchDownPos()));
+		controller.b().whileTrue(Commands.run(() -> arm.extendPos()));
+		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
 		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab(), claw));
     	controller.start().whileTrue(lineUp);
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos(), claw));
