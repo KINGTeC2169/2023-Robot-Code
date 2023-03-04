@@ -132,10 +132,21 @@ public class SwerveModule {
             return;
         }
         state = SwerveModuleState.optimize(state, getState().angle);
-        //driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
-        wantedSpeed = (state.speedMetersPerSecond / maxSpeed) * 21731;
+        if(state.speedMetersPerSecond > 0) {
+            //driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
+        wantedSpeed = (((state.speedMetersPerSecond / maxSpeed) * 0.94) + 0.06);
         //driveMotor.set(ControlMode.Velocity, wantedSpeed * 3 / 2);
-        driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
+        // I LOVE ALIVEBAND  
+        driveMotor.set(ControlMode.PercentOutput, ((state.speedMetersPerSecond / maxSpeed) * 0.94) + 0.06);
+            
+        } else {
+            //driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
+        wantedSpeed = (((state.speedMetersPerSecond / maxSpeed) * 0.94) - 0.06);
+        //driveMotor.set(ControlMode.Velocity, wantedSpeed * 3 / 2);
+        // I LOVE ALIVEBAND  
+        driveMotor.set(ControlMode.PercentOutput, ((state.speedMetersPerSecond / maxSpeed) * 0.94) - 0.06);
+        }
+        
         turnMotor.set(turningPID.calculate(getTurnPosition(), state.angle.getRadians()));
 
     }

@@ -95,6 +95,12 @@ public class SwerveSubsystem extends SubsystemBase {
 
         tab.addDouble("Rotation 2D", () -> getRotation2d().getDegrees());
 
+        tab.addDouble("Front Left Percent", () -> frontLeft.getWantedSpeed());
+        tab.addDouble("Front Right Percent", () -> frontRight.getWantedSpeed());
+        tab.addDouble("Back Left Percent", () -> backLeft.getWantedSpeed());
+        tab.addDouble("Back Right Percent", () -> backRight.getWantedSpeed());
+
+
         //tab.addDouble("Abs Front Left", () -> frontLeft.getAbsoluteTurnPosition());
         //tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition());
         //tab.addDouble("Abs Back Left", () -> backLeft.getAbsoluteTurnPosition());
