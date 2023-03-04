@@ -27,6 +27,10 @@ public final class Constants {
         public static final int clawTwist = 9;
         public static final int colorSensorClaw = 1;
 
+        public static final int armEncoder = 1;
+        public static final int wristEncoder = 2;
+        public static final int twistEncoder = 3;
+
         public static final int grabberOne = 8;
         public static final int grabberTwo = 10;
 

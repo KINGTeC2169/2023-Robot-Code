@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -19,8 +20,10 @@ public class Arm extends SubsystemBase {
 
     private final TalonFX elevatorMotor = new TalonFX(Ports.elevatorMotor);
     private final TalonFX winchMotor = new TalonFX(Ports.winchMotor);
+    private final DutyCycleEncoder angleEncoder = new DutyCycleEncoder(Ports.armEncoder);
     private double winchPos;
     private double elevatorPos;
+    
 
 
     private final double ELEVATOR_UPPER_LIMIT = 320000;
@@ -53,12 +56,15 @@ public class Arm extends SubsystemBase {
         tab.addDouble("Elevator Position", () -> getElevatorEncoder()).withPosition(7, 0);
 
         tab.addDouble("Winch Position", () -> getLiftAngle()).withPosition(7, 1);
+        tab.addDouble("Absolute Angle", () -> angleEncoder.getAbsolutePosition());
 
         currents.addDouble("Winch Current", () -> getWinchCurrent()).withWidget(BuiltInWidgets.kVoltageView);
         currents.addDouble("Elevator Current", () -> getElevatorCurrent()).withWidget(BuiltInWidgets.kVoltageView);
 
         tab.add("Reset Elevator Position", Commands.runOnce(() -> resetElevatorEncoder())).withPosition(8, 0).withSize(2, 1);
         tab.add("Reset Winch Position",Commands.runOnce(() -> resetWinchEncoder())).withPosition(8, 1).withSize(2, 1);
+
+
     }
 
     @Override
@@ -171,7 +177,9 @@ public class Arm extends SubsystemBase {
         return winchMotor.getClosedLoopError();
     }
 
-
+    public double getAngleAbsolute() {
+        return angleEncoder.getAbsolutePosition() * 360;
+    }
 
     public double getLiftAngle() {
         return winchMotor.getSelectedSensorPosition();//TODO: convert to degrees
