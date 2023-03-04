@@ -73,7 +73,7 @@ public class RobotContainer {
 
 
 	private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  
-	private final LineUp lineUp = new LineUp(swerveSubsystem, arm, claw);
+	private final LineUp lineUp = new LineUp(swerveSubsystem);
 	private final LineUpCubone lineUpCubone = new LineUpCubone(swerveSubsystem); 
 	//private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
 	private final CommandXboxController controller = new CommandXboxController(Ports.controller);
