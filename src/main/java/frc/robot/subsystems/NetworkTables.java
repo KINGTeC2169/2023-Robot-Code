@@ -156,24 +156,8 @@ public class NetworkTables {
         return -2169;
     }
 
-    //im cringe, think about this
-    //on second thought, check how the angle effect the X distance, maybe its epic
     public static double apriltagX() {
-        double adder = 0;
-        if(closestApriltag() != null) {
-            
-            if(closestApriltag().equals("Front")) {
-                adder = -320;
-            } else if(closestApriltag().equals("Left")) {
-                adder = -1120;
-            } else if(closestApriltag().equals("Right")) {
-                adder = 320;
-            }
-            if(table.getEntry("" + closestApriltag() + "-apriltag-X").getDouble(-2169) != -2169) {
-                return table.getEntry("" + closestApriltag() + "-apriltag-X").getDouble(-2169) + adder;
-            }
-        }
-        return -2169;
+        return table.getEntry("" + closestApriltag() + "-apriltag-X").getDouble(-2169);
     }
 
     public static double[] apriltagCenter() {
