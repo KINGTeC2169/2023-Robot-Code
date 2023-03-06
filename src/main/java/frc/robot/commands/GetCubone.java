@@ -60,10 +60,7 @@ public class GetCubone extends CommandBase {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		//if(!CuboneManager.isSomethingInClaw()) {
-			CuboneManager.setConeInClaw(NetworkTables.getPalmCenter("Cone")[0] != 0);
-			CuboneManager.setCubeInClaw(NetworkTables.getPalmCenter("Cube")[0] != 0);
-		//}
+		
 		if(!itemCentered) {
 			if(CuboneManager.isConeInClaw()) {
 				xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 240);

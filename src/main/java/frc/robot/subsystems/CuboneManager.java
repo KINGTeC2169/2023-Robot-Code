@@ -1,23 +1,23 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class CuboneManager extends SubsystemBase {
-    private static boolean coneInClaw;
-    private static boolean cubeInClaw;
     private static boolean coneInFront;
     private static boolean cubeInFront;
+
+    private ShuffleboardTab tab = Shuffleboard.getTab("Arm");
 
     public CuboneManager() {}
 
     @Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		SmartDashboard.putBoolean("Cone in Claw", coneInClaw);
-		SmartDashboard.putBoolean("Cube in Claw", cubeInClaw);
-        SmartDashboard.putBoolean("Cone in Front", coneInFront);
-		SmartDashboard.putBoolean("Cube in Front", cubeInFront);
+        tab.addBoolean("Cone in Front", coneInFront);
+		tab.addBoolean("Cube in Front", cubeInFront);
         switch(NetworkTables.isThereObject()) {
             case "Cube": cubeInFront = true; 
             coneInFront = false;
