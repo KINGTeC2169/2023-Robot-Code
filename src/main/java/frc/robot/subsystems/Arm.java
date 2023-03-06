@@ -56,7 +56,7 @@ public class Arm extends SubsystemBase {
         tab.addDouble("Elevator Position", () -> getElevatorEncoder()).withPosition(7, 0);
 
         tab.addDouble("Winch Position", () -> getLiftAngle()).withPosition(7, 1);
-        tab.addDouble("Absolute Angle", () -> getAngleAbsolute());
+        tab.addDouble("Absolute Angle", () -> getAngleAbsolute()).withPosition(7, 2);
 
         currents.addDouble("Winch Current", () -> getWinchCurrent()).withWidget(BuiltInWidgets.kVoltageView);
         currents.addDouble("Elevator Current", () -> getElevatorCurrent()).withWidget(BuiltInWidgets.kVoltageView);
@@ -180,6 +180,12 @@ public class Arm extends SubsystemBase {
     public double getLiftAngle() {
         return winchMotor.getSelectedSensorPosition() / 13540.4526;
         
+    }
+
+    //TODO: check if this is right, I think it is but I dont know why you got rid of it
+    public double setArmAngle(double degrees) {
+        winchMotor.set(ControlMode.Position, degrees * 13540.4526);
+        return winchMotor.getClosedLoopError();
     }
 
     public void resetWinchEncoder() {

@@ -189,10 +189,11 @@ public class RobotContainer {
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
 		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab(), claw));
     	controller.start().whileTrue(lineUp);
-		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos(), claw));
-		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos(), claw));
-		controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(.2), () -> claw.twistClaw(0),  claw).repeatedly());
-		controller.povLeft().whileTrue(Commands.startEnd(() -> claw.twistClaw(-.2), () -> claw.twistClaw(0),  claw).repeatedly());
+		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos()));
+		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos()));
+		controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(0.5), () -> claw.twistClaw(0),  claw).repeatedly());
+		//controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(1), () -> claw.twistClaw(0)).repeatedly());
+		controller.povLeft().whileTrue(Commands.startEnd(() -> claw.twistClaw(-0.5), () -> claw.twistClaw(0)).repeatedly());
 		//leftStick.button(1/*TODO: find the button that i can use*/).whileTrue(new LineUp(swerveSubsystem));
 		//leftStick.button(2).onTrue(Commands.runOnce(() -> NavX.reset()));
 		///rightStick.button(1).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders()));

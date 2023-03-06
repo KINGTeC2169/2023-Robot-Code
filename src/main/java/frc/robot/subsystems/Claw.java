@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -20,6 +21,8 @@ public class Claw extends SubsystemBase {
 	private final TalonFX wristMotor = new TalonFX(Ports.wristMotor);
 	private final TalonSRX clawTwist = new TalonSRX(Ports.clawTwist);
 	private final DoubleSolenoid grabber = new DoubleSolenoid(PneumaticsModuleType.REVPH, Ports.grabberOne, Ports.grabberTwo);
+	private final DutyCycleEncoder twistEncoder = new DutyCycleEncoder(Ports.twistEncoder);
+	private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(Ports.wristEncoder);
 	private double wristPos;
 	private double twistPos;
 
@@ -36,9 +39,12 @@ public class Claw extends SubsystemBase {
 
 		//tab.addDouble("Twist Encoder", () -> getTwistEncoder());
 		tab.addDouble("Wrist Encoder", () -> getWristEncoder());
+		tab.addDouble("Twist Absolute", () -> twistEncoder.getAbsolutePosition());
+		tab.addDouble("Wrist Absolute", () -> wristEncoder.getAbsolutePosition());
 
 		tab.addDouble("Twist Current", () -> getTwistCurrent());
 		tab.addDouble("Wrist Current", () -> getWristCurrent());
+
 	}
 
 	@Override
@@ -46,11 +52,11 @@ public class Claw extends SubsystemBase {
 	}
 
 	public void twistUpPos() {
-		twistPos += 50;
+		twistPos += 500;
 		clawTwist.set(ControlMode.Position, twistPos);
 	}
 	public void twistDownPos() {
-		twistPos -= 50;
+		twistPos -= 500;
 		clawTwist.set(ControlMode.Position, twistPos);
 	}
 	public void wristUpPos() {
@@ -92,6 +98,10 @@ public class Claw extends SubsystemBase {
 		else
 			grabber.toggle();
 		
+	}
+
+	public void twistMax() {
+		clawTwist.set(ControlMode.PercentOutput, 1);
 	}
 
 	public double getWristCurrent() {

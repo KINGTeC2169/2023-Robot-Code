@@ -20,7 +20,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
@@ -45,6 +47,11 @@ public class LineUp extends CommandBase {
     private boolean y = false;
     private boolean turn = true;
 
+    private ShuffleboardTab tab = Shuffleboard.getTab("PID apriltag");
+    private GenericEntry px = tab.addPersistent("P-X", 0.0016).getEntry();
+    private GenericEntry pr = tab.addPersistent("P-Rotate", 0.05).getEntry();
+    private GenericEntry py = tab.addPersistent("P-Y", 0.7).getEntry();
+
     /**
      * Creates a new ExampleCommand.
      *
@@ -52,7 +59,7 @@ public class LineUp extends CommandBase {
      */
     public LineUp(SwerveSubsystem swerve) {
         this.swerve = swerve;
-        SmartDashboard.putNumber("P-X", 0.0016);
+        /*SmartDashboard.putNumber("P-X", 0.0016);
         SmartDashboard.putNumber("I-X", 0);
         SmartDashboard.putNumber("D-X", 0);
         SmartDashboard.putNumber("P-Rotate", .05);
@@ -60,7 +67,7 @@ public class LineUp extends CommandBase {
         SmartDashboard.putNumber("D-Rotate", 0);
         SmartDashboard.putNumber("P-Y", .7);
         SmartDashboard.putNumber("I-Y", 0);
-        SmartDashboard.putNumber("D-Y", 0);
+        SmartDashboard.putNumber("D-Y", 0);*/
        
         
         
@@ -82,15 +89,15 @@ public class LineUp extends CommandBase {
         pidRotate.setTolerance(8);
         pidX.setTolerance(5);
         pidY.setTolerance(.1);
-        pidX.setP(SmartDashboard.getNumber("P-X", 0.0012));
-        pidX.setI(SmartDashboard.getNumber("I-X", 0));
-        pidX.setD(SmartDashboard.getNumber("D-X", 0));
-        pidRotate.setP(SmartDashboard.getNumber("P-Rotate", 0.14));
-        pidRotate.setI(SmartDashboard.getNumber("I-Rotate", 0));
-        pidRotate.setD(SmartDashboard.getNumber("D-Rotate", 0));
-        pidY.setP(SmartDashboard.getNumber("P-Y", .7));
-        pidY.setI(SmartDashboard.getNumber("I-Y", 0));
-        pidY.setD(SmartDashboard.getNumber("D-Y", 0));
+        pidX.setP(px.getDouble(0));
+        //pidX.setI(SmartDashboard.getNumber("I-X", 0));
+        //pidX.setD(SmartDashboard.getNumber("D-X", 0));
+        pidRotate.setP(pr.getDouble(0));
+        //pidRotate.setI(SmartDashboard.getNumber("I-Rotate", 0));
+        //pidRotate.setD(SmartDashboard.getNumber("D-Rotate", 0));
+        pidY.setP(py.getDouble(0));
+        //pidY.setI(SmartDashboard.getNumber("I-Y", 0));
+        //pidY.setD(SmartDashboard.getNumber("D-Y", 0));
         
         
     }
@@ -101,40 +108,17 @@ public class LineUp extends CommandBase {
         xSpeed = 0;
         ySpeed = 0;
         turningSpeed = 0;
-        SmartDashboard.putBoolean("Rotate Setpoint", pidRotate.atSetpoint());
-        if(!centered && NetworkTables.apriltagYaw() != -2169) {
+        if(NetworkTables.apriltagYaw() != -2169) {
 
-            if(turn) {
                 turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0) * .2;
-                if(pidRotate.atSetpoint()) {
-                    turn = false;
-                    x = true;
-                }
-            } 
-            
-            
            
-
-            if(x) {
-                //pidX.setGoal(960);
                 xSpeed = pidX.calculate(-NetworkTables.apriltagCenter()[0], 0);
-                if(pidX.atSetpoint()) {
-                    x = false;
-                    y = true;
-                }
-            }
-            if(y) {
-                
+             
                 ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
-                
-                if(pidY.atSetpoint()) {
-                    y = false;
-                }
-            }
-            
-            if(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint()){
-                end(false);
-            }
+               
+        }
+        if(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint()){
+            end(false);
         }
 
         
