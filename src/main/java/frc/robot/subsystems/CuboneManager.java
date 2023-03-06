@@ -9,15 +9,15 @@ public class CuboneManager extends SubsystemBase {
     private static boolean coneInFront;
     private static boolean cubeInFront;
 
-    private ShuffleboardTab tab = Shuffleboard.getTab("Arm");
+    private ShuffleboardTab tab = Shuffleboard.getTab("Cubone Manager");
 
     public CuboneManager() {}
 
     @Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-        tab.addBoolean("Cone in Front", coneInFront);
-		tab.addBoolean("Cube in Front", cubeInFront);
+        tab.addBoolean("Cone in Front", () -> coneInFront);
+		tab.addBoolean("Cube in Front", () -> cubeInFront);
         switch(NetworkTables.isThereObject()) {
             case "Cube": cubeInFront = true; 
             coneInFront = false;
@@ -34,22 +34,6 @@ public class CuboneManager extends SubsystemBase {
         }
 	}
 
-    public static boolean isConeInClaw() {
-        return coneInClaw;
-    }
-
-    public static void setConeInClaw(boolean coneInClaw) {
-        CuboneManager.coneInClaw = coneInClaw;
-    }
-
-    public static boolean isCubeInClaw() {
-        return cubeInClaw;
-    }
-
-    public static void setCubeInClaw(boolean cubeInClaw) {
-        CuboneManager.cubeInClaw = cubeInClaw;
-    }
-
     public static boolean isConeInFront() {
         return coneInFront;
     }
@@ -60,9 +44,5 @@ public class CuboneManager extends SubsystemBase {
     
     public static boolean isSomethingInFront() {
         return cubeInFront || coneInFront;
-    }
-
-    public static boolean isSomethingInClaw() {
-        return cubeInClaw || coneInClaw;
     }
 }
