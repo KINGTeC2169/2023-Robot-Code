@@ -34,6 +34,14 @@ public class CuboneManager extends SubsystemBase {
         }
 	}
 
+    public static boolean isConeInbound() {
+        return NetworkTables.getPalmCenter("Cone")[0] != -2169;
+    }
+
+    public static boolean isCubeInbound() {
+        return NetworkTables.getPalmCenter("Cube")[0] != -2169;
+    }
+
     public static boolean isConeInFront() {
         return coneInFront;
     }

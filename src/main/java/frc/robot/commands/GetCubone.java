@@ -13,6 +13,9 @@ import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
@@ -21,6 +24,16 @@ public class GetCubone extends CommandBase {
 	private final Claw claw;
 	private final SwerveSubsystem swerve;
 	private final Arm arm;
+
+	private final ShuffleboardTab tab = Shuffleboard.getTab("GetCubone");
+	private final GenericEntry pClawRotate = tab.addPersistent("P Claw Rotate", 0).getEntry();
+	private final GenericEntry pX = tab.addPersistent("P X", 0).getEntry();
+	private final GenericEntry pY = tab.addPersistent("P Y", 0).getEntry();
+	private final GenericEntry pTurn = tab.addPersistent("P Turn", 0).getEntry();
+	private final GenericEntry yTol = tab.addPersistent("Y Tol", 0).getEntry();
+	private final GenericEntry rotateTol = tab.addPersistent("Turn Tol", 0).getEntry();
+	private final GenericEntry xTol = tab.addPersistent("X Tol", 0).getEntry();
+	private final GenericEntry clawTol = tab.addPersistent("Claw Tol", 0).getEntry();
 
 
 	private double xSpeed;
@@ -33,6 +46,7 @@ public class GetCubone extends CommandBase {
 	private final PIDController pidTurn;
 	private final PIDController pidX;
 	private final PIDController pidY;
+	private final PIDController pidClawRotate;
 	/**
 	 * Creates a new ExampleCommand.
 	 *
@@ -46,6 +60,9 @@ public class GetCubone extends CommandBase {
 		addRequirements(claw);
 		addRequirements(swerve);
 		addRequirements(arm);
+
+		
+		pidClawRotate = new PIDController(.05, 0, 0);
 		pidTurn = new PIDController(0.5, 0, 0);
 		pidX = new PIDController(0.5, 0, 0);
 		pidY = new PIDController(0.5, 0, 0);
@@ -55,6 +72,16 @@ public class GetCubone extends CommandBase {
 	@Override
 	public void initialize() {
 		claw.resetTwistEncoder();
+
+		pidClawRotate.setTolerance(clawTol.getDouble(0));
+		pidTurn.setTolerance(rotateTol.getDouble(0));
+		pidX.setTolerance(xTol.getDouble(0));
+		pidY.setTolerance(yTol.getDouble(0));
+
+		pidClawRotate.setP(pClawRotate.getDouble(0));
+		pidTurn.setP(pTurn.getDouble(0));
+		pidX.setP(pX.getDouble(0));
+		pidY.setP(pY.getDouble(0));
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
@@ -62,15 +89,15 @@ public class GetCubone extends CommandBase {
 	public void execute() {
 		
 		if(!itemCentered) {
-			if(CuboneManager.isConeInClaw()) {
-				xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 240);
+			if(CuboneManager.isConeInbound()) {
+				xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 320);
 				ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 240);
-				claw.twistClaw(pidTurn.calculate(NetworkTables.getPalmAngle("Cone"), 0));
+				claw.twistClaw(pidClawRotate.calculate(NetworkTables.getPalmAngle("Cone"), 0));
 				itemCentered = pidX.atSetpoint() && pidY.atSetpoint() && pidTurn.atSetpoint();
 			}
-			else if(CuboneManager.isCubeInClaw()) {
-				xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 0);
-				ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 0);
+			else if(CuboneManager.isCubeInbound()) {
+				xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 320);
+				ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 240);
 				itemCentered = pidX.atSetpoint() && pidY.atSetpoint();
 			}
 			else if(CuboneManager.isSomethingInFront() || !NetworkTables.isThereObjectPalm()) {
@@ -92,7 +119,7 @@ public class GetCubone extends CommandBase {
 			
 		}
 
-		chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+		chassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, turningSpeed);
 			
 
 		SwerveModuleState[] moduleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
