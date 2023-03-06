@@ -18,12 +18,22 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 
 public class LineUpCubone extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final SwerveSubsystem swerve;
+
+    private final ShuffleboardTab tab = Shuffleboard.getTab("LineUp Cubone");
+	private final GenericEntry pY = tab.addPersistent("P Y", 0).getEntry();
+	private final GenericEntry pRotate = tab.addPersistent("P Rotate", 0).getEntry();
+    private final GenericEntry yTol = tab.addPersistent("Y Tol", 0).getEntry();
+	private final GenericEntry rotateTol = tab.addPersistent("Turn Tol", 0).getEntry();
+
 
     private final PIDController pidY;
     private final PIDController pidRotate;
@@ -51,7 +61,11 @@ public class LineUpCubone extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        pidRotate.setTolerance(4);
+        pidRotate.setTolerance(rotateTol.getDouble(0));
+        pidY.setTolerance(yTol.getDouble(0));
+
+        pidY.setP(pY.getDouble(0));
+        pidRotate.setP(pRotate.getDouble(0));
         
         
     }

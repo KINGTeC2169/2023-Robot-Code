@@ -1,23 +1,23 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class CuboneManager extends SubsystemBase {
-    private static boolean coneInClaw;
-    private static boolean cubeInClaw;
     private static boolean coneInFront;
     private static boolean cubeInFront;
+
+    private ShuffleboardTab tab = Shuffleboard.getTab("Cubone Manager");
 
     public CuboneManager() {}
 
     @Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		SmartDashboard.putBoolean("Cone in Claw", coneInClaw);
-		SmartDashboard.putBoolean("Cube in Claw", cubeInClaw);
-        SmartDashboard.putBoolean("Cone in Front", coneInFront);
-		SmartDashboard.putBoolean("Cube in Front", cubeInFront);
+        tab.addBoolean("Cone in Front", () -> coneInFront);
+		tab.addBoolean("Cube in Front", () -> cubeInFront);
         switch(NetworkTables.isThereObject()) {
             case "Cube": cubeInFront = true; 
             coneInFront = false;
@@ -34,20 +34,12 @@ public class CuboneManager extends SubsystemBase {
         }
 	}
 
-    public static boolean isConeInClaw() {
-        return coneInClaw;
+    public static boolean isConeInbound() {
+        return NetworkTables.getPalmCenter("Cone")[0] != -2169;
     }
 
-    public static void setConeInClaw(boolean coneInClaw) {
-        CuboneManager.coneInClaw = coneInClaw;
-    }
-
-    public static boolean isCubeInClaw() {
-        return cubeInClaw;
-    }
-
-    public static void setCubeInClaw(boolean cubeInClaw) {
-        CuboneManager.cubeInClaw = cubeInClaw;
+    public static boolean isCubeInbound() {
+        return NetworkTables.getPalmCenter("Cube")[0] != -2169;
     }
 
     public static boolean isConeInFront() {
@@ -60,9 +52,5 @@ public class CuboneManager extends SubsystemBase {
     
     public static boolean isSomethingInFront() {
         return cubeInFront || coneInFront;
-    }
-
-    public static boolean isSomethingInClaw() {
-        return cubeInClaw || coneInClaw;
     }
 }

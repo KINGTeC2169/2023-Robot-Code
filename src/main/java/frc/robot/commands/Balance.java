@@ -6,6 +6,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -16,6 +20,11 @@ import frc.robot.Constants.DriveConstants;
 public class Balance extends CommandBase {
     private SwerveSubsystem swerveSubsystem;
 
+    private final ShuffleboardTab tab = Shuffleboard.getTab("Balance");
+	private final GenericEntry pX = tab.addPersistent("P X", 0).getEntry();
+	private final GenericEntry pY = tab.addPersistent("P Y", 0).getEntry();
+	private final GenericEntry pTurn = tab.addPersistent("P Turn", 0).getEntry();
+
     private final PIDController pidTurn;
     private final PIDController pidX;
     private final PIDController pidY;
@@ -23,6 +32,7 @@ public class Balance extends CommandBase {
     private double xSpeed;
     private double ySpeed;
     private double turningSpeed;
+    private boolean balanced;
 
     
     public Balance(SwerveSubsystem swerveSubsystem) {
@@ -33,8 +43,13 @@ public class Balance extends CommandBase {
         pidY = new PIDController(0.5, 0, 0);
     }
 
+
     @Override
     public void initialize() {
+        pidTurn.setP(pTurn.getDouble(0));
+		pidX.setP(pX.getDouble(0));
+		pidY.setP(pY.getDouble(0));
+        tab.addBoolean("Balanced?", () -> balanced);
     }
 
     @Override
@@ -42,7 +57,13 @@ public class Balance extends CommandBase {
 
        xSpeed = pidX.calculate(NavX.getPitch(), 0);
        ySpeed = pidY.calculate(NavX.getYaw(), 0);
-       chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+       chassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, turningSpeed);
+
+       if(pidX.atSetpoint() && pidY.atSetpoint()) {
+        balanced = true;
+       } else {
+        balanced = false;
+       }
 
 
         SwerveModuleState[] moduleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
