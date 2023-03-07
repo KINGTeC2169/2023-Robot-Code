@@ -51,6 +51,9 @@ public class LineUp extends CommandBase {
     private GenericEntry px = tab.addPersistent("P-X", 0.0016).getEntry();
     private GenericEntry pr = tab.addPersistent("P-Rotate", 0.05).getEntry();
     private GenericEntry py = tab.addPersistent("P-Y", 0.7).getEntry();
+    private final GenericEntry xTol = tab.addPersistent("X Tol", 0).getEntry();
+    private final GenericEntry yTol = tab.addPersistent("Y Tol", 0).getEntry();
+    private final GenericEntry rotateTol = tab.addPersistent("Rotate Tol", 0).getEntry();
 
     /**
      * Creates a new ExampleCommand.
@@ -68,15 +71,19 @@ public class LineUp extends CommandBase {
         SmartDashboard.putNumber("P-Y", .7);
         SmartDashboard.putNumber("I-Y", 0);
         SmartDashboard.putNumber("D-Y", 0);*/
+        
        
         
         
        
 
         addRequirements(swerve);
-        pidX = new PIDController(0.0012, 0, 0);
-        pidY = new PIDController(0.7, 0, 0);
-        pidRotate = new PIDController(0.05, 0, 0);
+        pidX = new PIDController(1.5, 0, 0);
+        pidY = new PIDController(1.5, 0, 0);
+        pidRotate = new PIDController(0.04, 0, 0);
+        tab.addBoolean("Rotate Setpoint" , () -> pidRotate.atSetpoint());
+        tab.addBoolean("X Setpoint" , () -> pidX.atSetpoint());
+        tab.addBoolean("Y Setpoint" , () -> pidY.atSetpoint());
 
     }
 
@@ -86,9 +93,9 @@ public class LineUp extends CommandBase {
         x = false;
         y = false;
         turn = true;
-        pidRotate.setTolerance(8);
-        pidX.setTolerance(5);
-        pidY.setTolerance(.1);
+        pidRotate.setTolerance(rotateTol.getDouble(0));
+        pidX.setTolerance(xTol.getDouble(0));
+        pidY.setTolerance(yTol.getDouble(0));
         pidX.setP(px.getDouble(0));
         //pidX.setI(SmartDashboard.getNumber("I-X", 0));
         //pidX.setD(SmartDashboard.getNumber("D-X", 0));
@@ -108,18 +115,32 @@ public class LineUp extends CommandBase {
         xSpeed = 0;
         ySpeed = 0;
         turningSpeed = 0;
+        
+
         if(NetworkTables.apriltagYaw() != -2169) {
 
-                turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0) * .2;
+
+            
+
+            //TODO:make this work with the controller board
+                if(true) {
+                    xSpeed = pidX.calculate(-NetworkTables.apriltagX(), 0);
+                    turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0);
+                } else if(false){
+                    xSpeed = pidX.calculate(-NetworkTables.apriltagX(), 0.559);
+                    turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), -5);
+                } else if(false) {
+                    xSpeed = pidX.calculate(-NetworkTables.apriltagX(), -0.559);
+                    turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 5);
+                }
+                
            
-                xSpeed = pidX.calculate(-NetworkTables.apriltagCenter()[0], 0);
+                
              
                 ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
                
         }
-        if(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint()){
-            end(false);
-        }
+        
 
         
         chassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, turningSpeed);
@@ -142,6 +163,6 @@ public class LineUp extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return finished;
+        return pidRotate.atSetpoint() && pidX.atSetpoint() || NetworkTables.apriltagYaw() == -2169 ;
     }
 }

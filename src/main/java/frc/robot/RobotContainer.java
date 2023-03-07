@@ -37,6 +37,7 @@ import frc.robot.commands.LineUp;
 import frc.robot.commands.LineUpCubone;
 import frc.robot.commands.SwerveCommand;
 import frc.robot.commands.TurnToPosition;
+import frc.robot.commands.ArmClaw.High;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.CuboneManager;
@@ -73,7 +74,8 @@ public class RobotContainer {
 
 
 	private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  
-	private final LineUp lineUp = new LineUp(swerveSubsystem);
+	//private final LineUp lineUp = new LineUp(swerveSubsystem);
+	private final SequentialCommandGroup lineupHigh = new SequentialCommandGroup(new LineUp(swerveSubsystem), new High(arm, claw));
 	private final LineUpCubone lineUpCubone = new LineUpCubone(swerveSubsystem); 
 	//private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
 	private final CommandXboxController controller = new CommandXboxController(Ports.controller);
@@ -109,7 +111,7 @@ public class RobotContainer {
 	
 		eventMap.put("marker1", new PrintCommand("Passed marker 1"));
 		eventMap.put("pickUp", new PrintCommand("Picking up object"));
-		eventMap.put("lineUp", lineUp);
+		//eventMap.put("lineUp", lineUp);
 		eventMap.put("score", new PrintCommand("Scoring"));
 	
 		
@@ -188,7 +190,7 @@ public class RobotContainer {
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos()));
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
 		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab(), claw));
-    	controller.start().whileTrue(lineUp);
+    	controller.start().whileTrue(lineupHigh);
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos()));
 		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos()));
 		controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(0.5), () -> claw.twistClaw(0),  claw).repeatedly());
