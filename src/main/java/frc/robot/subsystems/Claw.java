@@ -5,15 +5,21 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
 
@@ -25,12 +31,17 @@ public class Claw extends SubsystemBase {
 	private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(Ports.wristEncoder);
 	private double wristPos;
 	private double twistPos;
+	
+	
 
 	private ShuffleboardTab tab = Shuffleboard.getTab("Arm");
 
+	private Constraints twistLimits = new Constraints(0.5, 0.5);
+	private GenericEntry twistP = tab.addPersistent("Twist P", 0.5).getEntry();
+	private ProfiledPIDController twistPID = new ProfiledPIDController(twistP.getDouble(0.5), 0.0, 0.0, twistLimits);
+
 	/** Creates a new ExampleSubsystem. */
 	public Claw() {
-
 		wristMotor.config_kP(0, 0.3);
 		clawTwist.config_kP(0, 0.5);
 		wristPos = wristMotor.getSelectedSensorPosition();
@@ -39,16 +50,19 @@ public class Claw extends SubsystemBase {
 
 		//tab.addDouble("Twist Encoder", () -> getTwistEncoder());
 		tab.addDouble("Wrist Encoder", () -> getWristEncoder());
-		tab.addDouble("Twist Absolute", () -> twistEncoder.getAbsolutePosition());
-		tab.addDouble("Wrist Absolute", () -> wristEncoder.getAbsolutePosition());
+		tab.addDouble("Twist Absolute", () -> getAbsoluteTwist());
+		tab.addDouble("Wrist Absolute", () -> getAbsoluteWrist());
 
 		tab.addDouble("Twist Current", () -> getTwistCurrent());
 		tab.addDouble("Wrist Current", () -> getWristCurrent());
 
+		resetWristEncoder();
+		resetTwistEncoder();
 	}
 
 	@Override
 	public void periodic() {
+		twistPID.setP(twistP.getDouble(0.5));
 	}
 
 	public void twistUpPos() {
@@ -81,6 +95,12 @@ public class Claw extends SubsystemBase {
   	public void moveWrist(double power) {
     	wristMotor.set(ControlMode.PercentOutput, power);
   	}
+	public double getAbsoluteWrist() {
+		return wristEncoder.getAbsolutePosition() * 360;
+	}
+	public double getAbsoluteTwist() {
+		return twistEncoder.getAbsolutePosition() * 360;
+	}
 
 	public void grab() {
 		//grabber.set(true);
@@ -113,7 +133,7 @@ public class Claw extends SubsystemBase {
 	}
 
 	public double getWristEncoder() {
-		return wristMotor.getSelectedSensorPosition();
+		return wristMotor.getSelectedSensorPosition() / 979.45;
 	}
 
 	public double getTwistEncoder() {
@@ -121,17 +141,15 @@ public class Claw extends SubsystemBase {
 	}
 
 	public void resetWristEncoder() {
-		wristMotor.setSelectedSensorPosition(0);
+		wristMotor.setSelectedSensorPosition(getAbsoluteWrist() * 979.45);
 	}
 
 	public void resetTwistEncoder() {
 		clawTwist.setSelectedSensorPosition(0);
 	}
 
-	public double setTwistAngle(double angle) {
-		//TODO convert angle to encoder ticks
-		clawTwist.set(ControlMode.Position, angle);
-		return clawTwist.getClosedLoopError();
+	public void setTwistAngle(double angle) {
+		clawTwist.set(ControlMode.PercentOutput, twistPID.calculate(getAbsoluteTwist(), angle));
 	}
 
 	@Override

@@ -111,7 +111,7 @@ public class GetCubone extends CommandBase {
 				gottem = true;
 			}
 			if(gottem) {
-				if(arm.setArmAngle(30) < 1000 && claw.setTwistAngle(0) < 1) {
+				if(arm.setArmAngle(30) < 1000) {
 					arm.winchStop();
 					claw.twistClaw(0);
 				}
