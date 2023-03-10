@@ -88,6 +88,9 @@ public class GetCubone extends CommandBase {
 	@Override
 	public void execute() {
 		
+		while(arm.setElevatorPosition(11) > 1) {
+		
+		}
 		if(!itemCentered) {
 			if(CuboneManager.isConeInbound()) {
 				xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 320);
