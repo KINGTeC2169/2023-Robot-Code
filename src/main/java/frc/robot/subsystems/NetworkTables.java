@@ -145,9 +145,9 @@ public class NetworkTables {
             if(closestApriltag().equals("front")) {
                 adder = 0;
             } else if(closestApriltag().equals("left")) {
-                adder = -60;
+                adder = -30;
             } else if(closestApriltag().equals("right")) {
-                adder = 60;
+                adder = 30;
             }
             if(table.getEntry("" + closestApriltag() + "-apriltag-Yaw").getDouble(-2169) != -2169) {
                 return table.getEntry("" + closestApriltag() + "-apriltag-Yaw").getDouble(-2169) + adder;

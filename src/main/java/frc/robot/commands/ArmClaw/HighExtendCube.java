@@ -4,13 +4,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
-public class High extends CommandBase {
+public class HighExtendCube extends CommandBase {
 
 
     private Arm arm;
     private Claw claw;
+    private boolean imDoneMate;
 
-    public High(Arm arm, Claw claw) {
+    public HighExtendCube(Arm arm, Claw claw) {
         this.arm = arm;
         this.claw = claw;
         addRequirements(arm, claw);
@@ -22,9 +23,21 @@ public class High extends CommandBase {
 
     @Override
     public void execute() {
-        arm.setArmAngle(45);
-        claw.setTwistAngle(0);
-        
-    }
+        arm.setElevatorPosition(293200);
     
+
+    }
+    @Override
+	public void end(boolean interrupted) {
+        if(!interrupted)
+            claw.unGrab();
+
+	}
+
+
+    
+    @Override
+    public boolean isFinished() {
+        return arm.getElevatorEncoder() > 290000;
+    }
 }

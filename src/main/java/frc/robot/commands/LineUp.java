@@ -20,7 +20,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
@@ -45,6 +47,14 @@ public class LineUp extends CommandBase {
     private boolean y = false;
     private boolean turn = true;
 
+    private ShuffleboardTab tab = Shuffleboard.getTab("PID apriltag");
+    private GenericEntry px = tab.addPersistent("P-X", 0.0016).getEntry();
+    private GenericEntry pr = tab.addPersistent("P-Rotate", 0.05).getEntry();
+    private GenericEntry py = tab.addPersistent("P-Y", 0.7).getEntry();
+    private final GenericEntry xTol = tab.addPersistent("X Tol", 0).getEntry();
+    private final GenericEntry yTol = tab.addPersistent("Y Tol", 0).getEntry();
+    private final GenericEntry rotateTol = tab.addPersistent("Rotate Tol", 0).getEntry();
+
     /**
      * Creates a new ExampleCommand.
      *
@@ -52,7 +62,7 @@ public class LineUp extends CommandBase {
      */
     public LineUp(SwerveSubsystem swerve) {
         this.swerve = swerve;
-        SmartDashboard.putNumber("P-X", 0.0016);
+        /*SmartDashboard.putNumber("P-X", 0.0016);
         SmartDashboard.putNumber("I-X", 0);
         SmartDashboard.putNumber("D-X", 0);
         SmartDashboard.putNumber("P-Rotate", .05);
@@ -60,16 +70,20 @@ public class LineUp extends CommandBase {
         SmartDashboard.putNumber("D-Rotate", 0);
         SmartDashboard.putNumber("P-Y", .7);
         SmartDashboard.putNumber("I-Y", 0);
-        SmartDashboard.putNumber("D-Y", 0);
+        SmartDashboard.putNumber("D-Y", 0);*/
+        
        
         
         
        
 
         addRequirements(swerve);
-        pidX = new PIDController(0.0012, 0, 0);
-        pidY = new PIDController(0.7, 0, 0);
-        pidRotate = new PIDController(0.05, 0, 0);
+        pidX = new PIDController(1.5, 0, 0);
+        pidY = new PIDController(1.5, 0, 0);
+        pidRotate = new PIDController(0.04, 0, 0);
+        tab.addBoolean("Rotate Setpoint" , () -> pidRotate.atSetpoint());
+        tab.addBoolean("X Setpoint" , () -> pidX.atSetpoint());
+        tab.addBoolean("Y Setpoint" , () -> pidY.atSetpoint());
 
     }
 
@@ -79,18 +93,22 @@ public class LineUp extends CommandBase {
         x = false;
         y = false;
         turn = true;
-        pidRotate.setTolerance(8);
-        pidX.setTolerance(5);
-        pidY.setTolerance(.1);
-        pidX.setP(SmartDashboard.getNumber("P-X", 0.0012));
-        pidX.setI(SmartDashboard.getNumber("I-X", 0));
-        pidX.setD(SmartDashboard.getNumber("D-X", 0));
-        pidRotate.setP(SmartDashboard.getNumber("P-Rotate", 0.14));
-        pidRotate.setI(SmartDashboard.getNumber("I-Rotate", 0));
-        pidRotate.setD(SmartDashboard.getNumber("D-Rotate", 0));
-        pidY.setP(SmartDashboard.getNumber("P-Y", .7));
-        pidY.setI(SmartDashboard.getNumber("I-Y", 0));
-        pidY.setD(SmartDashboard.getNumber("D-Y", 0));
+        centered = false;
+        pidRotate.setTolerance(rotateTol.getDouble(0));
+        pidX.setTolerance(xTol.getDouble(0));
+        pidY.setTolerance(yTol.getDouble(0));
+        pidX.setP(px.getDouble(0));
+        //pidX.setI(SmartDashboard.getNumber("I-X", 0));
+        //pidX.setD(SmartDashboard.getNumber("D-X", 0));
+        pidRotate.setP(pr.getDouble(0));
+        //pidRotate.setI(SmartDashboard.getNumber("I-Rotate", 0));
+        //pidRotate.setD(SmartDashboard.getNumber("D-Rotate", 0));
+        pidY.setP(py.getDouble(0));
+        //pidY.setI(SmartDashboard.getNumber("I-Y", 0));
+        //pidY.setD(SmartDashboard.getNumber("D-Y", 0));
+        pidRotate.calculate(-NetworkTables.apriltagYaw(), 0);
+        pidX.calculate(-NetworkTables.apriltagX(), 0);
+        ySpeed = pidY.calculate(NetworkTables.apriltagY(), .5);
         
         
     }
@@ -101,41 +119,38 @@ public class LineUp extends CommandBase {
         xSpeed = 0;
         ySpeed = 0;
         turningSpeed = 0;
-        SmartDashboard.putBoolean("Rotate Setpoint", pidRotate.atSetpoint());
-        if(!centered && NetworkTables.apriltagYaw() != -2169) {
+        System.out.print("SUSSY BAKA");
+        
 
-            if(turn) {
-                turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0) * .2;
-                if(pidRotate.atSetpoint()) {
-                    turn = false;
-                    x = true;
+        if(NetworkTables.apriltagYaw() != -2169 && !(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint())) {
+
+            
+
+            //TODO:make this work with the controller board
+                if(true) {
+                    xSpeed = pidX.calculate(-NetworkTables.apriltagX(), .5);
+                    turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0);
+                    if(pidX.atSetpoint() && pidRotate.atSetpoint()) {
+                        centered = true;
+                    }
+                    if(centered) {
+                        ySpeed = pidY.calculate(NetworkTables.apriltagY(), .54);
+                    }
+                } else if(false){
+                    xSpeed = pidX.calculate(-NetworkTables.apriltagX(), 0.559);
+                    turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), -5);
+                } else if(false) {
+                    xSpeed = pidX.calculate(-NetworkTables.apriltagX(), -0.559);
+                    turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 5);
                 }
-            } 
-            
-            
+                
            
-
-            if(x) {
-                //pidX.setGoal(960);
-                xSpeed = pidX.calculate(-NetworkTables.apriltagCenter()[0], 0);
-                if(pidX.atSetpoint()) {
-                    x = false;
-                    y = true;
-                }
-            }
-            if(y) {
                 
-                ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
-                
-                if(pidY.atSetpoint()) {
-                    y = false;
-                }
-            }
-            
-            if(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint()){
-                end(false);
-            }
+             
+              
+               
         }
+        
 
         
         chassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, turningSpeed);
@@ -152,12 +167,13 @@ public class LineUp extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        swerve.stopModules();
     
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return finished;
+        return pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint();
     }
 }

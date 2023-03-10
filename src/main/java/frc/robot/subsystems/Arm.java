@@ -56,7 +56,7 @@ public class Arm extends SubsystemBase {
         tab.addDouble("Elevator Position", () -> getElevatorEncoder()).withPosition(7, 0);
 
         tab.addDouble("Winch Position", () -> getLiftAngle()).withPosition(7, 1);
-        tab.addDouble("Absolute Angle", () -> getAngleAbsolute());
+        tab.addDouble("Absolute Angle", () -> getAngleAbsolute()).withPosition(7, 2);
 
         currents.addDouble("Winch Current", () -> getWinchCurrent()).withWidget(BuiltInWidgets.kVoltageView);
         currents.addDouble("Elevator Current", () -> getElevatorCurrent()).withWidget(BuiltInWidgets.kVoltageView);
@@ -93,7 +93,8 @@ public class Arm extends SubsystemBase {
         }
     }
     public void setWinch(double angle) {
-        winchMotor.set(ControlMode.Position, angle * 13540.4526);
+       // if(angle < winchUpperLimit.getDouble(WINCH_UPPER_LIMIT) && angle > winchLowerLimit.getDouble(WINCH_LOWER_LIMIT))
+            winchMotor.set(ControlMode.Position, angle * 13540.4526);
     }
     /**Lifts arm by winch speed value from shuffleboard. ControlMode.Position */
     public void winchUpPos() {
@@ -117,24 +118,13 @@ public class Arm extends SubsystemBase {
         }
     }
 
-    public void extend(double power) {
-        elevatorMotor.set(ControlMode.PercentOutput, power);
-    }
-
-    public void retract(double power) {
-        elevatorMotor.set(ControlMode.PercentOutput, -power);
-    }
-
-    public void setElevatorPower(double power) {
-        elevatorMotor.set(ControlMode.PercentOutput, power);
-    }
-
     public double getElevatorEncoder() {
         return elevatorMotor.getSelectedSensorPosition();
     }
-    public double setElevatorPosition(double inches) {
-        winchMotor.set(ControlMode.Position, inches);
-        return winchMotor.getClosedLoopError();
+    public double setElevatorPosition(double pos) {
+        if(pos > elevatorLowerLimit.getDouble(ELEVATOR_LOWER_LIMIT) && pos < elevatorUpperLimit.getDouble(ELEVATOR_UPPER_LIMIT))
+            elevatorMotor.set(ControlMode.Position, pos);
+        return elevatorMotor.getClosedLoopError();
     }
 
     public double getElevatorCurrent() {
@@ -153,13 +143,6 @@ public class Arm extends SubsystemBase {
         elevatorMotor.set(ControlMode.Position, 0);
         }
 
-    public void winchUp() {
-        winchMotor.set(ControlMode.PercentOutput, 0.3);
-    }
-
-    public void winchDown() {
-        winchMotor.set(ControlMode.PercentOutput, -0.3);
-    }
     public void winchStop() {
         winchMotor.set(ControlMode.PercentOutput, 0);
     }
@@ -180,6 +163,12 @@ public class Arm extends SubsystemBase {
     public double getLiftAngle() {
         return winchMotor.getSelectedSensorPosition() / 13540.4526;
         
+    }
+
+    //TODO: check if this is right, I think it is but I dont know why you got rid of it
+    public double setArmAngle(double degrees) {
+        winchMotor.set(ControlMode.Position, degrees * 13540.4526);
+        return winchMotor.getClosedLoopError();
     }
 
     public void resetWinchEncoder() {
