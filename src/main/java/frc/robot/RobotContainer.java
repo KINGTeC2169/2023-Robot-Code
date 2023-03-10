@@ -89,19 +89,43 @@ public class RobotContainer {
 	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
 
 
-	private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  
+	private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  	
 	
-	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new HighExtendCone(arm),new WaitCommand(.5), new HighFinishCone(arm, claw));
-	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(new HighAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new HighExtendCube(arm, claw));
-	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtendCone(arm),new WaitCommand(.5), new HighFinishCone(arm, claw));
 
-	private final SequentialCommandGroup lineupMediumConeLeft = new SequentialCommandGroup(new MediumAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new MediumExtendCone(arm),new WaitCommand(.5), new MediumFinishCone(arm, claw));
-	private final SequentialCommandGroup lineupMediumCube = new SequentialCommandGroup(new MediumAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new MediumExtendCube(arm, claw));
-	private final SequentialCommandGroup lineupMediumConeRight = new SequentialCommandGroup(new MediumAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new MediumExtendCone(arm),new WaitCommand(.5), new MediumFinishCone(arm, claw));
+	private final LineUpConeLeft lineUpConeLeft = new LineUpConeLeft(swerveSubsystem);
+	private final LineUpConeRight lineUpConeRight = new LineUpConeRight(swerveSubsystem);
+	private final LineUpCube lineUpCube = new LineUpCube(swerveSubsystem);
 
-	private final SequentialCommandGroup lineupLowConeLeft = new SequentialCommandGroup(new LowAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new LowExtendCone(arm),new WaitCommand(.5), new LowFinishCone(arm, claw));
-	private final SequentialCommandGroup lineupLowCube = new SequentialCommandGroup(new LowAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new LowExtendCube(arm, claw));
-	private final SequentialCommandGroup lineupLowConeRight = new SequentialCommandGroup(new LowAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new LowExtendCone(arm),new WaitCommand(.5), new LowFinishCone(arm, claw));
+	private final HighAnglesCone highAnglesCone = new HighAnglesCone(arm, claw);
+	private final HighExtendCone highExtendCone = new HighExtendCone(arm);
+	private final HighFinishCone highFinishCone = new HighFinishCone(arm, claw);
+
+	private final MediumAnglesCone mediumAnglesCone = new MediumAnglesCone(arm, claw);
+	private final MediumExtendCone mediumExtendCone = new MediumExtendCone(arm);
+	private final MediumFinishCone mediumFinishCone = new MediumFinishCone(arm, claw);
+
+	private final LowAnglesCone lowAnglesCone = new LowAnglesCone(arm, claw);
+	private final LowExtendCone lowExtendCone = new LowExtendCone(arm);
+	private final LowFinishCone lowFinishCone = new LowFinishCone(arm, claw);
+
+	private final HighAnglesCube highAnglesCube = new HighAnglesCube(arm, claw);
+	private final HighExtendCube highExtendCube = new HighExtendCube(arm, claw);
+	private final MediumAnglesCube mediumAnglesCube = new MediumAnglesCube(arm, claw);
+	private final MediumExtendCube mediumExtendCube = new MediumExtendCube(arm, claw);
+	private final LowAnglesCube lowAnglesCube = new LowAnglesCube(arm, claw);
+	private final LowExtendCube lowExtendCube = new LowExtendCube(arm, claw);
+
+	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(highAnglesCone, lineUpConeLeft, highExtendCone, new WaitCommand(.5), highFinishCone);
+	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(highAnglesCube, lineUpCube, highExtendCube);
+	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(highAnglesCone, lineUpConeRight, highExtendCone,new WaitCommand(.5), highFinishCone);
+
+	private final SequentialCommandGroup lineupMediumConeLeft = new SequentialCommandGroup(mediumAnglesCone, lineUpConeLeft, mediumExtendCone, new WaitCommand(.5), mediumFinishCone);
+	private final SequentialCommandGroup lineupMediumCube = new SequentialCommandGroup(mediumAnglesCube, lineUpCube, mediumExtendCube);
+	private final SequentialCommandGroup lineupMediumConeRight = new SequentialCommandGroup(mediumAnglesCone, lineUpConeRight, mediumExtendCone, new WaitCommand(.5), mediumFinishCone);
+
+	private final SequentialCommandGroup lineupLowConeLeft = new SequentialCommandGroup(lowAnglesCone, lineUpConeLeft, lowExtendCone, new WaitCommand(.5), lowFinishCone);
+	private final SequentialCommandGroup lineupLowCube = new SequentialCommandGroup(lowAnglesCube, lineUpCube, lowExtendCube);
+	private final SequentialCommandGroup lineupLowConeRight = new SequentialCommandGroup(lowAnglesCone, lineUpConeRight, lowExtendCone, new WaitCommand(.5), lowFinishCone);
 
 	
 
@@ -141,7 +165,7 @@ public class RobotContainer {
 	
 	
 		eventMap.put("marker1", new PrintCommand("Passed marker 1"));
-		eventMap.put("pickUp", new PrintCommand("Picking up object"));
+		eventMap.put("pickUp", new WaitCommand(5));
 		//eventMap.put("lineUp", lineUp);
 		eventMap.put("score", new PrintCommand("Scoring"));
 	
@@ -263,19 +287,6 @@ public class RobotContainer {
 	* @return the command to run in autonomous
 	*/
 	public Command getAutonomousCommand() {
-		TrajectoryConfig trajectoryConfig = new TrajectoryConfig(2,
-		 1).setKinematics(Constants.DriveConstants.DRIVE_KINEMATICS);
-
-
-		Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-			new Pose2d(0, 0, new Rotation2d(0)),
-			List.of(
-				new Translation2d(1, 0),
-				new Translation2d(1, -1)
-			),
-			new Pose2d(2, -1, Rotation2d.fromDegrees(180)),
-			trajectoryConfig
-		);
     
 		PathPlannerTrajectory examplePath = PathPlanner.loadPath("Test Path", new PathConstraints(3, 3));
 		Constraints angleConstraints = new Constraints(1.2, 1.2);
@@ -293,11 +304,15 @@ public class RobotContainer {
 			swerveSubsystem);
 
 		
-    return new SequentialCommandGroup(
+		/* 
+    	return new SequentialCommandGroup(
 			//new InstantCommand(() -> swerveSubsystem.resetOdometry(trajectory.getInitialPose())),
 			new InstantCommand(() -> swerveSubsystem.resetOdometry(examplePath.getInitialHolonomicPose())),
 			swerveControllerCommand,
 			new InstantCommand(() -> swerveSubsystem.stopModules())
-		);
+		); */
+
+		return autoBot;
+	
 	}
 }
