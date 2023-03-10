@@ -33,8 +33,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.GetCubone;
-import frc.robot.commands.LineUp;
-import frc.robot.commands.LineUpCubone;
+import frc.robot.commands.LineUpConeLeft;
+import frc.robot.commands.LineUpConeRight;
+import frc.robot.commands.LineUpCube;
 import frc.robot.commands.SwerveCommand;
 import frc.robot.commands.TurnToPosition;
 import frc.robot.commands.ArmClaw.HighAnglesCone;
@@ -79,14 +80,17 @@ public class RobotContainer {
 
 
 	private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  
-	//private final LineUp lineUp = new LineUp(swerveSubsystem);
-	private final SequentialCommandGroup lineupHigh = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUp(swerveSubsystem), new HighExtendCone(arm, claw),new WaitCommand(.5), new HighFinishCone(arm, claw));
-	private final LineUpCubone lineUpCubone = new LineUpCubone(swerveSubsystem); 
+	
+	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new HighExtendCone(arm, claw),new WaitCommand(.5), new HighFinishCone(arm, claw));
+	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(new HighAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new HighExtendCube(arm, claw));
+	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtendCone(arm, claw),new WaitCommand(.5), new HighFinishCone(arm, claw));
+
+	private final GetCubone getCubone = new GetCubone(claw, swerveSubsystem, arm);
 	//private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
 	private final CommandXboxController controller = new CommandXboxController(Ports.controller);
 	private final CommandJoystick joystick = new CommandJoystick(4);
 	private final XboxController joystickButtons = new XboxController(4);
-	private final XboxController buttonBoard = new XboxController(1);
+	private final CommandXboxController buttonBoard = new CommandXboxController(1);
 	private final Trigger button7 = new JoystickButton(joystickButtons, 7);
 	private final Trigger button14 = new JoystickButton(joystickButtons, 14);
 
@@ -196,14 +200,14 @@ public class RobotContainer {
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos()));
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
 		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab()));
-    	controller.start().whileTrue(lineupHigh);
+		controller.rightBumper().whileTrue(getCubone);
+		controller.start().whileTrue(lineupHighCube);
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos()));
 		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos()));
 		//controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(0.5), () -> claw.twistClaw(0)).repeatedly());
 		controller.povRight().whileTrue(Commands.run(() -> claw.twistUpPos()));
 		controller.povLeft().whileTrue(Commands.run(() -> claw.twistDownPos()));
 		//controller.povLeft().whileTrue(Commands.startEnd(() -> claw.setTwistAngle(45), () -> claw.twistClaw(0)).repeatedly());
-		//leftStick.button(1/*TODO: find the button that i can use*/).whileTrue(new LineUp(swerveSubsystem));
 		//leftStick.button(2).onTrue(Commands.runOnce(() -> NavX.reset()));
 		///rightStick.button(1).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders()));
 		rightStick.button(1).onTrue(Commands.runOnce(() -> NavX.reset()));
@@ -217,7 +221,9 @@ public class RobotContainer {
 
 		//Buttons
 
-		//buttonBoard.button(0, null);
+		buttonBoard.button(6).whileTrue(lineupHighConeLeft);
+		buttonBoard.button(7).whileTrue(lineupHighCube);
+		buttonBoard.button(8).whileTrue(lineupHighConeRight);
 
 
 	}

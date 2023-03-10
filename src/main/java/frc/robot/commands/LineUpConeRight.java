@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 
-public class LineUp extends CommandBase {
+public class LineUpConeRight extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final SwerveSubsystem swerve;
 
@@ -60,7 +60,7 @@ public class LineUp extends CommandBase {
      *
      * @param subsystem The subsystem used by this command.
      */
-    public LineUp(SwerveSubsystem swerve) {
+    public LineUpConeRight(SwerveSubsystem swerve) {
         this.swerve = swerve;
         /*SmartDashboard.putNumber("P-X", 0.0016);
         SmartDashboard.putNumber("I-X", 0);
@@ -119,30 +119,20 @@ public class LineUp extends CommandBase {
         xSpeed = 0;
         ySpeed = 0;
         turningSpeed = 0;
-        System.out.print("SUSSY BAKA");
         
 
         if(NetworkTables.apriltagYaw() != -2169 && !(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint())) {
 
             
-
-            //TODO:make this work with the controller board
-                if(true) {
-                    xSpeed = pidX.calculate(-NetworkTables.apriltagX(), .5);
-                    turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0);
-                    if(pidX.atSetpoint() && pidRotate.atSetpoint()) {
-                        centered = true;
-                    }
-                    if(centered) {
-                        ySpeed = pidY.calculate(NetworkTables.apriltagY(), .54);
-                    }
-                } else if(false){
-                    xSpeed = pidX.calculate(-NetworkTables.apriltagX(), 0.559);
-                    turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), -5);
-                } else if(false) {
-                    xSpeed = pidX.calculate(-NetworkTables.apriltagX(), -0.559);
-                    turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 5);
-                }
+            xSpeed = pidX.calculate(-NetworkTables.apriltagX(), .5);
+            turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0);
+            if(pidX.atSetpoint() && pidRotate.atSetpoint()) {
+                centered = true;
+            }
+            if(centered) {
+                ySpeed = pidY.calculate(NetworkTables.apriltagY(), .54);
+            }
+                
                 
            
                 
