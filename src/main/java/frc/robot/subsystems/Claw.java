@@ -29,8 +29,11 @@ public class Claw extends SubsystemBase {
 	private final DoubleSolenoid grabber = new DoubleSolenoid(PneumaticsModuleType.REVPH, Ports.grabberOne, Ports.grabberTwo);
 	private final DutyCycleEncoder twistEncoder = new DutyCycleEncoder(Ports.twistEncoder);
 	private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(Ports.wristEncoder);
+	private final DutyCycleEncoder twistRelative = new DutyCycleEncoder(3);
 	private double wristPos;
 	private double twistPos;
+	private double twistAngle = 0;
+	private double twistOffset;
 	
 	
 
@@ -38,8 +41,8 @@ public class Claw extends SubsystemBase {
 
 	private Constraints twistLimits = new Constraints(0.5, 0.5);
 	private GenericEntry twistP = tab.addPersistent("Twist P", 0.5).getEntry();
-	private ProfiledPIDController twistPID = new ProfiledPIDController(twistP.getDouble(0.5), 0.0, 0.0, twistLimits);
-
+	//private ProfiledPIDController twistPID = new ProfiledPIDController(twistP.getDouble(0.5), 0.0, 0.0, twistLimits);
+	private PIDController twistPID = new PIDController(twistP.getDouble(0.5), 0.0, 0.0);
 	/** Creates a new ExampleSubsystem. */
 	public Claw() {
 		wristMotor.config_kP(0, 0.3);
@@ -47,7 +50,7 @@ public class Claw extends SubsystemBase {
 		wristPos = wristMotor.getSelectedSensorPosition();
 		twistPos = clawTwist.getSelectedSensorPosition();
 		wristMotor.configAllowableClosedloopError(0, 100);
-
+		
 		//tab.addDouble("Twist Encoder", () -> getTwistEncoder());
 		tab.addDouble("Wrist Encoder", () -> getWristEncoder());
 		tab.addDouble("Twist Absolute", () -> getAbsoluteTwist());
@@ -56,6 +59,9 @@ public class Claw extends SubsystemBase {
 		tab.addDouble("Twist Current", () -> getTwistCurrent());
 		tab.addDouble("Wrist Current", () -> getWristCurrent());
 
+		tab.addDouble("Wrist Relative", () -> getRelativeTwist());
+		tab.addDouble("Absolute relative", () -> twistEncoder.get());
+		//twistEncoder.setPositionOffset(244/360);
 		resetWristEncoder();
 		resetTwistEncoder();
 	}
@@ -63,23 +69,46 @@ public class Claw extends SubsystemBase {
 	@Override
 	public void periodic() {
 		twistPID.setP(twistP.getDouble(0.5));
+		double number = twistPID.calculate(getAbsoluteTwist(), twistAngle);
+		if(number > 0.5)
+			number = 0.5;
+		if(number < -0.5)
+			number = -0.5;
+		clawTwist.set(ControlMode.PercentOutput, number);
 	}
 
 	public void twistUpPos() {
-		twistPos += 500;
-		clawTwist.set(ControlMode.Position, twistPos);
+
+		twistAngle = getAbsoluteTwist() + 50;
+		if (twistAngle > 100)
+			twistAngle = 100;
 	}
 	public void twistDownPos() {
-		twistPos -= 500;
-		clawTwist.set(ControlMode.Position, twistPos);
+		twistAngle = getAbsoluteTwist() - 50;
+		if (twistAngle < -100)
+			twistAngle = -100;
 	}
 	public void wristUpPos() {
-		wristPos = wristMotor.getSelectedSensorPosition() + 3000;
+		wristPos = wristMotor.getSelectedSensorPosition() + 5000;
+		if(wristPos > 0)
+			wristPos = 0;
 		wristMotor.set(ControlMode.Position, wristPos);
 	}
 	public void wristDownPos() {
-		wristPos = wristMotor.getSelectedSensorPosition() - 3000;
+		wristPos = wristMotor.getSelectedSensorPosition() - 5000;
+		if(wristPos < -130 * 979.45)
+			wristPos = -130 * 979.45;
 		wristMotor.set(ControlMode.Position, wristPos);
+	} 
+	public double setWristAngle(double angle) {
+		wristMotor.set(ControlMode.Position, angle * 979.45);
+		return wristMotor.getClosedLoopError() / 979.45;
+	}
+	public double setWristAngleSlow(double angle) {
+		wristMotor.configClosedLoopPeakOutput(0, 0.5);
+		wristMotor.set(ControlMode.Position, angle * 979.45);
+		wristMotor.configClosedLoopPeakOutput(0, .5);
+		return wristMotor.getClosedLoopError() / 979.45;
 	}
 	public void wristStopPos() {
 		wristMotor.set(ControlMode.Position, wristMotor.getSelectedSensorPosition());
@@ -96,21 +125,24 @@ public class Claw extends SubsystemBase {
     	wristMotor.set(ControlMode.PercentOutput, power);
   	}
 	public double getAbsoluteWrist() {
-		return wristEncoder.getAbsolutePosition() * 360;
+		return wristEncoder.getAbsolutePosition() * 360 - 244;
 	}
 	public double getAbsoluteTwist() {
-		return twistEncoder.getAbsolutePosition() * 360;
+		return twistEncoder.getAbsolutePosition() * 360 - 244;
+	}
+	public double getRelativeTwist() {
+		return twistRelative.get() * 360 - twistOffset;
 	}
 
 	public void grab() {
-		//grabber.set(true);
+		grabber.set(Value.kForward);
 		
 	}
 	public void unGrab() {
-		//grabber.set(false);
+		grabber.set(Value.kReverse);
 	}
 	public void setGrab(Boolean isGrab) {
-		//grabber.set(isGrab);
+		//grabber.set(Value.kReverse);
 	} 
 	public void toggleGrab() {
 		if(grabber.get() == Value.kOff)
@@ -145,11 +177,12 @@ public class Claw extends SubsystemBase {
 	}
 
 	public void resetTwistEncoder() {
-		clawTwist.setSelectedSensorPosition(0);
+		twistOffset = twistRelative.get() - getAbsoluteTwist();
 	}
 
-	public void setTwistAngle(double angle) {
-		clawTwist.set(ControlMode.PercentOutput, twistPID.calculate(getAbsoluteTwist(), angle));
+	public double setTwistAngle(double angle) {
+		twistAngle = angle;
+		return twistPID.getPositionError();
 	}
 
 	@Override

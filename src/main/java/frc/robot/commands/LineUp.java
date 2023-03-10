@@ -93,6 +93,7 @@ public class LineUp extends CommandBase {
         x = false;
         y = false;
         turn = true;
+        centered = false;
         pidRotate.setTolerance(rotateTol.getDouble(0));
         pidX.setTolerance(xTol.getDouble(0));
         pidY.setTolerance(yTol.getDouble(0));
@@ -105,6 +106,9 @@ public class LineUp extends CommandBase {
         pidY.setP(py.getDouble(0));
         //pidY.setI(SmartDashboard.getNumber("I-Y", 0));
         //pidY.setD(SmartDashboard.getNumber("D-Y", 0));
+        pidRotate.calculate(-NetworkTables.apriltagYaw(), 0);
+        pidX.calculate(-NetworkTables.apriltagX(), 0);
+        ySpeed = pidY.calculate(NetworkTables.apriltagY(), .5);
         
         
     }
@@ -115,17 +119,23 @@ public class LineUp extends CommandBase {
         xSpeed = 0;
         ySpeed = 0;
         turningSpeed = 0;
+        System.out.print("SUSSY BAKA");
         
 
-        if(NetworkTables.apriltagYaw() != -2169) {
-
+        if(NetworkTables.apriltagYaw() != -2169 && !(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint())) {
 
             
 
             //TODO:make this work with the controller board
                 if(true) {
-                    xSpeed = pidX.calculate(-NetworkTables.apriltagX(), 0);
+                    xSpeed = pidX.calculate(-NetworkTables.apriltagX(), .5);
                     turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0);
+                    if(pidX.atSetpoint() && pidRotate.atSetpoint()) {
+                        centered = true;
+                    }
+                    if(centered) {
+                        ySpeed = pidY.calculate(NetworkTables.apriltagY(), .54);
+                    }
                 } else if(false){
                     xSpeed = pidX.calculate(-NetworkTables.apriltagX(), 0.559);
                     turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), -5);
@@ -137,7 +147,7 @@ public class LineUp extends CommandBase {
            
                 
              
-                ySpeed = pidY.calculate(NetworkTables.apriltagY(), 1);
+              
                
         }
         
@@ -157,12 +167,13 @@ public class LineUp extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        swerve.stopModules();
     
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return pidRotate.atSetpoint() && pidX.atSetpoint() || NetworkTables.apriltagYaw() == -2169 ;
+        return pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint();
     }
 }
