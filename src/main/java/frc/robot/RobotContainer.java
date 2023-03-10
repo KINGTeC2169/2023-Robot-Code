@@ -38,11 +38,21 @@ import frc.robot.commands.LineUpConeRight;
 import frc.robot.commands.LineUpCube;
 import frc.robot.commands.SwerveCommand;
 import frc.robot.commands.TurnToPosition;
-import frc.robot.commands.ArmClaw.HighAnglesCone;
-import frc.robot.commands.ArmClaw.HighAnglesCube;
-import frc.robot.commands.ArmClaw.HighExtendCone;
-import frc.robot.commands.ArmClaw.HighExtendCube;
-import frc.robot.commands.ArmClaw.HighFinishCone;
+import frc.robot.commands.ArmClaw.High.Cone.HighAnglesCone;
+import frc.robot.commands.ArmClaw.High.Cone.HighExtendCone;
+import frc.robot.commands.ArmClaw.High.Cone.HighFinishCone;
+import frc.robot.commands.ArmClaw.High.Cube.HighAnglesCube;
+import frc.robot.commands.ArmClaw.High.Cube.HighExtendCube;
+import frc.robot.commands.ArmClaw.Low.Cone.LowAnglesCone;
+import frc.robot.commands.ArmClaw.Low.Cone.LowExtendCone;
+import frc.robot.commands.ArmClaw.Low.Cone.LowFinishCone;
+import frc.robot.commands.ArmClaw.Low.Cube.LowAnglesCube;
+import frc.robot.commands.ArmClaw.Low.Cube.LowExtendCube;
+import frc.robot.commands.ArmClaw.Medium.Cone.MediumAnglesCone;
+import frc.robot.commands.ArmClaw.Medium.Cone.MediumExtendCone;
+import frc.robot.commands.ArmClaw.Medium.Cone.MediumFinishCone;
+import frc.robot.commands.ArmClaw.Medium.Cube.MediumAnglesCube;
+import frc.robot.commands.ArmClaw.Medium.Cube.MediumExtendCube;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.CuboneManager;
@@ -84,6 +94,17 @@ public class RobotContainer {
 	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new HighExtendCone(arm),new WaitCommand(.5), new HighFinishCone(arm, claw));
 	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(new HighAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new HighExtendCube(arm, claw));
 	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtendCone(arm),new WaitCommand(.5), new HighFinishCone(arm, claw));
+
+	private final SequentialCommandGroup lineupMediumConeLeft = new SequentialCommandGroup(new MediumAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new MediumExtendCone(arm),new WaitCommand(.5), new MediumFinishCone(arm, claw));
+	private final SequentialCommandGroup lineupMediumCube = new SequentialCommandGroup(new MediumAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new MediumExtendCube(arm, claw));
+	private final SequentialCommandGroup lineupMediumConeRight = new SequentialCommandGroup(new MediumAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new MediumExtendCone(arm),new WaitCommand(.5), new MediumFinishCone(arm, claw));
+
+	private final SequentialCommandGroup lineupLowConeLeft = new SequentialCommandGroup(new LowAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new LowExtendCone(arm),new WaitCommand(.5), new LowFinishCone(arm, claw));
+	private final SequentialCommandGroup lineupLowCube = new SequentialCommandGroup(new LowAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new LowExtendCube(arm, claw));
+	private final SequentialCommandGroup lineupLowConeRight = new SequentialCommandGroup(new LowAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new LowExtendCone(arm),new WaitCommand(.5), new LowFinishCone(arm, claw));
+
+	
+
 
 	private final GetCubone getCubone = new GetCubone(claw, swerveSubsystem, arm);
 	//private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
@@ -220,6 +241,14 @@ public class RobotContainer {
 		//controller.x().whileTrue(RepeatCommand()))
 
 		//Buttons
+
+		buttonBoard.button(0).whileTrue(lineupLowConeLeft);
+		buttonBoard.button(1).whileTrue(lineupLowCube);
+		buttonBoard.button(2).whileTrue(lineupLowConeRight);
+
+		buttonBoard.button(3).whileTrue(lineupMediumConeLeft);
+		buttonBoard.button(4).whileTrue(lineupMediumCube);
+		buttonBoard.button(5).whileTrue(lineupMediumConeRight);
 
 		buttonBoard.button(6).whileTrue(lineupHighConeLeft);
 		buttonBoard.button(7).whileTrue(lineupHighCube);

@@ -1,20 +1,19 @@
-package frc.robot.commands.ArmClaw;
+package frc.robot.commands.ArmClaw.Medium.Cone;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
-public class HighExtendCube extends CommandBase {
+public class MediumExtendCone extends CommandBase {
 
 
     private Arm arm;
-    private Claw claw;
-    private double elevatorPosition = 293200;
+    private double elevatorPosition = 305000;
+    
 
-    public HighExtendCube(Arm arm, Claw claw) {
+    public MediumExtendCone(Arm arm) {
         this.arm = arm;
-        this.claw = claw;
-        addRequirements(arm, claw);
+        addRequirements(arm);
     }
 
     @Override
@@ -29,8 +28,6 @@ public class HighExtendCube extends CommandBase {
     }
     @Override
 	public void end(boolean interrupted) {
-        if(!interrupted)
-            claw.unGrab();
 
 	}
 

@@ -1,19 +1,19 @@
-package frc.robot.commands.ArmClaw;
+package frc.robot.commands.ArmClaw.Medium.Cone;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
-public class HighAnglesCube extends CommandBase {
+public class MediumAnglesCone extends CommandBase {
 
 
     private Arm arm;
     private Claw claw;
-    private double armAngle = 45;
-    private double wristAngle = -17;
+    private double armAngle = 47;
+    private double wristAngle = -15;
     private double twistAngle = 0;
 
-    public HighAnglesCube(Arm arm, Claw claw) {
+    public MediumAnglesCone(Arm arm, Claw claw) {
         this.arm = arm;
         this.claw = claw;
         addRequirements(arm, claw);
