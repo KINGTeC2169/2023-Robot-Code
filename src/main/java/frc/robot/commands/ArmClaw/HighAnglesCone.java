@@ -9,6 +9,9 @@ public class HighAnglesCone extends CommandBase {
 
     private Arm arm;
     private Claw claw;
+    private double armAngle = 47;
+    private double wristAngle = -15;
+    private double twistAngle = 0;
 
     public HighAnglesCone(Arm arm, Claw claw) {
         this.arm = arm;
@@ -22,14 +25,14 @@ public class HighAnglesCone extends CommandBase {
 
     @Override
     public void execute() {
-        arm.setArmAngle(47);
-        claw.setWristAngleSlow(-15);
-        claw.setTwistAngle(0);
+        arm.setArmAngle(armAngle);
+        claw.setWristAngleSlow(wristAngle);
+        claw.setTwistAngle(twistAngle);
 
     }
     
     @Override
     public boolean isFinished() {
-        return Math.abs(arm.getLiftAngle() - 47) < 5 && Math.abs(claw.getWristEncoder() + 15) < 10 && Math.abs(claw.getTwistEncoder()) < 4;
+        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(claw.getWristEncoder() - wristAngle) < 10 && Math.abs(claw.getTwistEncoder() - twistAngle) < 4;
     }
 }

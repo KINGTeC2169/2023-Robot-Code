@@ -9,7 +9,7 @@ public class HighExtendCube extends CommandBase {
 
     private Arm arm;
     private Claw claw;
-    private boolean imDoneMate;
+    private double elevatorPosition = 293200;
 
     public HighExtendCube(Arm arm, Claw claw) {
         this.arm = arm;
@@ -23,7 +23,7 @@ public class HighExtendCube extends CommandBase {
 
     @Override
     public void execute() {
-        arm.setElevatorPosition(293200);
+        arm.setElevatorPosition(elevatorPosition);
     
 
     }
@@ -38,6 +38,6 @@ public class HighExtendCube extends CommandBase {
     
     @Override
     public boolean isFinished() {
-        return arm.getElevatorEncoder() > 290000;
+        return arm.getElevatorEncoder() > (elevatorPosition - 500);
     }
 }

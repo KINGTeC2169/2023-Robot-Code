@@ -8,13 +8,12 @@ public class HighExtendCone extends CommandBase {
 
 
     private Arm arm;
-    private Claw claw;
-    private boolean imDoneMate;
+    private double elevatorPosition = 305000;
+    
 
-    public HighExtendCone(Arm arm, Claw claw) {
+    public HighExtendCone(Arm arm) {
         this.arm = arm;
-        this.claw = claw;
-        addRequirements(arm, claw);
+        addRequirements(arm);
     }
 
     @Override
@@ -23,7 +22,7 @@ public class HighExtendCone extends CommandBase {
 
     @Override
     public void execute() {
-        arm.setElevatorPosition(305000);
+        arm.setElevatorPosition(elevatorPosition);
     
 
     }
@@ -36,6 +35,6 @@ public class HighExtendCone extends CommandBase {
     
     @Override
     public boolean isFinished() {
-        return arm.getElevatorEncoder() > 301500;
+        return arm.getElevatorEncoder() > (elevatorPosition - 500);
     }
 }

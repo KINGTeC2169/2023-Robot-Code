@@ -81,9 +81,9 @@ public class RobotContainer {
 
 	private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  
 	
-	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new HighExtendCone(arm, claw),new WaitCommand(.5), new HighFinishCone(arm, claw));
+	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new HighExtendCone(arm),new WaitCommand(.5), new HighFinishCone(arm, claw));
 	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(new HighAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new HighExtendCube(arm, claw));
-	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtendCone(arm, claw),new WaitCommand(.5), new HighFinishCone(arm, claw));
+	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtendCone(arm),new WaitCommand(.5), new HighFinishCone(arm, claw));
 
 	private final GetCubone getCubone = new GetCubone(claw, swerveSubsystem, arm);
 	//private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);

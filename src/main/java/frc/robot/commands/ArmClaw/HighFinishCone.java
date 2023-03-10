@@ -9,6 +9,8 @@ public class HighFinishCone extends CommandBase {
 
     private Arm arm;
     private Claw claw;
+    private double elevatorPosition = 230560;
+    private double armAngle = 37;
 
     public HighFinishCone(Arm arm, Claw claw) {
         this.arm = arm;
@@ -23,8 +25,8 @@ public class HighFinishCone extends CommandBase {
 
     @Override
     public void execute() {
-        arm.setElevatorPosition(230560);
-        arm.setArmAngle(37);
+        arm.setElevatorPosition(elevatorPosition);
+        arm.setArmAngle(armAngle);
     
 
     }
@@ -39,6 +41,6 @@ public class HighFinishCone extends CommandBase {
     
     @Override
     public boolean isFinished() {
-        return arm.getElevatorEncoder() < 231000 && Math.abs(arm.getLiftAngle() - 37) < 2;
+        return arm.getElevatorEncoder() < (elevatorPosition + 500) && Math.abs(arm.getLiftAngle() - armAngle) < 2;
     }
 }

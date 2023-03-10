@@ -9,6 +9,9 @@ public class HighAnglesCube extends CommandBase {
 
     private Arm arm;
     private Claw claw;
+    private double armAngle = 45;
+    private double wristAngle = -17;
+    private double twistAngle = 0;
 
     public HighAnglesCube(Arm arm, Claw claw) {
         this.arm = arm;
@@ -22,14 +25,14 @@ public class HighAnglesCube extends CommandBase {
 
     @Override
     public void execute() {
-        arm.setArmAngle(45);
-        claw.setWristAngleSlow(-17);
-        claw.setTwistAngle(0);
+        arm.setArmAngle(armAngle);
+        claw.setWristAngleSlow(wristAngle);
+        claw.setTwistAngle(twistAngle);
 
     }
     
     @Override
     public boolean isFinished() {
-        return Math.abs(arm.getLiftAngle() - 45) < 5 && Math.abs(claw.getWristEncoder() + 17) < 10 && Math.abs(claw.getTwistEncoder()) < 4;
+        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(claw.getWristEncoder() - wristAngle) < 10 && Math.abs(claw.getTwistEncoder() - twistAngle) < 4;
     }
 }
