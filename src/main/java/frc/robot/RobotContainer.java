@@ -21,6 +21,7 @@ import frc.robot.commands.LineUpConeRight;
 import frc.robot.commands.LineUpCube;
 import frc.robot.commands.SwerveCommand;
 import frc.robot.commands.TurnToPosition;
+import frc.robot.commands.ArmClaw.ResetArmClaw;
 import frc.robot.commands.ArmClaw.High.Cone.HighAnglesCone;
 import frc.robot.commands.ArmClaw.High.Cone.HighExtendCone;
 import frc.robot.commands.ArmClaw.High.Cone.HighFinishCone;
@@ -73,6 +74,7 @@ public class RobotContainer {
 
 	private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  	
 	
+	private final ResetArmClaw resetArmClaw = new ResetArmClaw(arm);
 
 	private final LineUpConeLeft lineUpConeLeft = new LineUpConeLeft(swerveSubsystem);
 	private final LineUpConeRight lineUpConeRight = new LineUpConeRight(swerveSubsystem);
@@ -160,7 +162,7 @@ public class RobotContainer {
 		//eventMap.put("lineUp", lineUp);
 		eventMap.put("score", new PrintCommand("Scoring"));
 
-		score2NoParkMap.put("scoreCone", new SequentialCommandGroup(highAnglesCone, highExtendCone, new WaitCommand(.5), highFinishCone));
+		score2NoParkMap.put("scoreCone", new SequentialCommandGroup(highAnglesCone, highExtendCone, new WaitCommand(.5), highFinishCone, resetArmClaw));
 		score2NoParkMap.put("pickUp", new ParallelCommandGroup(new PrintCommand("Idk how to pick up yet"), new WaitCommand(3)));
 	
 		
