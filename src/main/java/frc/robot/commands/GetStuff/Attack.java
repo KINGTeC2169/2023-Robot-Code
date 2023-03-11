@@ -16,16 +16,13 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class Persue extends CommandBase {
+public class Attack extends CommandBase {
 	@SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 	private final Claw claw;
-	private final SwerveSubsystem swerve;
+	private final Arm arm;
 
-    private double armAngle = 23;
-    private double wristAngle = -17;
-    private double twistAngle = 0;
-    private double elevatorPos = 51931;
-    private ChassisSpeeds chassisSpeeds;
+    private double armAngle = 20;
+    
 	
 
 	/**
@@ -33,16 +30,14 @@ public class Persue extends CommandBase {
 	 *
 	 * @param subsystem The subsystem used by this command.
 	 */
-	public Persue(Claw claw, SwerveSubsystem swerve) {
+	public Attack(Claw claw, Arm arm) {
 		this.claw = claw;
-        this.swerve = swerve;
 		
-		
+		this.arm = arm;
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(claw);
-        addRequirements(swerve);
 	
-		
+		addRequirements(arm);
 
 		
 	}
@@ -56,29 +51,22 @@ public class Persue extends CommandBase {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-
-
-
-
-        chassisSpeeds = new ChassisSpeeds(.2, 0, 0);
-			
-
-		SwerveModuleState[] moduleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeeds);
-
-		swerve.setModuleStates(moduleStates);
-		
+		//51931 elevator 23 angle
+		arm.setArmAngle(armAngle);
+        
 
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-        swerve.stopModules();
+        if(!interrupted) 
+            claw.grab();
 	}
 
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-        return NetworkTables.isThereObjectPalm();
+        return Math.abs(arm.getLiftAngle() - armAngle) < 5;
 	}
 }

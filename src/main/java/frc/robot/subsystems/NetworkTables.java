@@ -14,7 +14,14 @@ public class NetworkTables {
     }
 
     public static double getPalmAngle(String coneOrCube) {
-        return table.getEntry("Palm-" + coneOrCube + "-Angle").getDouble(-2169);
+        if(table.getEntry("Palm-" + coneOrCube + "-Angle").getDouble(-2169) == -2169)
+            return -2169;
+        if(table.getEntry("Palm-" + coneOrCube + "-Angle").getDouble(-2169) > 0)
+            return table.getEntry("Palm-" + coneOrCube + "-Angle").getDouble(-2169) - 90;
+        if(table.getEntry("Palm-" + coneOrCube + "-Angle").getDouble(-2169) <= 0) {
+            return table.getEntry("Palm-" + coneOrCube + "-Angle").getDouble(-2169) + 90;
+        }
+        return -2169;
     }
 
     public static double[] getFrontCenter(String coneOrCube) {
@@ -28,11 +35,34 @@ public class NetworkTables {
 
     public static double[] closestObject() {
         if(getFrontCenter("Cube")[1] != -2169 || getFrontCenter("Cone")[1] != -2169) {
-            return Math.abs(table.getEntry("Front-Cone-Center").getDoubleArray(arr)[1]) < Math.abs(table.getEntry("Front-Cube-Center").getDoubleArray(arr)[1]) ? 
-        getFrontCenter("Cone") : getFrontCenter("Cube");
+            if(getFrontCenter("Cube")[1] == -2169) {
+                return getFrontCenter("Cone");
+            } else if(getFrontCenter("Cone")[1] == -2169) {
+                return getFrontCenter("Cube");
+            } else {
+                return Math.abs(table.getEntry("Front-Cone-Center").getDoubleArray(arr)[1]) < Math.abs(table.getEntry("Front-Cube-Center").getDoubleArray(arr)[1]) ? 
+                getFrontCenter("Cube") : getFrontCenter("Cone");
+            }
+        
         }
         else
             return arr;
+    }
+
+    public static double closestObjectAngle() {
+        if(getFrontCenter("Cube")[1] != -2169 || getFrontCenter("Cone")[1] != -2169) {
+            if(getFrontCenter("Cube")[1] == -2169) {
+                return (getFrontCenter("Cone")[0] - 320)/320 * 34.25;
+            } else if(getFrontCenter("Cone")[1] == -2169) {
+                return (getFrontCenter("Cube")[0] - 320)/320 * 34.25;
+            } else {
+                return Math.abs(table.getEntry("Front-Cone-Center").getDoubleArray(arr)[1]) < Math.abs(table.getEntry("Front-Cube-Center").getDoubleArray(arr)[1]) ? 
+                (getFrontCenter("Cube")[0] - 320)/320 * 34.25 : (getFrontCenter("Cone")[0] - 320) / 320 * 34.25;
+            }
+        
+        }
+        else
+            return -2169;
     }
 
     public static String isThereObject() {

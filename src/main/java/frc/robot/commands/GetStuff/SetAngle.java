@@ -21,10 +21,10 @@ public class SetAngle extends CommandBase {
 	private final Claw claw;
 	private final Arm arm;
 
-    private double armAngle = 23;
-    private double wristAngle = -17;
+    private double armAngle = 35;
+    private double wristAngle = -115;
     private double twistAngle = 0;
-    private double elevatorPos = 51931;
+    private double elevatorPos = 85100;
 	
 
 	/**
@@ -69,6 +69,6 @@ public class SetAngle extends CommandBase {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(claw.getWristEncoder() - wristAngle) < 10 && Math.abs(claw.getTwistEncoder() - twistAngle) < 4 && Math.abs(arm.getElevatorEncoder() - elevatorPos) < 10;
+        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(claw.getWristEncoder() - wristAngle) < 10 && Math.abs(claw.getTwistEncoder() - twistAngle) < 4 && Math.abs(arm.getElevatorEncoder() - elevatorPos) < 1000;
 	}
 }

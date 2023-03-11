@@ -177,6 +177,10 @@ public class SwerveModule {
         turnMotor.set(0);
     }
 
+    public void fullStop() {
+        driveMotor.set(ControlMode.Position, 0);
+        turnMotor.set(0);
+    }
     /**
      * Sets wheels to X formation
      */

@@ -37,10 +37,10 @@ import frc.robot.commands.ArmClaw.Medium.Cone.MediumExtendCone;
 import frc.robot.commands.ArmClaw.Medium.Cone.MediumFinishCone;
 import frc.robot.commands.ArmClaw.Medium.Cube.MediumAnglesCube;
 import frc.robot.commands.ArmClaw.Medium.Cube.MediumExtendCube;
-import frc.robot.commands.GetStuff.Grab;
+import frc.robot.commands.GetStuff.Attack;
+import frc.robot.commands.GetStuff.LineUpClaw;
+import frc.robot.commands.GetStuff.LineUpSwerve;
 import frc.robot.commands.GetStuff.SetAngle;
-import frc.robot.commands.GetStuff.Persue;
-import frc.robot.commands.GetStuff.TurnToCubone;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.NavX;
@@ -99,10 +99,10 @@ public class RobotContainer {
 	private final LowAnglesCube lowAnglesCube = new LowAnglesCube(arm, claw);
 	private final LowExtendCube lowExtendCube = new LowExtendCube(arm, claw);
 
-	private final Grab grab = new Grab(claw, swerveSubsystem);
-	private final Persue persue = new Persue(claw, swerveSubsystem);
+	private final LineUpSwerve lineUpSwerve = new LineUpSwerve(claw, swerveSubsystem);
 	private final SetAngle setAngle = new SetAngle(claw, arm);
-	private final TurnToCubone turnToCubone = new TurnToCubone(swerveSubsystem);
+	private final Attack attack = new Attack(claw, arm);
+	private final LineUpClaw lineUpClaw = new LineUpClaw(claw);
 
 	//private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(highAnglesCone, lineUpConeLeft, highExtendCone, new WaitCommand(.5), highFinishCone);
 	//private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(highAnglesCube, lineUpCube, highExtendCube);
@@ -117,7 +117,7 @@ public class RobotContainer {
 	private final SequentialCommandGroup lineupLowConeRight = new SequentialCommandGroup(lowAnglesCone, lineUpConeRight, lowExtendCone, new WaitCommand(.5), lowFinishCone);
 	*/
 
-	private final SequentialCommandGroup getCuboneCommand = new SequentialCommandGroup(setAngle, turnToCubone, persue, grab);
+	private final SequentialCommandGroup getCuboneCommand = new SequentialCommandGroup(setAngle, lineUpSwerve, lineUpClaw, attack);
 
 	
 
