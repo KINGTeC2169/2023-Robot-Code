@@ -87,8 +87,8 @@ public class GetCubone extends CommandBase {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		
-		while(arm.setElevatorPosition(11) > 1) {
+		//51931 elevator 23 angle
+		while(arm.setArmAngle(23) > 1 ) {
 		
 		}
 		if(!itemCentered) {

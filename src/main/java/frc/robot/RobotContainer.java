@@ -115,17 +115,18 @@ public class RobotContainer {
 	private final LowAnglesCube lowAnglesCube = new LowAnglesCube(arm, claw);
 	private final LowExtendCube lowExtendCube = new LowExtendCube(arm, claw);
 
-	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(highAnglesCone, lineUpConeLeft, highExtendCone, new WaitCommand(.5), highFinishCone);
-	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(highAnglesCube, lineUpCube, highExtendCube);
+	//private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(highAnglesCone, lineUpConeLeft, highExtendCone, new WaitCommand(.5), highFinishCone);
+	//private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(highAnglesCube, lineUpCube, highExtendCube);
 	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(highAnglesCone, lineUpConeRight, highExtendCone,new WaitCommand(.5), highFinishCone);
 
-	private final SequentialCommandGroup lineupMediumConeLeft = new SequentialCommandGroup(mediumAnglesCone, lineUpConeLeft, mediumExtendCone, new WaitCommand(.5), mediumFinishCone);
+	/*private final SequentialCommandGroup lineupMediumConeLeft = new SequentialCommandGroup(mediumAnglesCone, lineUpConeLeft, mediumExtendCone, new WaitCommand(.5), mediumFinishCone);
 	private final SequentialCommandGroup lineupMediumCube = new SequentialCommandGroup(mediumAnglesCube, lineUpCube, mediumExtendCube);
 	private final SequentialCommandGroup lineupMediumConeRight = new SequentialCommandGroup(mediumAnglesCone, lineUpConeRight, mediumExtendCone, new WaitCommand(.5), mediumFinishCone);
 
 	private final SequentialCommandGroup lineupLowConeLeft = new SequentialCommandGroup(lowAnglesCone, lineUpConeLeft, lowExtendCone, new WaitCommand(.5), lowFinishCone);
 	private final SequentialCommandGroup lineupLowCube = new SequentialCommandGroup(lowAnglesCube, lineUpCube, lowExtendCube);
 	private final SequentialCommandGroup lineupLowConeRight = new SequentialCommandGroup(lowAnglesCone, lineUpConeRight, lowExtendCone, new WaitCommand(.5), lowFinishCone);
+	*/
 
 	
 
@@ -245,8 +246,8 @@ public class RobotContainer {
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos()));
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
 		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab()));
-		controller.rightBumper().whileTrue(getCubone);
-		controller.start().whileTrue(lineupHighCube);
+		controller.back().whileTrue(getCubone);
+		controller.start().whileTrue(lineupHighConeRight);
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos()));
 		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos()));
 		//controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(0.5), () -> claw.twistClaw(0)).repeatedly());
@@ -266,16 +267,16 @@ public class RobotContainer {
 
 		//Buttons
 
-		buttonBoard.button(0).whileTrue(lineupLowConeLeft);
-		buttonBoard.button(1).whileTrue(lineupLowCube);
-		buttonBoard.button(2).whileTrue(lineupLowConeRight);
+		//buttonBoard.button(0).whileTrue(lineupLowConeLeft);
+		//buttonBoard.button(1).whileTrue(lineupLowCube);
+		//buttonBoard.button(2).whileTrue(lineupLowConeRight);
 
-		buttonBoard.button(3).whileTrue(lineupMediumConeLeft);
-		buttonBoard.button(4).whileTrue(lineupMediumCube);
-		buttonBoard.button(5).whileTrue(lineupMediumConeRight);
+		//buttonBoard.button(3).whileTrue(lineupMediumConeLeft);
+		//buttonBoard.button(4).whileTrue(lineupMediumCube);
+		//buttonBoard.button(5).whileTrue(lineupMediumConeRight);
 
-		buttonBoard.button(6).whileTrue(lineupHighConeLeft);
-		buttonBoard.button(7).whileTrue(lineupHighCube);
+		//buttonBoard.button(6).whileTrue(lineupHighConeLeft);
+		//buttonBoard.button(7).whileTrue(lineupHighCube);
 		buttonBoard.button(8).whileTrue(lineupHighConeRight);
 
 

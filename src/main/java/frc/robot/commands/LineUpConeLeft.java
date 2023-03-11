@@ -47,13 +47,13 @@ public class LineUpConeLeft extends CommandBase {
     private boolean y = false;
     private boolean turn = true;
 
-    private ShuffleboardTab tab = Shuffleboard.getTab("PID apriltag");
+    private ShuffleboardTab tab = Shuffleboard.getTab("PID apriltag Cone Left");
     private GenericEntry px = tab.addPersistent("P-X", 0.0016).getEntry();
     private GenericEntry pr = tab.addPersistent("P-Rotate", 0.05).getEntry();
     private GenericEntry py = tab.addPersistent("P-Y", 0.7).getEntry();
-    private final GenericEntry xTol = tab.addPersistent("X Tol", 0).getEntry();
-    private final GenericEntry yTol = tab.addPersistent("Y Tol", 0).getEntry();
-    private final GenericEntry rotateTol = tab.addPersistent("Rotate Tol", 0).getEntry();
+    private GenericEntry xTol = tab.addPersistent("X Tol", 0).getEntry();
+    private GenericEntry yTol = tab.addPersistent("Y Tol", 0).getEntry();
+    private GenericEntry rotateTol = tab.addPersistent("Rotate Tol", 0).getEntry();
 
     /**
      * Creates a new ExampleCommand.

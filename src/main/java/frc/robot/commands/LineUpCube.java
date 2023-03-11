@@ -47,7 +47,7 @@ public class LineUpCube extends CommandBase {
     private boolean y = false;
     private boolean turn = true;
 
-    private ShuffleboardTab tab = Shuffleboard.getTab("PID apriltag");
+    private ShuffleboardTab tab = Shuffleboard.getTab("PID apriltag Cube");
     private GenericEntry px = tab.addPersistent("P-X", 0.0016).getEntry();
     private GenericEntry pr = tab.addPersistent("P-Rotate", 0.05).getEntry();
     private GenericEntry py = tab.addPersistent("P-Y", 0.7).getEntry();
