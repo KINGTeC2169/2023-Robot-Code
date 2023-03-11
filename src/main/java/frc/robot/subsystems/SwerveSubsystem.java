@@ -99,7 +99,7 @@ public class SwerveSubsystem extends SubsystemBase {
         tab.addDouble("Front Right Percent", () -> frontRight.getWantedSpeed());
         tab.addDouble("Back Left Percent", () -> backLeft.getWantedSpeed());
         tab.addDouble("Back Right Percent", () -> backRight.getWantedSpeed());
-
+        tab.addDouble("180 Head", () -> head180());
 
         //tab.addDouble("Abs Front Left", () -> frontLeft.getAbsoluteTurnPosition());
         //tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition());
@@ -156,6 +156,9 @@ public class SwerveSubsystem extends SubsystemBase {
     public double getHeading() {
         //return Math.IEEEremainder(NavX.getAngle(), 360);
         return NavX.getAngle() % 360;
+    }
+    public double head180() {
+        return  Math.IEEEremainder(NavX.getAngle(), 360);
     }
 
     public Rotation2d getRotation2d() {
@@ -238,6 +241,12 @@ public class SwerveSubsystem extends SubsystemBase {
             backRight.getState()};
     }
 
+    public void fullStop() {
+        frontLeft.fullStop();
+        frontRight.fullStop();
+        backLeft.fullStop();
+        backRight.fullStop();
+    }
     /**Puts wheels in 'X' position and sets driving to a velocity-PID loop set at 0m/s */
     public void setActiveStop() {
         System.out.println("1\n1\n1\n1\n1\n1\n1\n1");

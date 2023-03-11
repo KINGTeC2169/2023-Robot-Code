@@ -75,11 +75,11 @@ public class Claw extends SubsystemBase {
 	@Override
 	public void periodic() {
 		
-		clawTwist.config_kP(0, twistP.getDouble(0.5));
 		//clawTwist.set(ControlMode.PercentOutput, number);
 	}
 
 	public void twistUpPos() {
+		clawTwist.config_kP(0, twistP.getDouble(0.5));
 
 		twistAngle = getRelativeTwist() + 50;
 		if (twistAngle > 100)
@@ -88,6 +88,8 @@ public class Claw extends SubsystemBase {
 		
 	}
 	public void twistDownPos() {
+		clawTwist.config_kP(0, twistP.getDouble(0.5));
+
 		twistAngle = getRelativeTwist() - 50;
 		if (twistAngle < -100)
 			twistAngle = -100;
@@ -133,7 +135,7 @@ public class Claw extends SubsystemBase {
 		return wristEncoder.getAbsolutePosition() * 360 - 244;
 	}
 	public double getAbsoluteTwist() {
-		return twistEncoder.getAbsolutePosition() * 360 - 244;
+		return twistEncoder.getAbsolutePosition() * 360 - 130;
 	}
 	public double getRelativeTwist() {
 		return clawTwist.getSelectedSensorPosition() / 8192 * 360;
@@ -187,7 +189,22 @@ public class Claw extends SubsystemBase {
 	}
 
 	public double setTwistAngle(double angle) {
+		if (angle > 100)
+			angle = 100;
+		if (angle < -100)
+			angle = -100;
+		clawTwist.config_kP(0, twistP.getDouble(0.5));
+
 		//clawTwist.set(ControlMode.Position, angle);
+		clawTwist.set(ControlMode.Position, angle / 360 * 8192);
+		return clawTwist.getClosedLoopError();
+	}
+	public double setTwistAngle(double angle, double kP) {
+		if (angle > 100)
+			angle = 100;
+		if (angle < -100)
+			angle = -100;
+		clawTwist.config_kP(0, kP);
 		clawTwist.set(ControlMode.Position, angle / 360 * 8192);
 		return clawTwist.getClosedLoopError();
 	}
