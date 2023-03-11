@@ -4,35 +4,18 @@
 
 package frc.robot;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import javax.sound.sampled.LineEvent;
-
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
-
-import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.Ports;
-import frc.robot.commands.GetCubone;
 import frc.robot.commands.LineUpConeLeft;
 import frc.robot.commands.LineUpConeRight;
 import frc.robot.commands.LineUpCube;
@@ -53,22 +36,20 @@ import frc.robot.commands.ArmClaw.Medium.Cone.MediumExtendCone;
 import frc.robot.commands.ArmClaw.Medium.Cone.MediumFinishCone;
 import frc.robot.commands.ArmClaw.Medium.Cube.MediumAnglesCube;
 import frc.robot.commands.ArmClaw.Medium.Cube.MediumExtendCube;
+import frc.robot.commands.GetStuff.Grab;
+import frc.robot.commands.GetStuff.SetAngle;
+import frc.robot.commands.GetStuff.Persue;
+import frc.robot.commands.GetStuff.TurnToCubone;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
-import frc.robot.subsystems.CuboneManager;
 import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -115,6 +96,11 @@ public class RobotContainer {
 	private final LowAnglesCube lowAnglesCube = new LowAnglesCube(arm, claw);
 	private final LowExtendCube lowExtendCube = new LowExtendCube(arm, claw);
 
+	private final Grab grab = new Grab(claw, swerveSubsystem);
+	private final Persue persue = new Persue(claw, swerveSubsystem);
+	private final SetAngle setAngle = new SetAngle(claw, arm);
+	private final TurnToCubone turnToCubone = new TurnToCubone(swerveSubsystem);
+
 	//private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(highAnglesCone, lineUpConeLeft, highExtendCone, new WaitCommand(.5), highFinishCone);
 	//private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(highAnglesCube, lineUpCube, highExtendCube);
 	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(highAnglesCone, lineUpConeRight, highExtendCone,new WaitCommand(.5), highFinishCone);
@@ -128,10 +114,12 @@ public class RobotContainer {
 	private final SequentialCommandGroup lineupLowConeRight = new SequentialCommandGroup(lowAnglesCone, lineUpConeRight, lowExtendCone, new WaitCommand(.5), lowFinishCone);
 	*/
 
+	private final SequentialCommandGroup getCuboneCommand = new SequentialCommandGroup(setAngle, turnToCubone, persue, grab);
+
 	
 
 
-	private final GetCubone getCubone = new GetCubone(claw, swerveSubsystem, arm);
+	
 	//private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
 	private final CommandXboxController controller = new CommandXboxController(Ports.controller);
 	private final CommandJoystick joystick = new CommandJoystick(4);
@@ -246,7 +234,7 @@ public class RobotContainer {
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos()));
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
 		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab()));
-		controller.back().whileTrue(getCubone);
+		controller.back().whileTrue(getCuboneCommand);
 		controller.start().whileTrue(lineupHighConeRight);
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos()));
 		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos()));
