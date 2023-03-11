@@ -158,17 +158,20 @@ public class RobotContainer {
 	public RobotContainer() {
 
 		PathPlannerTrajectory path = PathPlanner.loadPath("epic", new PathConstraints(3, 3));
-
+		PathPlannerTrajectory score2NoParkPath = PathPlanner.loadPath("epic", new PathConstraints(1, 3));
 
 		// This is just an example event map. It would be better to have a constant, global event map
 		// in your code that will be used by all path following commands.
 		HashMap<String, Command> eventMap = new HashMap<String, Command>();
-	
+		HashMap<String, Command> score2NoParkMap = new HashMap<String, Command>();
 	
 		eventMap.put("marker1", new PrintCommand("Passed marker 1"));
 		eventMap.put("pickUp", new WaitCommand(5));
 		//eventMap.put("lineUp", lineUp);
 		eventMap.put("score", new PrintCommand("Scoring"));
+
+		score2NoParkMap.put("scoreCone", new SequentialCommandGroup(highAnglesCone, highExtendCone, new WaitCommand(.5), highFinishCone));
+		score2NoParkMap.put("pickUp", new ParallelCommandGroup(new PrintCommand("Idk how to pick up yet"), new WaitCommand(3)));
 	
 		
 		// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
@@ -185,6 +188,8 @@ public class RobotContainer {
 		);
 		
 		autoBot = autoBuilder.fullAuto(path);
+
+
 
 		/* 
 		swerveSubsystem.setDefaultCommand(new SwerveCommand(
