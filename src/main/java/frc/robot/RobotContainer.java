@@ -46,6 +46,7 @@ import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -135,6 +136,7 @@ public class RobotContainer {
 	private final CommandJoystick rightStick = new CommandJoystick(3);
 
 	private Command autoBot;
+	private Command score2NoPark;
 
  
   
@@ -174,9 +176,21 @@ public class RobotContainer {
 			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
 			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
 		);
+		SwerveAutoBuilder autoBuilder2 = new SwerveAutoBuilder(
+			swerveSubsystem::getPose, // Pose2d supplier
+			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
+			swerveSubsystem.kinematics, // SwerveDriveKinematics
+			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+			new PIDConstants(2.0, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+			swerveSubsystem::setModuleStates, // Module states consumer used to output to the drive subsystem
+			score2NoParkMap,
+			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
+		);
+		
 		
 		autoBot = autoBuilder.fullAuto(path);
-
+		score2NoPark = autoBuilder2.fullAuto(score2NoParkPath);
 
 
 		/* 
@@ -306,7 +320,7 @@ public class RobotContainer {
 			new InstantCommand(() -> swerveSubsystem.stopModules())
 		); */
 
-		return autoBot;
+		return score2NoPark;
 	
 	}
 }
