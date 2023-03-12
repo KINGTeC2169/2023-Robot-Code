@@ -69,6 +69,14 @@ public final class Constants {
         public static final double PTurn = 0.3;
         public static final double PDrive = 0.3;
     }
+    public static final class PIDApriltags {
+        public static final double px = 1.25;
+        public static final double pr = 0.01;
+        public static final double py = 1;
+        public static final double xTol = 0.04;
+        public static final double yTol = 0.08;
+        public static final double rotateTol = 1;
+    }
 
     public static final class DriveConstants {
         //These will need to be in meters

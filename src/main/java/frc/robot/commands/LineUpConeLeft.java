@@ -4,6 +4,7 @@ package frc.robot.commands;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Motors;
+import frc.robot.Constants.PIDApriltags;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.CuboneManager;
@@ -47,13 +48,8 @@ public class LineUpConeLeft extends CommandBase {
     private boolean y = false;
     private boolean turn = true;
 
-    private ShuffleboardTab tab = Shuffleboard.getTab("PID apriltag Cone Left");
-    private GenericEntry px = tab.addPersistent("P-X", 0.0016).getEntry();
-    private GenericEntry pr = tab.addPersistent("P-Rotate", 0.05).getEntry();
-    private GenericEntry py = tab.addPersistent("P-Y", 0.7).getEntry();
-    private GenericEntry xTol = tab.addPersistent("X Tol", 0).getEntry();
-    private GenericEntry yTol = tab.addPersistent("Y Tol", 0).getEntry();
-    private GenericEntry rotateTol = tab.addPersistent("Rotate Tol", 0).getEntry();
+    
+    
 
     /**
      * Creates a new ExampleCommand.
@@ -78,12 +74,10 @@ public class LineUpConeLeft extends CommandBase {
        
 
         addRequirements(swerve);
-        pidX = new PIDController(1.5, 0, 0);
-        pidY = new PIDController(1.5, 0, 0);
-        pidRotate = new PIDController(0.04, 0, 0);
-        tab.addBoolean("Rotate Setpoint" , () -> pidRotate.atSetpoint());
-        tab.addBoolean("X Setpoint" , () -> pidX.atSetpoint());
-        tab.addBoolean("Y Setpoint" , () -> pidY.atSetpoint());
+        pidX = new PIDController(PIDApriltags.px, 0, 0);
+        pidY = new PIDController(PIDApriltags.py, 0, 0);
+        pidRotate = new PIDController(PIDApriltags.pr, 0, 0);
+        
 
     }
 
@@ -94,21 +88,21 @@ public class LineUpConeLeft extends CommandBase {
         y = false;
         turn = true;
         centered = false;
-        pidRotate.setTolerance(rotateTol.getDouble(0));
-        pidX.setTolerance(xTol.getDouble(0));
-        pidY.setTolerance(yTol.getDouble(0));
-        pidX.setP(px.getDouble(0));
+        pidRotate.setTolerance(PIDApriltags.rotateTol);
+        pidX.setTolerance(PIDApriltags.xTol);
+        pidY.setTolerance(PIDApriltags.yTol);
+        
         //pidX.setI(SmartDashboard.getNumber("I-X", 0));
         //pidX.setD(SmartDashboard.getNumber("D-X", 0));
-        pidRotate.setP(pr.getDouble(0));
+        
         //pidRotate.setI(SmartDashboard.getNumber("I-Rotate", 0));
         //pidRotate.setD(SmartDashboard.getNumber("D-Rotate", 0));
-        pidY.setP(py.getDouble(0));
+        
         //pidY.setI(SmartDashboard.getNumber("I-Y", 0));
         //pidY.setD(SmartDashboard.getNumber("D-Y", 0));
         pidRotate.calculate(-NetworkTables.apriltagYaw(), 0);
         pidX.calculate(-NetworkTables.apriltagX(), 0);
-        ySpeed = pidY.calculate(NetworkTables.apriltagY(), .5);
+        pidY.calculate(NetworkTables.apriltagY(), .5);
         
         
     }
@@ -124,13 +118,13 @@ public class LineUpConeLeft extends CommandBase {
         if(NetworkTables.apriltagYaw() != -2169 && !(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint())) {
 
 
-            xSpeed = pidX.calculate(-NetworkTables.apriltagX(), -.5);
-            turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), 0);
+            xSpeed = pidX.calculate(-NetworkTables.apriltagX(), -.55);
+            turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), -3);
             if(pidX.atSetpoint() && pidRotate.atSetpoint()) {
                 centered = true;
             }
             if(centered) {
-                ySpeed = pidY.calculate(NetworkTables.apriltagY(), .54);
+                ySpeed = pidY.calculate(NetworkTables.apriltagY(), .56);
             }
                         
         }

@@ -12,6 +12,7 @@ public class MediumAnglesCone extends CommandBase {
     private double armAngle = 47;
     private double wristAngle = -15;
     private double twistAngle = 0;
+    private double elevatorPosition = 1000;
 
     public MediumAnglesCone(Arm arm, Claw claw) {
         this.arm = arm;
@@ -26,6 +27,7 @@ public class MediumAnglesCone extends CommandBase {
     @Override
     public void execute() {
         arm.setArmAngle(armAngle);
+        arm.setElevatorPosition(elevatorPosition);
         claw.setWristAngleSlow(wristAngle);
         claw.setTwistAngle(twistAngle);
 
@@ -33,6 +35,6 @@ public class MediumAnglesCone extends CommandBase {
     
     @Override
     public boolean isFinished() {
-        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(claw.getWristEncoder() - wristAngle) < 10 && Math.abs(claw.getTwistEncoder() - twistAngle) < 4;
+        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(claw.getWristEncoder() - wristAngle) < 10 && Math.abs(claw.getTwistEncoder() - twistAngle) < 4 && arm.getElevatorEncoder() < (elevatorPosition + 500);
     }
 }

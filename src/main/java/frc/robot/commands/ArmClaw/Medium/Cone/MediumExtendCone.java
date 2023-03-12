@@ -7,13 +7,16 @@ import frc.robot.subsystems.Claw;
 public class MediumExtendCone extends CommandBase {
 
 
-    private Arm arm;
-    private double elevatorPosition = 305000;
+   
+    private Claw claw;
+    private double wristPosition = -49;
     
 
-    public MediumExtendCone(Arm arm) {
-        this.arm = arm;
-        addRequirements(arm);
+    public MediumExtendCone(Claw claw) {
+        
+        this.claw = claw;
+       
+        addRequirements(claw);
     }
 
     @Override
@@ -22,19 +25,20 @@ public class MediumExtendCone extends CommandBase {
 
     @Override
     public void execute() {
-        arm.setElevatorPosition(elevatorPosition);
+        claw.setWristAngle(wristPosition);
     
 
     }
     @Override
 	public void end(boolean interrupted) {
-
+        if(!interrupted) 
+            claw.unGrab();
 	}
 
 
     
     @Override
     public boolean isFinished() {
-        return arm.getElevatorEncoder() > (elevatorPosition - 500);
+        return Math.abs(claw.getWristEncoder() - wristPosition) < 10;
     }
 }
