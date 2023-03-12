@@ -162,7 +162,9 @@ public class RobotContainer {
 		//eventMap.put("lineUp", lineUp);
 		eventMap.put("score", new PrintCommand("Scoring"));
 
-		score2NoParkMap.put("scoreCone", new SequentialCommandGroup(highAnglesCone, highExtendCone, new WaitCommand(.5), highFinishCone, resetArmClaw));
+		//score2NoParkMap.put("scoreCone", new SequentialCommandGroup(highAnglesCone, highExtendCone, new WaitCommand(.5), highFinishCone, resetArmClaw));
+		score2NoParkMap.put("scoreCone", new PrintCommand("Starting auto ooh me oh my"));
+
 		score2NoParkMap.put("pickUp", new ParallelCommandGroup(new PrintCommand("Idk how to pick up yet"), new WaitCommand(3)));
 	
 		
