@@ -1,10 +1,10 @@
-package frc.robot.commands.ArmClaw.Medium.Cone;
+package frc.robot.commands.ArmClaw.High;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
-public class MediumFinishCone extends CommandBase {
+public class HighDrop extends CommandBase {
 
 
     private Arm arm;
@@ -12,7 +12,7 @@ public class MediumFinishCone extends CommandBase {
     private double elevatorPosition = 230560;
     private double armAngle = 37;
 
-    public MediumFinishCone(Arm arm, Claw claw) {
+    public HighDrop(Arm arm, Claw claw) {
         this.arm = arm;
         this.claw = claw;
         addRequirements(arm, claw);

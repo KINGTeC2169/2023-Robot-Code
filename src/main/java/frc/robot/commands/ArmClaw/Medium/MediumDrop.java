@@ -1,20 +1,22 @@
-package frc.robot.commands.ArmClaw.Low.Cube;
+package frc.robot.commands.ArmClaw.Medium;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
-public class LowExtendCube extends CommandBase {
+public class MediumDrop extends CommandBase {
 
 
-    private Arm arm;
+   
     private Claw claw;
-    private double elevatorPosition = 293200;
+    private double wristPosition = -49;
+    
 
-    public LowExtendCube(Arm arm, Claw claw) {
-        this.arm = arm;
+    public MediumDrop(Claw claw) {
+        
         this.claw = claw;
-        addRequirements(arm, claw);
+       
+        addRequirements(claw);
     }
 
     @Override
@@ -23,21 +25,20 @@ public class LowExtendCube extends CommandBase {
 
     @Override
     public void execute() {
-        arm.setElevatorPosition(elevatorPosition);
+        claw.setWristAngle(wristPosition);
     
 
     }
     @Override
 	public void end(boolean interrupted) {
-        if(!interrupted)
+        if(!interrupted) 
             claw.unGrab();
-
 	}
 
 
     
     @Override
     public boolean isFinished() {
-        return arm.getElevatorEncoder() > (elevatorPosition - 500);
+        return Math.abs(claw.getWristEncoder() - wristPosition) < 10;
     }
 }

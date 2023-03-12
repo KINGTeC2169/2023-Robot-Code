@@ -22,22 +22,15 @@ import frc.robot.commands.LineUpCube;
 import frc.robot.commands.SwerveCommand;
 import frc.robot.commands.TurnToPosition;
 import frc.robot.commands.ArmClaw.ResetArmClaw;
-import frc.robot.commands.ArmClaw.High.Cone.HighAnglesCone;
-import frc.robot.commands.ArmClaw.High.Cone.HighExtendCone;
-import frc.robot.commands.ArmClaw.High.Cone.HighFinishCone;
-import frc.robot.commands.ArmClaw.High.Cone.HighRetractCone;
-import frc.robot.commands.ArmClaw.High.Cube.HighAnglesCube;
-import frc.robot.commands.ArmClaw.High.Cube.HighExtendCube;
-import frc.robot.commands.ArmClaw.Low.Cone.LowAnglesCone;
-import frc.robot.commands.ArmClaw.Low.Cone.LowExtendCone;
-import frc.robot.commands.ArmClaw.Low.Cone.LowFinishCone;
-import frc.robot.commands.ArmClaw.Low.Cube.LowAnglesCube;
-import frc.robot.commands.ArmClaw.Low.Cube.LowExtendCube;
-import frc.robot.commands.ArmClaw.Medium.Cone.MediumAnglesCone;
-import frc.robot.commands.ArmClaw.Medium.Cone.MediumExtendCone;
-import frc.robot.commands.ArmClaw.Medium.Cone.MediumFinishCone;
-import frc.robot.commands.ArmClaw.Medium.Cube.MediumAnglesCube;
-import frc.robot.commands.ArmClaw.Medium.Cube.MediumExtendCube;
+import frc.robot.commands.ArmClaw.High.HighAngles;
+import frc.robot.commands.ArmClaw.High.HighExtend;
+import frc.robot.commands.ArmClaw.High.HighDrop;
+import frc.robot.commands.ArmClaw.High.HighRetract;
+import frc.robot.commands.ArmClaw.Low.LowAnglesCone;
+import frc.robot.commands.ArmClaw.Low.LowExtendCone;
+import frc.robot.commands.ArmClaw.Low.LowFinishCone;
+import frc.robot.commands.ArmClaw.Medium.MediumAngles;
+import frc.robot.commands.ArmClaw.Medium.MediumDrop;
 import frc.robot.commands.GetStuff.Attack;
 import frc.robot.commands.GetStuff.LineUpClaw;
 import frc.robot.commands.GetStuff.LineUpSwerve;
@@ -77,45 +70,23 @@ public class RobotContainer {
 	
 	private final ResetArmClaw resetArmClaw = new ResetArmClaw(arm);
 
-	private final LineUpConeLeft lineUpConeLeft = new LineUpConeLeft(swerveSubsystem);
-	private final LineUpConeRight lineUpConeRight = new LineUpConeRight(swerveSubsystem);
-	private final LineUpCube lineUpCube = new LineUpCube(swerveSubsystem);
-
-	private final HighAnglesCone highAnglesCone = new HighAnglesCone(arm, claw);
-	private final HighExtendCone highExtendCone = new HighExtendCone(arm);
-	private final HighFinishCone highFinishCone = new HighFinishCone(arm, claw);
-
-	private final MediumAnglesCone mediumAnglesCone = new MediumAnglesCone(arm, claw);
-	private final MediumExtendCone mediumExtendCone = new MediumExtendCone(claw);
-	private final MediumFinishCone mediumFinishCone = new MediumFinishCone(arm, claw);
-
-	private final LowAnglesCone lowAnglesCone = new LowAnglesCone(arm, claw);
-	private final LowExtendCone lowExtendCone = new LowExtendCone(arm);
-	private final LowFinishCone lowFinishCone = new LowFinishCone(arm, claw);
-
-	private final HighAnglesCube highAnglesCube = new HighAnglesCube(arm, claw);
-	private final HighExtendCube highExtendCube = new HighExtendCube(arm, claw);
-	private final MediumAnglesCube mediumAnglesCube = new MediumAnglesCube(arm, claw);
-	private final MediumExtendCube mediumExtendCube = new MediumExtendCube(arm, claw);
-	private final LowAnglesCube lowAnglesCube = new LowAnglesCube(arm, claw);
-	private final LowExtendCube lowExtendCube = new LowExtendCube(arm, claw);
 
 	private final LineUpSwerve lineUpSwerve = new LineUpSwerve(claw, swerveSubsystem);
 	private final SetAngle setAngle = new SetAngle(claw, arm);
 	private final Attack attack = new Attack(claw, arm);
 	private final LineUpClaw lineUpClaw = new LineUpClaw(claw);
 
-	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new HighExtendCone(arm),new WaitCommand(.5), new HighFinishCone(arm, claw), new HighRetractCone(arm, claw));
-	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(new HighAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new HighExtendCube(arm, claw));
-	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(new HighAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtendCone(arm),new WaitCommand(.5), new HighFinishCone(arm, claw), new HighRetractCone(arm, claw));
+	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeLeft(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
+	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpCube(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
+	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
 
-	private final SequentialCommandGroup lineupMediumConeLeft = new SequentialCommandGroup(new MediumAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new MediumExtendCone(claw));
-	private final SequentialCommandGroup lineupMediumCube = new SequentialCommandGroup(new MediumAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new MediumExtendCube(arm, claw));
-	private final SequentialCommandGroup lineupMediumConeRight = new SequentialCommandGroup(new MediumAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new MediumExtendCone(claw),new WaitCommand(.5), new MediumFinishCone(arm, claw));
+	private final SequentialCommandGroup lineupMediumConeLeft = new SequentialCommandGroup(new MediumAngles(arm, claw), new LineUpConeLeft(swerveSubsystem), new MediumDrop(claw));
+	private final SequentialCommandGroup lineupMediumCube = new SequentialCommandGroup(new MediumAngles(arm, claw), new LineUpCube(swerveSubsystem), new MediumDrop(claw));
+	private final SequentialCommandGroup lineupMediumConeRight = new SequentialCommandGroup(new MediumAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new MediumDrop(claw));
 
-	private final SequentialCommandGroup lineupLowConeLeft = new SequentialCommandGroup(new LowAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new LowExtendCone(arm),new WaitCommand(.5), new LowFinishCone(arm, claw));
-	private final SequentialCommandGroup lineupLowCube = new SequentialCommandGroup(new LowAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new LowExtendCube(arm, claw));
-	private final SequentialCommandGroup lineupLowConeRight = new SequentialCommandGroup(new LowAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new LowExtendCone(arm),new WaitCommand(.5), new LowFinishCone(arm, claw));
+	//private final SequentialCommandGroup lineupLowConeLeft = new SequentialCommandGroup(new LowAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new LowExtendCone(arm),new WaitCommand(.5), new LowFinishCone(arm, claw));
+	//private final SequentialCommandGroup lineupLowCube = new SequentialCommandGroup(new LowAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new LowExtendCube(arm, claw));
+	//private final SequentialCommandGroup lineupLowConeRight = new SequentialCommandGroup(new LowAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new LowExtendCone(arm),new WaitCommand(.5), new LowFinishCone(arm, claw));
 	
 
 	private final SequentialCommandGroup getCuboneCommand = new SequentialCommandGroup(setAngle, lineUpSwerve, lineUpClaw, attack);
@@ -279,13 +250,13 @@ public class RobotContainer {
 
 		//Buttons
 
-		//buttonBoard.button(0).whileTrue(lineupLowConeLeft);
+		//buttonBoard.button(2).whileTrue(lineupLowConeLeft);
 		//buttonBoard.button(1).whileTrue(lineupLowCube);
-		//buttonBoard.button(2).whileTrue(lineupLowConeRight);
+		//buttonBoard.button(0).whileTrue(lineupLowConeRight);
 
-		buttonBoard.button(3).whileTrue(lineupMediumConeLeft);
-		//buttonBoard.button(4).whileTrue(lineupMediumCube);
-		//buttonBoard.button(5).whileTrue(lineupMediumConeRight);
+		buttonBoard.button(5).whileTrue(lineupMediumConeLeft);
+		buttonBoard.button(4).whileTrue(lineupMediumCube);
+		buttonBoard.button(3).whileTrue(lineupMediumConeRight);
 
 		buttonBoard.button(9).whileTrue(lineupHighConeLeft);
 		buttonBoard.button(8).whileTrue(lineupHighCube);
