@@ -133,12 +133,9 @@ public class RobotContainer {
 		eventMap.put("pickUp", new WaitCommand(5));
 		//eventMap.put("lineUp", lineUp);
 		score2NoParkMap.put("scoreCone", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		score2NoParkMap.put("trainingWheels", new PrintCommand("I print things \n balls \n balls"));
+		score2NoParkMap.put("balance", new PrintCommand("I print things as well \n cock \n cock"));
 
-		//score2NoParkMap.put("scoreCone", new SequentialCommandGroup(highAnglesCone, highExtendCone, new WaitCommand(.5), highFinishCone, resetArmClaw));
-		//score2NoParkMap.put("scoreCone", new PrintCommand("Starting auto ooh me oh my"));
-
-		score2NoParkMap.put("pickUp", new ParallelCommandGroup(new PrintCommand("Idk how to pick up yet"), new WaitCommand(3)));
-	
 		
 		// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
 		SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
