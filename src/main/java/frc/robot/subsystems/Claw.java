@@ -24,8 +24,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
 
 public class Claw extends SubsystemBase {
-	private final TalonFX wristMotor = new TalonFX(Ports.wristMotor);
-	private final TalonSRX clawTwist = new TalonSRX(Ports.clawTwist);
+	private static final TalonFX wristMotor = new TalonFX(Ports.wristMotor);
+	private static final TalonSRX clawTwist = new TalonSRX(Ports.clawTwist);
 	private final DoubleSolenoid grabber = new DoubleSolenoid(PneumaticsModuleType.REVPH, Ports.grabberOne, Ports.grabberTwo);
 	private final DutyCycleEncoder twistEncoder = new DutyCycleEncoder(Ports.twistEncoder);
 	private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(Ports.wristEncoder);
@@ -124,10 +124,6 @@ public class Claw extends SubsystemBase {
 		//clawTwist.set(ControlMode.Position, clawTwist.getSelectedSensorPosition());
 	}
 
-  	public void twistClaw(double power) {
-    	System.out.println("Turning: " + power);
-    	clawTwist.set(ControlMode.PercentOutput, power);
-  	}
   	public void moveWrist(double power) {
     	wristMotor.set(ControlMode.PercentOutput, power);
   	}
@@ -157,10 +153,6 @@ public class Claw extends SubsystemBase {
 		else
 			grabber.toggle();
 		
-	}
-
-	public void twistMax() {
-		clawTwist.set(ControlMode.PercentOutput, 1);
 	}
 
 	public double getWristCurrent() {
@@ -208,6 +200,16 @@ public class Claw extends SubsystemBase {
 		clawTwist.set(ControlMode.Position, angle / 360 * 8192);
 		return clawTwist.getClosedLoopError();
 	}
+
+	public static double getWristAngle() {
+		return wristMotor.getSelectedSensorPosition() / 979.45;
+	}
+
+	public static double getTwistAngle() {
+		return clawTwist.getSelectedSensorPosition() / 8192 * 360;
+	}
+
+
 
 	@Override
 	public void simulationPeriodic() {
