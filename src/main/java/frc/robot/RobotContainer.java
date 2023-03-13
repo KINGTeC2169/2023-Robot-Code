@@ -122,7 +122,7 @@ public class RobotContainer {
 	public RobotContainer() {
 
 		PathPlannerTrajectory path = PathPlanner.loadPath("epic", new PathConstraints(3, 3));
-		PathPlannerTrajectory score2NoParkPath = PathPlanner.loadPath("epic", new PathConstraints(1, 3));
+		PathPlannerTrajectory score2NoParkPath = PathPlanner.loadPath("score2NoPark", new PathConstraints(1, 3));
 
 		// This is just an example event map. It would be better to have a constant, global event map
 		// in your code that will be used by all path following commands.
@@ -132,10 +132,10 @@ public class RobotContainer {
 		eventMap.put("marker1", new PrintCommand("Passed marker 1"));
 		eventMap.put("pickUp", new WaitCommand(5));
 		//eventMap.put("lineUp", lineUp);
-		eventMap.put("score", new PrintCommand("Scoring"));
+		score2NoParkMap.put("scoreCone", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 
 		//score2NoParkMap.put("scoreCone", new SequentialCommandGroup(highAnglesCone, highExtendCone, new WaitCommand(.5), highFinishCone, resetArmClaw));
-		score2NoParkMap.put("scoreCone", new PrintCommand("Starting auto ooh me oh my"));
+		//score2NoParkMap.put("scoreCone", new PrintCommand("Starting auto ooh me oh my"));
 
 		score2NoParkMap.put("pickUp", new ParallelCommandGroup(new PrintCommand("Idk how to pick up yet"), new WaitCommand(3)));
 	
@@ -157,7 +157,7 @@ public class RobotContainer {
 			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
 			swerveSubsystem.kinematics, // SwerveDriveKinematics
 			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-			new PIDConstants(2.0, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
 			swerveSubsystem::setModuleStates, // Module states consumer used to output to the drive subsystem
 			score2NoParkMap,
 			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
