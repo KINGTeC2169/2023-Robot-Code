@@ -103,8 +103,8 @@ public class Claw extends SubsystemBase {
 	}
 	public void wristDownPos() {
 		wristPos = wristMotor.getSelectedSensorPosition() - 5000;
-		if(wristPos < -130 * 979.45)
-			wristPos = -130 * 979.45;
+		if(wristPos < -115 * 979.45)
+			wristPos = -115 * 979.45;
 		wristMotor.set(ControlMode.Position, wristPos);
 	} 
 	public double setWristAngle(double angle) {

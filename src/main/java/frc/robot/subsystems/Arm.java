@@ -32,7 +32,7 @@ public class Arm extends SubsystemBase {
     private final double WINCH_LOWER_LIMIT = 20;
     private final double ELEVATOR_SPEED = 20000;
     private final double WINCH_SPEED = 1;
-    private final double lowLimit = 40000;
+    private final double lowLimit = 80000;
     private boolean wristWillBreak;
 
     private ShuffleboardTab tab = Shuffleboard.getTab("Arm");
@@ -65,20 +65,22 @@ public class Arm extends SubsystemBase {
 
         tab.add("Reset Elevator Position", Commands.runOnce(() -> resetElevatorEncoder())).withPosition(8, 0).withSize(2, 1);
         tab.add("Reset Winch Position",Commands.runOnce(() -> resetWinchEncoder())).withPosition(8, 1).withSize(2, 1);
-
+        tab.addBoolean("Wrist will break", () -> wristWillBreak);
+        resetElevatorEncoder();
 
         resetWinchEncoder();
     }
 
     @Override
     public void periodic() {
-        if(Claw.getWristAngle() < -90 && Math.abs(Claw.getTwistAngle()) > 55) {
+        if(Claw.getWristAngle() < -80 && Math.abs(Claw.getTwistAngle()) > 55) {
             wristWillBreak = true;
         }
         else {
             wristWillBreak = false;
         }
     }
+
 
     /**Extends arm by elevator speed value from shuffleboard. ControlMode.Position */
     public void extendPos() {
