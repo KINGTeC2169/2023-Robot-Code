@@ -39,8 +39,9 @@ public class Balance extends CommandBase {
         this.swerveSubsystem = swerveSubsystem;
         addRequirements(swerveSubsystem);
         pidTurn = new PIDController(0.5, 0, 0);
-        pidX = new PIDController(0.5, 0, 0);
-        pidY = new PIDController(0.5, 0, 0);
+        pidX = new PIDController(0.8, 0, 0);
+        pidY = new PIDController(0.8, 0, 0);
+        tab.addBoolean("Balanced?", () -> balanced);
     }
 
 
@@ -49,15 +50,23 @@ public class Balance extends CommandBase {
         pidTurn.setP(pTurn.getDouble(0));
 		pidX.setP(pX.getDouble(0));
 		pidY.setP(pY.getDouble(0));
-        tab.addBoolean("Balanced?", () -> balanced);
+        
     }
 
     @Override
     public void execute() {
 
-       xSpeed = pidX.calculate(NavX.getPitch(), 0);
-       ySpeed = pidY.calculate(NavX.getYaw(), 0);
-       chassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, turningSpeed);
+        double roll = -NavX.getRoll();
+        double pitch = -NavX.getPitch();
+
+        double total = Math.sqrt(Math.pow(roll, 2) + Math.pow(pitch, 2));
+        if(roll > 0 && pitch < 0)
+            total = -total;
+
+       xSpeed = pidX.calculate(total, 0);
+       //xSpeed = -pidX.calculate(NavX.getPitch(), 0);
+       //chassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, turningSpeed);
+       chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
 
        if(pidX.atSetpoint() && pidY.atSetpoint()) {
         balanced = true;

@@ -176,7 +176,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        odometer.resetPosition(pose.getRotation(), getModulePositions(), pose);
+        odometer.resetPosition(getRotation2d(), getModulePositions(), pose);
     }
 
 
@@ -230,6 +230,16 @@ public class SwerveSubsystem extends SubsystemBase {
         frontRight.setDesiredState(states[1]);
         backLeft.setDesiredState(states[2]);
         backRight.setDesiredState(states[3]);
+
+    }
+
+    public void setAutoModuleStates(SwerveModuleState[] states) {
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, ModuleConstants.maxSpeed);
+        frontLeft.setState(states[0]);
+        frontRight.setState(states[1]);
+        backLeft.setState(states[2]);
+        backRight.setState(states[3]);
 
     }
 

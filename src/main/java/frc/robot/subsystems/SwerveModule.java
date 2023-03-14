@@ -78,7 +78,7 @@ public class SwerveModule {
 
     public double getDrivePosition() {
         //return driveMotor.getSelectedSensorPosition() * driveEncoderToMeter;
-        return driveMotor.getSelectedSensorPosition() * (0.32 / 13824);
+        return -driveMotor.getSelectedSensorPosition() * (0.32 / 13824);
     }
 
     /**Returns position of turn encoder in radians. Counterclockwise is positive, accumulates. */
@@ -149,6 +149,12 @@ public class SwerveModule {
         
         turnMotor.set(turningPID.calculate(getTurnPosition(), state.angle.getRadians()));
 
+    }
+    public void setState(SwerveModuleState state) {
+        state = SwerveModuleState.optimize(state, getState().angle);
+
+        driveMotor.set(ControlMode.PercentOutput, -((state.speedMetersPerSecond / maxSpeed) * 0.94) - 0.06);
+        turnMotor.set(turningPID.calculate(getTurnPosition(), state.angle.getRadians()));
     }
 
     public double getError() {

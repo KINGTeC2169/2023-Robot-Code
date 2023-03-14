@@ -5,6 +5,9 @@
 package frc.robot;
 
 import java.util.HashMap;
+
+import javax.print.attribute.standard.MediaSize.NA;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -16,6 +19,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.Ports;
+import frc.robot.commands.Balance;
 import frc.robot.commands.LineUpConeLeft;
 import frc.robot.commands.LineUpConeRight;
 import frc.robot.commands.LineUpCube;
@@ -62,6 +66,7 @@ public class RobotContainer {
   
 	private final Claw claw = new Claw();
 	private final Arm arm = new Arm();
+	private final NavX navx = new NavX();
 	//private final CuboneManager cuboneManager = new CuboneManager();
 	private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
 
@@ -75,6 +80,7 @@ public class RobotContainer {
 	private final SetAngle setAngle = new SetAngle(claw, arm);
 	private final Attack attack = new Attack(claw, arm);
 	private final LineUpClaw lineUpClaw = new LineUpClaw(claw);
+	private final Balance balance = new Balance(swerveSubsystem);
 
 	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeLeft(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
 	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpCube(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
@@ -154,15 +160,14 @@ public class RobotContainer {
 			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
 			swerveSubsystem.kinematics, // SwerveDriveKinematics
 			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-			new PIDConstants(0.1, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
-			swerveSubsystem::setModuleStates, // Module states consumer used to output to the drive subsystem
+			new PIDConstants(2.0, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+			swerveSubsystem::setAutoModuleStates, // Module states consumer used to output to the drive subsystem
 			score2NoParkMap,
 			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
 			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
 		);
 		
 		
-		autoBot = autoBuilder.fullAuto(path);
 		score2NoPark = autoBuilder2.fullAuto(score2NoParkPath);
 
 
@@ -227,7 +232,7 @@ public class RobotContainer {
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
 		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab()));
 		controller.back().whileTrue(getCuboneCommand);
-		controller.start().whileTrue(lineupHighConeRight);
+		controller.start().whileTrue(balance);
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos()));
 		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos()));
 		//controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(0.5), () -> claw.twistClaw(0)).repeatedly());

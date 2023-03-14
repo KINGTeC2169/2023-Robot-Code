@@ -5,12 +5,19 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class NavX {
     private static AHRS gyro = new AHRS(SPI.Port.kMXP);
+    private ShuffleboardTab tab = Shuffleboard.getTab("NavX");
+
 
     public NavX() {
-
+        tab.addDouble("Yaw", () -> getYaw());
+        tab.addDouble("Pitch", () -> getPitch());
+        tab.addDouble("Roll", () -> getRoll());
+        tab.addDouble("Angle", () -> getAngle());
     }
 
     public static double getX() {
@@ -19,6 +26,10 @@ public class NavX {
 
     public static double getY() {
         return gyro.getPitch();
+    }
+
+    public static double getRoll() {
+        return gyro.getRoll();
     }
     
     public static double getPitch() {
