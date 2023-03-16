@@ -36,6 +36,7 @@ import frc.robot.commands.ArmClaw.Low.LowFinishCone;
 import frc.robot.commands.ArmClaw.Medium.MediumAngles;
 import frc.robot.commands.ArmClaw.Medium.MediumDrop;
 import frc.robot.commands.GetStuff.Attack;
+import frc.robot.commands.GetStuff.AttackUpright;
 import frc.robot.commands.GetStuff.LineUpClaw;
 import frc.robot.commands.GetStuff.LineUpRetract;
 import frc.robot.commands.GetStuff.LineUpSwerveCone;
@@ -102,7 +103,7 @@ public class RobotContainer {
 
 	private final SequentialCommandGroup getConeCommand = new SequentialCommandGroup(new SetAngle(claw, arm), lineUpSwerveCone, new LineUpClaw(claw), new WaitCommand(0.5), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw));
 	private final SequentialCommandGroup getCubeCommand = new SequentialCommandGroup(new SetAngle(claw, arm), lineUpSwerveCube, new LineUpClaw(claw), new WaitCommand(0.5), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw));
-	private final SequentialCommandGroup getConeUprightCommand = new SequentialCommandGroup(new SetAngle(claw, arm), new LineUpSwerveConeUpright(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.5), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw));
+	private final SequentialCommandGroup getConeUprightCommand = new SequentialCommandGroup(new SetAngle(claw, arm), new LineUpSwerveConeUpright(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.5), new AttackUpright(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw));
 
 
 	
