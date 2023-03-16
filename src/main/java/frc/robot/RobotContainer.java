@@ -258,9 +258,9 @@ public class RobotContainer {
 
 		//Buttons
 
-		buttonBoard.button(3).whileTrue(getConeCommand);
-		buttonBoard.button(2).whileTrue(getConeUprightCommand);
-		buttonBoard.button(1).whileTrue(getCubeCommand);
+		buttonBoard.button(3).whileTrue(getConeUprightCommand);
+		buttonBoard.button(2).whileTrue(getCubeCommand);
+		buttonBoard.button(1).whileTrue(getConeCommand);
 
 		buttonBoard.button(4).whileTrue(lineupMediumConeLeft);
 		buttonBoard.button(5).whileTrue(lineupMediumCube);
