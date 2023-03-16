@@ -124,7 +124,7 @@ public class LineUpConeLeft extends CommandBase {
                 centered = true;
             }
             if(centered) {
-                ySpeed = pidY.calculate(NetworkTables.apriltagY(), .58);
+                //ySpeed = pidY.calculate(NetworkTables.apriltagY(), .58);
             }
                         
         }
@@ -152,6 +152,6 @@ public class LineUpConeLeft extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint();
+        return pidRotate.atSetpoint() && pidX.atSetpoint();
     }
 }
