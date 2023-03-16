@@ -77,8 +77,8 @@ public class LineUpSwerveCube extends CommandBase {
 		pidX.setP(-0.003);
 		pidY.setP(-0.003);
 		claw.setTwistAngle(0);
-		pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 320);
-        pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 240);
+		pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 320);
+        pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 240);
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.

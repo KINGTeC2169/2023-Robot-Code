@@ -23,12 +23,6 @@ public class LineUpSwerveCone extends CommandBase {
 
 	private final ShuffleboardTab tab = Shuffleboard.getTab("GetCubone");
 	
-	private final GenericEntry pX = tab.addPersistent("P Xf", 0).getEntry();
-	private final GenericEntry pY = tab.addPersistent("P Yf", 0).getEntry();
-	
-	private final GenericEntry yTol = tab.addPersistent("Y Tolf", 0).getEntry();
-
-	private final GenericEntry xTol = tab.addPersistent("X Tolf", 0).getEntry();
 	
 
 
