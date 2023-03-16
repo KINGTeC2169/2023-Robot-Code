@@ -136,7 +136,7 @@ public class RobotContainer {
 	public RobotContainer() {
 
 		PathPlannerTrajectory score2Path = PathPlanner.loadPath("Score2", new PathConstraints(2, 1));
-		PathPlannerTrajectory scoreAndBalancePath = PathPlanner.loadPath("ScoreAndBalance", new PathConstraints(1, 3));
+		PathPlannerTrajectory scoreAndBalancePath = PathPlanner.loadPath("ScoreAndBalance", new PathConstraints(4, 3));
 		PathPlannerTrajectory scoreAndParkClosePath = PathPlanner.loadPath("ScoreAndParkClose", new PathConstraints(1, 2));
 		PathPlannerTrajectory scoreAndParkLongPath = PathPlanner.loadPath("ScoreAndParkClose", new PathConstraints(1, 2));
 
@@ -153,7 +153,7 @@ public class RobotContainer {
 		score2Map.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.5), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
 		score2Map.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		//eventMap.put("lineUp", lineUp);
-		scoreAndBalanceMap.put("scoreCone", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		scoreAndBalanceMap.put("scoreCone", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()),new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		scoreAndBalanceMap.put("trainingWheels", new PrintCommand("I print things \n balls \n balls"));
 		scoreAndBalanceMap.put("balance", new Balance(swerveSubsystem));
 
