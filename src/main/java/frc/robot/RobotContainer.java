@@ -128,6 +128,8 @@ public class RobotContainer {
 	private Command scoreAndBalance;
 	private Command scoreAndParkLong;
 	private Command scoreAndParkClose;
+	private Command score2Feeder;
+	private Command justScore;
 
  
 	private ShuffleboardTab tab = Shuffleboard.getTab("AutoChooser");
@@ -141,11 +143,11 @@ public class RobotContainer {
 
 	public RobotContainer() {
 
-		PathPlannerTrajectory score2Path = PathPlanner.loadPath("Score2", new PathConstraints(2, 1));
+		PathPlannerTrajectory score2Path = PathPlanner.loadPath("Score2", new PathConstraints(4, 3));
 		PathPlannerTrajectory scoreAndBalancePath = PathPlanner.loadPath("ScoreAndBalance", new PathConstraints(4, 3));
 		PathPlannerTrajectory scoreAndParkClosePath = PathPlanner.loadPath("ScoreAndParkClose", new PathConstraints(1, 2));
 		PathPlannerTrajectory scoreAndParkLongPath = PathPlanner.loadPath("ScoreAndParkClose", new PathConstraints(1, 2));
-
+		PathPlannerTrajectory score2FeederPath = PathPlanner.loadPath("Score2Feeder", new PathConstraints(4, 3));
 
 		// This is just an example event map. It would be better to have a constant, global event map
 		// in your code that will be used by all path following commands.
@@ -153,11 +155,12 @@ public class RobotContainer {
 		HashMap<String, Command> scoreAndBalanceMap = new HashMap<String, Command>();
 		HashMap<String, Command> scoreAndParkCloseMap = new HashMap<String, Command>();
 		HashMap<String, Command> scoreAndParkLongMap = new HashMap<String, Command>();
+		HashMap<String, Command> score2FeederMap = new HashMap<String, Command>();
 
 	
 		score2Map.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
-		score2Map.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.5), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
-		score2Map.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		score2Map.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), Commands.runOnce(() -> claw.unGrab()), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.25), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
+		score2Map.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm), new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		//eventMap.put("lineUp", lineUp);
 		scoreAndBalanceMap.put("scoreCone", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()),new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		scoreAndBalanceMap.put("trainingWheels", new PrintCommand("I print things \n balls \n balls"));
@@ -166,7 +169,11 @@ public class RobotContainer {
 		scoreAndParkCloseMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		scoreAndParkLongMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 
+		score2FeederMap.put("score", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		score2FeederMap.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), Commands.runOnce(() -> claw.unGrab()), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.25), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
+		score2FeederMap.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		
+
 		// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
 		SwerveAutoBuilder score2Builder = new SwerveAutoBuilder(
 			swerveSubsystem::getPose, // Pose2d supplier
@@ -212,13 +219,24 @@ public class RobotContainer {
 			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
 			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
 		);
+		SwerveAutoBuilder score2FeederBuilder = new SwerveAutoBuilder(
+			swerveSubsystem::getPose, // Pose2d supplier
+			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
+			swerveSubsystem.kinematics, // SwerveDriveKinematics
+			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+			new PIDConstants(2.0, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+			swerveSubsystem::setAutoModuleStates, // Module states consumer used to output to the drive subsystem
+			score2FeederMap,
+			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
+		);
 		
 		score2 = score2Builder.fullAuto(score2Path);
 		scoreAndBalance = scoreAndBalanceBuilder.fullAuto(scoreAndBalancePath);
 		scoreAndParkClose = scoreAndParkCloseBuilder.fullAuto(scoreAndParkClosePath);
 		scoreAndParkLong = scoreAndParkLongBuilder.fullAuto(scoreAndParkLongPath);
-
-		
+		score2Feeder = score2FeederBuilder.fullAuto(score2FeederPath);
+		justScore = new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
 
 
 		/* 
@@ -322,30 +340,7 @@ public class RobotContainer {
 	* @return the command to run in autonomous
 	*/
 	public Command getAutonomousCommand() {
-    
-		PathPlannerTrajectory examplePath = PathPlanner.loadPath("Test Path", new PathConstraints(3, 3));
-		Constraints angleConstraints = new Constraints(1.2, 1.2);
-		PIDController xPID = new PIDController(0.5, 0, 0);
-		PIDController yPID = new PIDController(0.5, 0, 0);
-		ProfiledPIDController anglePID = new ProfiledPIDController(5, 0, 0, angleConstraints);
-		anglePID.enableContinuousInput(-Math.PI, Math.PI);
 
-		SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-			examplePath, 
-			swerveSubsystem::getPose,
-			Constants.DriveConstants.DRIVE_KINEMATICS, 
-			xPID, yPID, anglePID, 
-			swerveSubsystem::setModuleStates, 
-			swerveSubsystem);
-
-		
-		/* 
-    	return new SequentialCommandGroup(
-			//new InstantCommand(() -> swerveSubsystem.resetOdometry(trajectory.getInitialPose())),
-			new InstantCommand(() -> swerveSubsystem.resetOdometry(examplePath.getInitialHolonomicPose())),
-			swerveControllerCommand,
-			new InstantCommand(() -> swerveSubsystem.stopModules())
-		); */
 		if(autoChoice.getDouble(0.0) == 1.0) {
 			return scoreAndBalance;
 		}
@@ -358,7 +353,10 @@ public class RobotContainer {
 		else if(autoChoice.getDouble(0.0) == 4.0) {
 			return score2;
 		}
-		return scoreAndParkClose;
+		else if(autoChoice.getDouble(0.0) == 5.0) {
+			return score2Feeder;
+		}
+		return justScore;
 	
 	}
 }
