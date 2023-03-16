@@ -74,7 +74,7 @@ public final class Constants {
         public static final double pr = 0.01;
         public static final double py = 1;
         public static final double xTol = 0.04;
-        public static final double yTol = 0.08;
+        public static final double yTol = 0.04;
         public static final double rotateTol = 1;
     }
 

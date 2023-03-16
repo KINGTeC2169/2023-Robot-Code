@@ -22,6 +22,7 @@ public class Attack extends CommandBase {
 	private final Arm arm;
 
     private double armAngle = 20;
+	private double elevatorPosition = 75000;
     
 	
 
@@ -53,6 +54,7 @@ public class Attack extends CommandBase {
 	public void execute() {
 		//51931 elevator 23 angle
 		arm.setArmAngle(armAngle);
+		arm.setElevatorPosition(elevatorPosition);
         
 
 	}
@@ -67,6 +69,6 @@ public class Attack extends CommandBase {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-        return Math.abs(arm.getLiftAngle() - armAngle) < 5;
+        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(arm.getElevatorEncoder() - elevatorPosition) < 1000;
 	}
 }

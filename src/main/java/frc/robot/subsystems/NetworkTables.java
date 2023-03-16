@@ -140,7 +140,7 @@ public class NetworkTables {
 
     public static String closestApriltag() {
         double closest = -2169;
-        String closestString = null;
+        String closestString = "null";
         if(frontApriltagYaw() != -2169 && Math.abs(closest) > Math.abs(frontApriltagYaw()) ) {
             closest = frontApriltagYaw();
             closestString = "front";
@@ -169,40 +169,47 @@ public class NetworkTables {
     //TODO: FIX the 20 degree difference here
     //The Y value of the center might not work, but i dont think we use it so it should be good 
     public static double apriltagYaw() {
+        String temp = closestApriltag();
         double adder = 0;
-        if(closestApriltag() != null) {
+        
+        if(!temp.equals("null")) {
             
-            if(closestApriltag().equals("front")) {
+            if(temp.equals("front")) {
                 adder = 0;
-            } else if(closestApriltag().equals("left")) {
+            } else if(temp.equals("left")) {
                 adder = -30;
-            } else if(closestApriltag().equals("right")) {
+            } else if(temp.equals("right")) {
                 adder = 30;
             }
-            if(table.getEntry("" + closestApriltag() + "-apriltag-Yaw").getDouble(-2169) != -2169) {
-                return table.getEntry("" + closestApriltag() + "-apriltag-Yaw").getDouble(-2169) + adder;
+            if(table.getEntry("" + temp + "-apriltag-Yaw").getDouble(-2169) != -2169) {
+                return table.getEntry("" + temp + "-apriltag-Yaw").getDouble(-2169) + adder;
             }
         }
         return -2169;
     }
 
     public static double apriltagX() {
-        return table.getEntry("" + closestApriltag() + "-apriltag-X").getDouble(-2169);
+        String temp = closestApriltag();
+        if(temp.equals("null")) {
+            return -2169;
+        }
+        return table.getEntry("" + temp + "-apriltag-X").getDouble(-2169);
     }
 
     public static double[] apriltagCenter() {
+        String temp = closestApriltag();
         double adder = 0;
-        if(closestApriltag() != null) {
+        if(!temp.equals("null")) {
             
-            if(closestApriltag().equals("front")) {
+            if(temp.equals("front")) {
                 adder = -320;
-            } else if(closestApriltag().equals("left")) {
+            } else if(temp.equals("left")) {
                 adder = -1120;
-            } else if(closestApriltag().equals("right")) {
+            } else if(temp.equals("right")) {
                 adder = 320;
             }
-            if(table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr) != arr) {
-                double[] cringe = {table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr)[0] + adder, (table.getEntry("" + closestApriltag() + "-apriltag-Center").getDoubleArray(arr)[1])};
+            if(table.getEntry("" + temp + "-apriltag-Center").getDoubleArray(arr) != arr) {
+                double[] cringe = {table.getEntry("" + temp + "-apriltag-Center").getDoubleArray(arr)[0] + adder, (table.getEntry("" + temp + "-apriltag-Center").getDoubleArray(arr)[1])};
                 return cringe;
             }
         }
@@ -211,7 +218,11 @@ public class NetworkTables {
 
     
     public static double apriltagY() {
-        return table.getEntry("" + closestApriltag() + "-apriltag-Y").getDouble(-2169);
+        String temp = closestApriltag();
+        if(temp.equals("null")) {
+            return -2169;
+        }
+        return table.getEntry("" + temp + "-apriltag-Y").getDouble(-2169);
     }
     
 }

@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class LineUpSwerve extends CommandBase {
+public class LineUpSwerveCone extends CommandBase {
 	@SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 	private final Claw claw;
 	private final SwerveSubsystem swerve;
@@ -23,12 +23,12 @@ public class LineUpSwerve extends CommandBase {
 
 	private final ShuffleboardTab tab = Shuffleboard.getTab("GetCubone");
 	
-	private final GenericEntry pX = tab.addPersistent("P X", 0).getEntry();
-	private final GenericEntry pY = tab.addPersistent("P Y", 0).getEntry();
+	private final GenericEntry pX = tab.addPersistent("P Xf", 0).getEntry();
+	private final GenericEntry pY = tab.addPersistent("P Yf", 0).getEntry();
 	
-	private final GenericEntry yTol = tab.addPersistent("Y Tol", 0).getEntry();
+	private final GenericEntry yTol = tab.addPersistent("Y Tolf", 0).getEntry();
 
-	private final GenericEntry xTol = tab.addPersistent("X Tol", 0).getEntry();
+	private final GenericEntry xTol = tab.addPersistent("X Tolf", 0).getEntry();
 	
 
 
@@ -48,7 +48,7 @@ public class LineUpSwerve extends CommandBase {
 	 *
 	 * @param subsystem The subsystem used by this command.
 	 */
-	public LineUpSwerve(Claw claw, SwerveSubsystem swerve) {
+	public LineUpSwerveCone(Claw claw, SwerveSubsystem swerve) {
 		this.claw = claw;
 		this.swerve = swerve;
 	
@@ -70,12 +70,12 @@ public class LineUpSwerve extends CommandBase {
 		centered = false;
 		claw.resetTwistEncoder();
 
-		pidX.setTolerance(xTol.getDouble(0));
-		pidY.setTolerance(yTol.getDouble(0));
+		pidX.setTolerance(10);
+		pidY.setTolerance(10);
 
 		
-		pidX.setP(pX.getDouble(0));
-		pidY.setP(pY.getDouble(0));
+		pidX.setP(-0.003);
+		pidY.setP(-0.003);
 		claw.setTwistAngle(0);
 		pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 320);
         pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 240);
@@ -87,20 +87,19 @@ public class LineUpSwerve extends CommandBase {
 		xSpeed = 0;
 		ySpeed = 0;
 
-        if(CuboneManager.isConeInbound()) {
-            
+        if(CuboneManager.isSomethingInBound()) {
+
 			
-				xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 320);
-            	ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 300);
+            
+				if(CuboneManager.isConeInbound() ) {
+					xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 320);
+            		ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 260);
+				}
 				
 			
-			
             
         }
-        else if(CuboneManager.isCubeInbound()) {
-            xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 320);
-            ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 240);
-        }
+        
 		
 
 		chassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, 0);
