@@ -68,7 +68,7 @@ public class LineUpSwerveConeUpright extends CommandBase {
 		pidX.setP(-0.003);
 		pidY.setP(-0.003);
 		claw.setTwistAngle(0);
-		pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 300);
+		pidX.calculate(NetworkTables.getPalmCenter("Cone")[0], 320);
         pidY.calculate(NetworkTables.getPalmCenter("Cone")[1], 240);
 	}
 
@@ -84,7 +84,7 @@ public class LineUpSwerveConeUpright extends CommandBase {
             
 				if(CuboneManager.isCubeInbound()) {
 					xSpeed = pidX.calculate(NetworkTables.getPalmCenter("Cube")[0], 320);
-            		ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 260);
+            		ySpeed = pidY.calculate(NetworkTables.getPalmCenter("Cube")[1], 240);
 				}
 			
 			
