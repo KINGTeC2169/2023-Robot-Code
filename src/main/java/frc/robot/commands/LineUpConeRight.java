@@ -123,7 +123,7 @@ public class LineUpConeRight extends CommandBase {
                 centered = true;
             }
             if(centered) {
-                ySpeed = pidY.calculate(NetworkTables.apriltagY(), .56);
+                ySpeed = pidY.calculate(NetworkTables.apriltagY(), .58);
             }
                 
                 

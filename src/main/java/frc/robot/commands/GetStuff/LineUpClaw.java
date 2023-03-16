@@ -54,9 +54,11 @@ public class LineUpClaw extends CommandBase {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		
+		if(CuboneManager.isConeInbound()){
+			claw.setTwistAngle(NetworkTables.getPalmAngle("Cone"));
+		}
 
-        claw.setTwistAngle(NetworkTables.getPalmAngle("Cone"));
+        
 		
 
 
@@ -71,6 +73,7 @@ public class LineUpClaw extends CommandBase {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return Math.abs(claw.getTwistEncoder() - NetworkTables.getPalmAngle("Cone")) < 10;
+		//return Math.abs(claw.getTwistEncoder() - NetworkTables.getPalmAngle("Cone")) < 10;
+		return true;
 	}
 }

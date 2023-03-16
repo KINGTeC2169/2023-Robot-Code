@@ -184,7 +184,7 @@ public class SwerveModule {
     }
 
     public void fullStop() {
-        driveMotor.set(ControlMode.Position, 0);
+        driveMotor.set(ControlMode.Velocity, 0);
         turnMotor.set(0);
     }
     /**

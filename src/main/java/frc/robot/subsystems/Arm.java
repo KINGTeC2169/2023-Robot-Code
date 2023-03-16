@@ -66,7 +66,6 @@ public class Arm extends SubsystemBase {
         tab.add("Reset Elevator Position", Commands.runOnce(() -> resetElevatorEncoder())).withPosition(8, 0).withSize(2, 1);
         tab.add("Reset Winch Position",Commands.runOnce(() -> resetWinchEncoder())).withPosition(8, 1).withSize(2, 1);
         tab.addBoolean("Wrist will break", () -> wristWillBreak);
-        resetElevatorEncoder();
 
         resetWinchEncoder();
     }
