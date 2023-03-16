@@ -120,7 +120,9 @@ public class RobotContainer {
 	private final CommandJoystick rightStick = new CommandJoystick(3);
 
 	private Command score2;
-	private Command score2NoPark;
+	private Command scoreAndBalance;
+	private Command scoreAndParkLong;
+	private Command scoreAndParkClose;
 
  
   
@@ -132,20 +134,29 @@ public class RobotContainer {
 	public RobotContainer() {
 
 		PathPlannerTrajectory score2Path = PathPlanner.loadPath("Score2", new PathConstraints(2, 1));
-		PathPlannerTrajectory score2NoParkPath = PathPlanner.loadPath("score2NoPark", new PathConstraints(1, 3));
+		PathPlannerTrajectory scoreAndBalancePath = PathPlanner.loadPath("ScoreAndBalance", new PathConstraints(1, 3));
+		PathPlannerTrajectory scoreAndParkClosePath = PathPlanner.loadPath("ScoreAndParkClose", new PathConstraints(1, 2));
+		PathPlannerTrajectory scoreAndParkLongPath = PathPlanner.loadPath("ScoreAndParkClose", new PathConstraints(1, 2));
+
 
 		// This is just an example event map. It would be better to have a constant, global event map
 		// in your code that will be used by all path following commands.
 		HashMap<String, Command> score2Map = new HashMap<String, Command>();
-		HashMap<String, Command> score2NoParkMap = new HashMap<String, Command>();
+		HashMap<String, Command> scoreAndBalanceMap = new HashMap<String, Command>();
+		HashMap<String, Command> scoreAndParkCloseMap = new HashMap<String, Command>();
+		HashMap<String, Command> scoreAndParkLongMap = new HashMap<String, Command>();
+
 	
 		score2Map.put("score", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		score2Map.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), lineUpSwerveCone, new LineUpClaw(claw), new WaitCommand(0.5), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
 		score2Map.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		//eventMap.put("lineUp", lineUp);
-		score2NoParkMap.put("scoreCone", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
-		score2NoParkMap.put("trainingWheels", new PrintCommand("I print things \n balls \n balls"));
-		score2NoParkMap.put("balance", new PrintCommand("I print things as well \n cock \n cock"));
+		scoreAndBalanceMap.put("scoreCone", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		scoreAndBalanceMap.put("trainingWheels", new PrintCommand("I print things \n balls \n balls"));
+		scoreAndBalanceMap.put("balance", new PrintCommand("I print things as well \n cock \n cock"));
+
+		scoreAndParkCloseMap.put("score", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		scoreAndParkLongMap.put("score", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 
 		
 		// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
@@ -160,20 +171,46 @@ public class RobotContainer {
 			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
 			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
 		);
-		SwerveAutoBuilder autoBuilder2 = new SwerveAutoBuilder(
+		SwerveAutoBuilder scoreAndBalanceBuilder = new SwerveAutoBuilder(
 			swerveSubsystem::getPose, // Pose2d supplier
 			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
 			swerveSubsystem.kinematics, // SwerveDriveKinematics
 			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
 			new PIDConstants(2.0, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
 			swerveSubsystem::setAutoModuleStates, // Module states consumer used to output to the drive subsystem
-			score2NoParkMap,
+			scoreAndBalanceMap,
+			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
+		);
+		SwerveAutoBuilder scoreAndParkCloseBuilder = new SwerveAutoBuilder(
+			swerveSubsystem::getPose, // Pose2d supplier
+			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
+			swerveSubsystem.kinematics, // SwerveDriveKinematics
+			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+			new PIDConstants(2.0, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+			swerveSubsystem::setAutoModuleStates, // Module states consumer used to output to the drive subsystem
+			scoreAndParkCloseMap,
+			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
+		);
+		SwerveAutoBuilder scoreAndParkLongBuilder = new SwerveAutoBuilder(
+			swerveSubsystem::getPose, // Pose2d supplier
+			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
+			swerveSubsystem.kinematics, // SwerveDriveKinematics
+			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+			new PIDConstants(2.0, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+			swerveSubsystem::setAutoModuleStates, // Module states consumer used to output to the drive subsystem
+			scoreAndParkLongMap,
 			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
 			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
 		);
 		
 		score2 = score2Builder.fullAuto(score2Path);
-		score2NoPark = autoBuilder2.fullAuto(score2NoParkPath);
+		scoreAndBalance = scoreAndBalanceBuilder.fullAuto(scoreAndBalancePath);
+		scoreAndParkClose = scoreAndParkCloseBuilder.fullAuto(scoreAndParkClosePath);
+		scoreAndParkLong = scoreAndParkLongBuilder.fullAuto(scoreAndParkLongPath);
+
+		
 
 
 		/* 
@@ -302,7 +339,7 @@ public class RobotContainer {
 			new InstantCommand(() -> swerveSubsystem.stopModules())
 		); */
 
-		return score2NoPark;
+		return scoreAndBalance;
 	
 	}
 }
