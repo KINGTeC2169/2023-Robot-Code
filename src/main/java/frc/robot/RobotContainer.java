@@ -119,7 +119,7 @@ public class RobotContainer {
 	private final CommandJoystick leftStick = new CommandJoystick(2);
 	private final CommandJoystick rightStick = new CommandJoystick(3);
 
-	private Command autoBot;
+	private Command score2;
 	private Command score2NoPark;
 
  
@@ -131,16 +131,17 @@ public class RobotContainer {
 
 	public RobotContainer() {
 
-		PathPlannerTrajectory path = PathPlanner.loadPath("epic", new PathConstraints(3, 3));
+		PathPlannerTrajectory score2Path = PathPlanner.loadPath("Score2", new PathConstraints(2, 1));
 		PathPlannerTrajectory score2NoParkPath = PathPlanner.loadPath("score2NoPark", new PathConstraints(1, 3));
 
 		// This is just an example event map. It would be better to have a constant, global event map
 		// in your code that will be used by all path following commands.
-		HashMap<String, Command> eventMap = new HashMap<String, Command>();
+		HashMap<String, Command> score2Map = new HashMap<String, Command>();
 		HashMap<String, Command> score2NoParkMap = new HashMap<String, Command>();
 	
-		eventMap.put("marker1", new PrintCommand("Passed marker 1"));
-		eventMap.put("pickUp", new WaitCommand(5));
+		score2Map.put("score", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		score2Map.put("pickUp", );
+		score2Map.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		//eventMap.put("lineUp", lineUp);
 		score2NoParkMap.put("scoreCone", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		score2NoParkMap.put("trainingWheels", new PrintCommand("I print things \n balls \n balls"));
@@ -148,14 +149,14 @@ public class RobotContainer {
 
 		
 		// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
-		SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+		SwerveAutoBuilder score2Builder = new SwerveAutoBuilder(
 			swerveSubsystem::getPose, // Pose2d supplier
 			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
 			swerveSubsystem.kinematics, // SwerveDriveKinematics
 			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
 			new PIDConstants(2.0, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
 			swerveSubsystem::setModuleStates, // Module states consumer used to output to the drive subsystem
-			eventMap,
+			score2Map,
 			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
 			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
 		);
@@ -171,7 +172,7 @@ public class RobotContainer {
 			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
 		);
 		
-		
+		score2 = score2Builder.fullAuto(score2Path);
 		score2NoPark = autoBuilder2.fullAuto(score2NoParkPath);
 
 
@@ -267,7 +268,7 @@ public class RobotContainer {
 		buttonBoard.button(8).whileTrue(lineupHighCube);
 		buttonBoard.button(9).whileTrue(lineupHighConeRight);
 
-
+		
 	}
 
 	/**
