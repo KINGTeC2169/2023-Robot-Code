@@ -162,14 +162,14 @@ public class RobotContainer {
 		score2Map.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), Commands.runOnce(() -> claw.unGrab()), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.25), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
 		score2Map.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm), new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		//eventMap.put("lineUp", lineUp);
-		scoreAndBalanceMap.put("scoreCone", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()),new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		scoreAndBalanceMap.put("scoreCone", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		scoreAndBalanceMap.put("trainingWheels", new PrintCommand("I print things \n balls \n balls"));
 		scoreAndBalanceMap.put("balance", new Balance(swerveSubsystem));
 
 		scoreAndParkCloseMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		scoreAndParkLongMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 
-		score2FeederMap.put("score", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		score2FeederMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		score2FeederMap.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), Commands.runOnce(() -> claw.unGrab()), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.25), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
 		score2FeederMap.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		
