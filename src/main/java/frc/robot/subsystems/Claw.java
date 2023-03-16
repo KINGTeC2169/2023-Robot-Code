@@ -81,7 +81,7 @@ public class Claw extends SubsystemBase {
 	public void twistUpPos() {
 		clawTwist.config_kP(0, twistP.getDouble(0.5));
 
-		twistAngle = getRelativeTwist() + 50;
+		twistAngle = getRelativeTwist() + 20;
 		if (twistAngle > 100)
 			twistAngle = 100;
 		setTwistAngle(twistAngle);
@@ -90,7 +90,7 @@ public class Claw extends SubsystemBase {
 	public void twistDownPos() {
 		clawTwist.config_kP(0, twistP.getDouble(0.5));
 
-		twistAngle = getRelativeTwist() - 50;
+		twistAngle = getRelativeTwist() - 20;
 		if (twistAngle < -100)
 			twistAngle = -100;
 		setTwistAngle(twistAngle);

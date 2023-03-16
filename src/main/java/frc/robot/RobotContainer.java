@@ -92,19 +92,19 @@ public class RobotContainer {
 	private final Balance balance = new Balance(swerveSubsystem);
 
 	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeLeft(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
-	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpCube(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
+	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(new HighAngles(arm, claw),  new LineUpCube(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
 	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
 
-	private final SequentialCommandGroup lineupMediumConeLeft = new SequentialCommandGroup(new MediumAngles(arm, claw), new LineUpConeLeft(swerveSubsystem), new MediumDrop(claw));
-	private final SequentialCommandGroup lineupMediumCube = new SequentialCommandGroup(new MediumAngles(arm, claw), new LineUpCube(swerveSubsystem), new MediumDrop(claw));
-	private final SequentialCommandGroup lineupMediumConeRight = new SequentialCommandGroup(new MediumAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new MediumDrop(claw));
+	private final SequentialCommandGroup lineupMediumConeLeft = new SequentialCommandGroup(new MediumAngles(arm, claw),/*, new LineUpConeLeft(swerveSubsystem)*/ new MediumDrop(claw));
+	private final SequentialCommandGroup lineupMediumCube = new SequentialCommandGroup(new MediumAngles(arm, claw)/* , new LineUpCube(swerveSubsystem)*/, new MediumDrop(claw));
+	private final SequentialCommandGroup lineupMediumConeRight = new SequentialCommandGroup(new MediumAngles(arm, claw), /*new LineUpConeRight(swerveSubsystem),*/ new MediumDrop(claw));
 
 	//private final SequentialCommandGroup lineupLowConeLeft = new SequentialCommandGroup(new LowAnglesCone(arm, claw), new LineUpConeLeft(swerveSubsystem), new LowExtendCone(arm),new WaitCommand(.5), new LowFinishCone(arm, claw));
 	//private final SequentialCommandGroup lineupLowCube = new SequentialCommandGroup(new LowAnglesCube(arm, claw), new LineUpCube(swerveSubsystem), new LowExtendCube(arm, claw));
 	//private final SequentialCommandGroup lineupLowConeRight = new SequentialCommandGroup(new LowAnglesCone(arm, claw), new LineUpConeRight(swerveSubsystem), new LowExtendCone(arm),new WaitCommand(.5), new LowFinishCone(arm, claw));
 	
 
-	private final SequentialCommandGroup getConeCommand = new SequentialCommandGroup(new SetAngle(claw, arm), lineUpSwerveCone, new LineUpClaw(claw), new WaitCommand(0.5), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw));
+	private final SequentialCommandGroup getConeCommand = new SequentialCommandGroup(new SetAngle(claw, arm), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.5), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw));
 	private final SequentialCommandGroup getCubeCommand = new SequentialCommandGroup(new SetAngle(claw, arm), lineUpSwerveCube, new LineUpClaw(claw), new WaitCommand(0.5), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw));
 	private final SequentialCommandGroup getConeUprightCommand = new SequentialCommandGroup(new SetAngle(claw, arm), new LineUpSwerveConeUpright(claw, swerveSubsystem), new WaitCommand(0.5), new AttackUpright(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw));
 
@@ -155,7 +155,7 @@ public class RobotContainer {
 		HashMap<String, Command> scoreAndParkLongMap = new HashMap<String, Command>();
 
 	
-		score2Map.put("score", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		score2Map.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		score2Map.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.5), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
 		score2Map.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		//eventMap.put("lineUp", lineUp);
@@ -163,8 +163,8 @@ public class RobotContainer {
 		scoreAndBalanceMap.put("trainingWheels", new PrintCommand("I print things \n balls \n balls"));
 		scoreAndBalanceMap.put("balance", new Balance(swerveSubsystem));
 
-		scoreAndParkCloseMap.put("score", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
-		scoreAndParkLongMap.put("score", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		scoreAndParkCloseMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		scoreAndParkLongMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 
 		
 		// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
@@ -281,7 +281,7 @@ public class RobotContainer {
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos()));
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
 		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab()));
-		controller.start().whileTrue(new Balance(swerveSubsystem));
+		controller.start().whileTrue(new SetAngle(claw, arm));
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos()));
 		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos()));
 		//controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(0.5), () -> claw.twistClaw(0)).repeatedly());
@@ -301,8 +301,8 @@ public class RobotContainer {
 
 		//Buttons
 
-		buttonBoard.button(3).whileTrue(getConeUprightCommand);
-		buttonBoard.button(2).whileTrue(getCubeCommand);
+		buttonBoard.button(3).whileTrue(new SetAngle(claw, arm));
+		buttonBoard.button(2).whileTrue(new Attack(claw, arm));
 		buttonBoard.button(1).whileTrue(getConeCommand);
 
 		buttonBoard.button(4).whileTrue(lineupMediumConeLeft);
