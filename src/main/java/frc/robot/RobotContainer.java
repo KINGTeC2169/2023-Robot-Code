@@ -91,9 +91,9 @@ public class RobotContainer {
 	private final LineUpClaw lineUpClaw = new LineUpClaw(claw);
 	private final Balance balance = new Balance(swerveSubsystem);
 
-	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeLeft(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
-	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(new HighAngles(arm, claw),  new LineUpCube(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
-	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
+	private final SequentialCommandGroup lineupHighConeLeft = new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
+	private final SequentialCommandGroup lineupHighCube = new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
+	private final SequentialCommandGroup lineupHighConeRight = new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
 
 	private final SequentialCommandGroup lineupMediumConeLeft = new SequentialCommandGroup(new MediumAngles(arm, claw),/*, new LineUpConeLeft(swerveSubsystem)*/ new MediumDrop(claw));
 	private final SequentialCommandGroup lineupMediumCube = new SequentialCommandGroup(new MediumAngles(arm, claw)/* , new LineUpCube(swerveSubsystem)*/, new MediumDrop(claw));
@@ -319,9 +319,9 @@ public class RobotContainer {
 
 		//Buttons
 
-		buttonBoard.button(3).whileTrue(new SetAngle(claw, arm));
-		buttonBoard.button(2).whileTrue(new Attack(claw, arm));
-		buttonBoard.button(1).whileTrue(getConeCommand);
+		buttonBoard.button(3).whileTrue(new LineUpConeRight(swerveSubsystem));
+		buttonBoard.button(2).whileTrue(new LineUpCube(swerveSubsystem));
+		buttonBoard.button(1).whileTrue(new LineUpConeLeft(swerveSubsystem));
 
 		buttonBoard.button(4).whileTrue(lineupMediumConeLeft);
 		buttonBoard.button(5).whileTrue(lineupMediumCube);
