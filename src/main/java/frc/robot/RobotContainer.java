@@ -16,8 +16,11 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.Balance;
 import frc.robot.commands.LineUpConeLeft;
@@ -127,6 +130,9 @@ public class RobotContainer {
 	private Command scoreAndParkClose;
 
  
+	private ShuffleboardTab tab = Shuffleboard.getTab("AutoChooser");
+    private GenericEntry autoChoice = tab.addPersistent("Auto Choice", 0).getEntry();
+    
   
  // private final CommandXboxController buttonBoard = new CommandXboxController(Ports.buttonBoard);
   //private final Score score = new Score(claw, swerve, arm, () -> 8);
@@ -340,8 +346,19 @@ public class RobotContainer {
 			swerveControllerCommand,
 			new InstantCommand(() -> swerveSubsystem.stopModules())
 		); */
-
-		return scoreAndBalance;
+		if(autoChoice.getDouble(0.0) == 1.0) {
+			return scoreAndBalance;
+		}
+		else if(autoChoice.getDouble(0.0) == 2.0) {
+			return scoreAndParkClose;
+		}
+		else if(autoChoice.getDouble(0.0) == 3.0) {
+			return scoreAndParkLong;
+		}
+		else if(autoChoice.getDouble(0.0) == 4.0) {
+			return score2;
+		}
+		return scoreAndParkClose;
 	
 	}
 }
