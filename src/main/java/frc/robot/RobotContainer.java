@@ -319,9 +319,9 @@ public class RobotContainer {
 
 		//Buttons
 
-		buttonBoard.button(3).whileTrue(new LineUpConeRight(swerveSubsystem));
+		buttonBoard.button(1).whileTrue(new LineUpConeRight(swerveSubsystem));
 		buttonBoard.button(2).whileTrue(new LineUpCube(swerveSubsystem));
-		buttonBoard.button(1).whileTrue(new LineUpConeLeft(swerveSubsystem));
+		buttonBoard.button(3).whileTrue(new LineUpConeLeft(swerveSubsystem));
 
 		buttonBoard.button(4).whileTrue(lineupMediumConeLeft);
 		buttonBoard.button(5).whileTrue(lineupMediumCube);
