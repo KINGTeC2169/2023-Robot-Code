@@ -20,6 +20,7 @@ public class CoolBalance extends CommandBase {
     private boolean balancing;
     private boolean balanced;
     private boolean done;
+    private boolean charge;
     private Timer timer = new Timer();
     
     public CoolBalance(SwerveSubsystem swerveSubsystem) {
@@ -33,6 +34,7 @@ public class CoolBalance extends CommandBase {
 
     @Override
     public void initialize() {
+        charge = true;
     }
 
     @Override
@@ -42,38 +44,46 @@ public class CoolBalance extends CommandBase {
         double roll = -NavX.getRoll();
         double pitch = -NavX.getPitch();
 
-        if(pitch < -10 || balancing) {
-            balancing = true;
-            double total = Math.sqrt(Math.pow(roll, 2) + Math.pow(pitch, 2));
-            if(roll > 0 && pitch < 0)
-                total = -total;
 
-            xSpeed = pidX.calculate(total, 0);
-        }
-        else if (!done){
+        if(pitch > -9 && charge) {
             xSpeed = 3;
         }
         else {
-            swerveSubsystem.stopModules();
-        }
-
-        if(pidX.atSetpoint()) {
-                balanced = true;
-            } else {
-                balanced = false;
+            charge = false;
+            if(pitch < -10 || balancing) {
+                balancing = true;
+                double total = Math.sqrt(Math.pow(roll, 2) + Math.pow(pitch, 2));
+                if(roll > 0 && pitch < 0)
+                    total = -total;
+    
+                xSpeed = pidX.calculate(total, 0);
             }
-
-        if(balanced) {
-            timer.start();
-            if (timer.get() > 3) {
-                balancing = false;
-                done = true;
+            else if (!done){
+                xSpeed = 0.35;
+            }
+            else {
+                swerveSubsystem.stopModules();
+            }
+    
+            if(pidX.atSetpoint()) {
+                    balanced = true;
+                } else {
+                    balanced = false;
+                }
+    
+            if(balanced) {
+                timer.start();
+                if (timer.get() > 3) {
+                    balancing = false;
+                    done = true;
+                }
+            }
+            else {
+                timer.stop();
+                timer.reset();
             }
         }
-        else {
-            timer.stop();
-            timer.reset();
-        }
+        
 
 
 

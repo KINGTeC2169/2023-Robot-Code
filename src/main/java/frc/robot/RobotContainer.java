@@ -165,25 +165,25 @@ public class RobotContainer {
 		HashMap<String, Command> basicBalanceMap = new HashMap<String, Command>();
 
 	
-		score2Map.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		score2Map.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		score2Map.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), Commands.runOnce(() -> claw.unGrab()), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.25), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
-		score2Map.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm), new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		score2Map.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm), new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		//eventMap.put("lineUp", lineUp);
-		scoreAndBalanceMap.put("scoreCone", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		scoreAndBalanceMap.put("scoreCone", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		scoreAndBalanceMap.put("trainingWheels", new PrintCommand("I print things \n balls \n balls"));
 		scoreAndBalanceMap.put("balance", new Balance(swerveSubsystem));
 
-		scoreAndParkCloseMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
-		scoreAndParkLongMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		scoreAndParkCloseMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
+		scoreAndParkLongMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 
-		score2FeederMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		score2FeederMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		score2FeederMap.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), Commands.runOnce(() -> claw.unGrab()), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.25), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
-		score2FeederMap.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		score2FeederMap.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		
-		balanceMiddleMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		balanceMiddleMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		balanceMiddleMap.put("coolBalance", new PrintCommand("In progress"));
 
-		basicBalanceMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		basicBalanceMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		basicBalanceMap.put("balance", new CoolBalance(swerveSubsystem));
 
 		// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
@@ -247,7 +247,7 @@ public class RobotContainer {
 			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
 			swerveSubsystem.kinematics, // SwerveDriveKinematics
 			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-			new PIDConstants(2.0, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+			new PIDConstants(1.5, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
 			swerveSubsystem::setAutoModuleStates, // Module states consumer used to output to the drive subsystem
 			basicBalanceMap,
 			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
@@ -260,7 +260,7 @@ public class RobotContainer {
 		scoreAndParkLong = scoreAndParkLongBuilder.fullAuto(scoreAndParkLongPath);
 		score2Feeder = score2FeederBuilder.fullAuto(score2FeederPath);
 		basicBalance = basicBalanceBuilder.fullAuto(basicBalancePath);
-		justScore = new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
+		justScore = new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm), new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw));
 
 		/* 
 		swerveSubsystem.setDefaultCommand(new SwerveCommand(
