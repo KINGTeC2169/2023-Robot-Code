@@ -146,7 +146,7 @@ public class RobotContainer {
 		PathPlannerTrajectory score2Path = PathPlanner.loadPath("Score2", new PathConstraints(4, 3));
 		PathPlannerTrajectory scoreAndBalancePath = PathPlanner.loadPath("ScoreAndBalance", new PathConstraints(4, 3));
 		PathPlannerTrajectory scoreAndParkClosePath = PathPlanner.loadPath("ScoreAndParkClose", new PathConstraints(1, 2));
-		PathPlannerTrajectory scoreAndParkLongPath = PathPlanner.loadPath("ScoreAndParkClose", new PathConstraints(1, 2));
+		PathPlannerTrajectory scoreAndParkLongPath = PathPlanner.loadPath("ScoreAndParkLong", new PathConstraints(1, 2));
 		PathPlannerTrajectory score2FeederPath = PathPlanner.loadPath("Score2Feeder", new PathConstraints(4, 3));
 
 		// This is just an example event map. It would be better to have a constant, global event map
