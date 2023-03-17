@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.Balance;
+import frc.robot.commands.CoolBalance;
 import frc.robot.commands.LineUpConeLeft;
 import frc.robot.commands.LineUpConeRight;
 import frc.robot.commands.LineUpCube;
@@ -131,10 +132,11 @@ public class RobotContainer {
 	private Command score2Feeder;
 	private Command justScore;
 	private Command balanceMiddle;
+	private Command basicBalance;
 
  
 	private ShuffleboardTab tab = Shuffleboard.getTab("AutoChooser");
-    private GenericEntry autoChoice = tab.addPersistent("Auto Choice", 0).getEntry();
+    private GenericEntry autoChoice = tab.add("Auto Choice", 0.0).getEntry();
     
   
  // private final CommandXboxController buttonBoard = new CommandXboxController(Ports.buttonBoard);
@@ -150,6 +152,7 @@ public class RobotContainer {
 		PathPlannerTrajectory scoreAndParkLongPath = PathPlanner.loadPath("ScoreAndParkLong", new PathConstraints(1, 2));
 		PathPlannerTrajectory score2FeederPath = PathPlanner.loadPath("Score2Feeder", new PathConstraints(4, 3));
 		PathPlannerTrajectory balanceMiddlePath = PathPlanner.loadPath("BalanceMiddle", new PathConstraints(6, 4));
+		PathPlannerTrajectory basicBalancePath = PathPlanner.loadPath("BasicBalance", new PathConstraints(2, 2));
 
 		// This is just an example event map. It would be better to have a constant, global event map
 		// in your code that will be used by all path following commands.
@@ -159,6 +162,7 @@ public class RobotContainer {
 		HashMap<String, Command> scoreAndParkLongMap = new HashMap<String, Command>();
 		HashMap<String, Command> score2FeederMap = new HashMap<String, Command>();
 		HashMap<String, Command> balanceMiddleMap = new HashMap<String, Command>();
+		HashMap<String, Command> basicBalanceMap = new HashMap<String, Command>();
 
 	
 		score2Map.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
@@ -178,6 +182,9 @@ public class RobotContainer {
 		
 		balanceMiddleMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
 		balanceMiddleMap.put("coolBalance", new PrintCommand("In progress"));
+
+		basicBalanceMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw)));
+		basicBalanceMap.put("balance", new CoolBalance(swerveSubsystem));
 
 		// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
 		SwerveAutoBuilder score2Builder = new SwerveAutoBuilder(
@@ -235,14 +242,25 @@ public class RobotContainer {
 			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
 			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
 		);
+		SwerveAutoBuilder basicBalanceBuilder = new SwerveAutoBuilder(
+			swerveSubsystem::getPose, // Pose2d supplier
+			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
+			swerveSubsystem.kinematics, // SwerveDriveKinematics
+			new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+			new PIDConstants(2.0, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+			swerveSubsystem::setAutoModuleStates, // Module states consumer used to output to the drive subsystem
+			basicBalanceMap,
+			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+			swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
+		);
 		
 		score2 = score2Builder.fullAuto(score2Path);
 		scoreAndBalance = scoreAndBalanceBuilder.fullAuto(scoreAndBalancePath);
 		scoreAndParkClose = scoreAndParkCloseBuilder.fullAuto(scoreAndParkClosePath);
 		scoreAndParkLong = scoreAndParkLongBuilder.fullAuto(scoreAndParkLongPath);
 		score2Feeder = score2FeederBuilder.fullAuto(score2FeederPath);
+		basicBalance = basicBalanceBuilder.fullAuto(basicBalancePath);
 		justScore = new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new HighRetract(arm, claw));
-
 
 		/* 
 		swerveSubsystem.setDefaultCommand(new SwerveCommand(
@@ -360,6 +378,9 @@ public class RobotContainer {
 		}
 		else if(autoChoice.getDouble(0.0) == 5.0) {
 			return score2Feeder;
+		}
+		else if(autoChoice.getDouble(0.0) == 6.0) {
+			return basicBalance;
 		}
 		return justScore;
 	
