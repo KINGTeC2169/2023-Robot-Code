@@ -24,7 +24,7 @@ public class SwerveCommand extends CommandBase {
 
     private final SwerveSubsystem swerveSubsystem;
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction, slider, rightX, rightY;
-    private final Supplier<Boolean> sideButton, trigger, fieldButton;
+    private final Supplier<Boolean> sideButton, trigger, fieldButton, leftTop, leftBottom;
     private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
     private boolean isFieldOriented, isSlowMode;
     private final int controlMode;
@@ -34,7 +34,6 @@ public class SwerveCommand extends CommandBase {
     private ProfiledPIDController turnPID2 = new ProfiledPIDController(0.01, 0, 0, constraints);
     private final double kPTurn = 0.009;
     private ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
-    
     
     public SwerveCommand(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction, 
     Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction, Supplier<Double> slider, Supplier<Boolean> sideButton,
@@ -50,6 +49,8 @@ public class SwerveCommand extends CommandBase {
         this.rightY = null;
         this.controlMode = 0;
         this.fieldButton = null;
+        this.leftTop = null;
+        this.leftBottom = null;
         
         //this.fieldOrientedFunction = fieldOrientedFunction;
 
@@ -61,7 +62,8 @@ public class SwerveCommand extends CommandBase {
         addRequirements(swerveSubsystem);
     }
     public SwerveCommand(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, 
-    Supplier<Double> turningSpdFunction, Supplier<Double> rightX, Supplier<Double> rightY, Supplier<Boolean> fieldButton) {
+    Supplier<Double> turningSpdFunction, Supplier<Double> rightX, Supplier<Double> rightY, Supplier<Boolean> fieldButton, 
+    Supplier<Boolean> leftTop,Supplier<Boolean> leftBottom) {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
@@ -73,14 +75,17 @@ public class SwerveCommand extends CommandBase {
         this.rightY = rightY;
         this.controlMode = 1;
         this.fieldButton = fieldButton;
+        this.leftTop = leftTop;
+        this.leftBottom = leftBottom;
+
 
         turnPID = new PIDController(kPTurn, 0, 0);
         turnPID.setTolerance(5);
         turnPID2.enableContinuousInput(0, 360);
 
-        this.xLimiter = new SlewRateLimiter(5);
-        this.yLimiter = new SlewRateLimiter(5);
-        this.turningLimiter = new SlewRateLimiter(5);
+        this.xLimiter = new SlewRateLimiter(1.5);
+        this.yLimiter = new SlewRateLimiter(1.5);
+        this.turningLimiter = new SlewRateLimiter(1.5);
         addRequirements(swerveSubsystem);
     }
 
@@ -90,6 +95,7 @@ public class SwerveCommand extends CommandBase {
 
     @Override
     public void execute() {
+        
         SmartDashboard.putBoolean("Field Oriented", isFieldOriented);
         SmartDashboard.putBoolean("Slow mode", isSlowMode);
 
@@ -152,6 +158,22 @@ public class SwerveCommand extends CommandBase {
                 SmartDashboard.putNumber("Control angle", angle);
 
                turningSpeed = turnPID2.calculate(swerveSubsystem.getHeading(), angle);
+            }
+
+            if(leftBottom.get()) {
+                xSpeed *= swerveSubsystem.getSlowSpeed();
+                ySpeed *= swerveSubsystem.getSlowSpeed();
+                turningSpeed *= swerveSubsystem.getSlowSpeed();
+            }
+            else if(leftTop.get()) {
+                xSpeed *= swerveSubsystem.getFastSpeed();
+                ySpeed *= swerveSubsystem.getFastSpeed();
+                turningSpeed *= swerveSubsystem.getFastSpeed();
+            }
+            else {
+                xSpeed *= swerveSubsystem.getMediumSpeed();
+                ySpeed *= swerveSubsystem.getMediumSpeed();
+                turningSpeed *= swerveSubsystem.getMediumSpeed();
             }
             isFieldOriented = !fieldButton.get();
         }

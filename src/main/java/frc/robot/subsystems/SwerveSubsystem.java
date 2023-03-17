@@ -9,8 +9,12 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,6 +22,8 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.Ports;
 import static frc.robot.Constants.ModuleConstants.*;
+
+import java.util.Map;
 
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -56,42 +62,82 @@ public class SwerveSubsystem extends SubsystemBase {
     false);
 
     public SwerveDriveKinematics kinematics = DriveConstants.DRIVE_KINEMATICS;
-    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions());
+    private final SwerveDriveOdometry odometer;
     public Field2d field = new Field2d();
 
     private ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
-    private GenericEntry maxSpeed = tab.add("Max Speed", 1.0).getEntry();
-
+    private GenericEntry fastSpeed = tab.add("Fast Speed", 1.0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", 0)).withPosition(6, 3).getEntry();
+    private GenericEntry mediumSpeed = tab.add("Medium Speed", 0.5).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", 0)).withPosition(4, 3).getEntry();
+    private GenericEntry slowSpeed = tab.add("Slow Speed", 0.2).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", 0)).withPosition(2, 3).getEntry();
 
     public SwerveSubsystem() {
+        odometer = new SwerveDriveOdometry(kinematics, getRotation2d(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
         
-        SmartDashboard.putData("Field", field);
-        tab.addDouble("Robot Heading", () -> getHeading());
-
-        tab.addDouble("Front Left", () -> frontLeft.getDriveCurrent());
-        tab.addDouble("Front Right", () -> frontRight.getDriveCurrent());
-        tab.addDouble("Back Left", () -> backLeft.getDriveCurrent());
-        tab.addDouble("Back Right", () -> backRight.getDriveCurrent());
+        //SmartDashboard.putData("Field", field);
         
-        tab.addDouble("Abs Front Left", () -> frontLeft.getAbsoluteTurnPosition());
-        tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition());
-        tab.addDouble("Abs Back Left", () -> backLeft.getAbsoluteTurnPosition());
-        tab.addDouble("Abs Back Right", () -> backRight.getAbsoluteTurnPosition());
+        ShuffleboardLayout driveCurrents = tab.getLayout("Drive Currents", BuiltInLayouts.kGrid).withSize(2, 2).withProperties(Map.of("Number of rows", 2)).withPosition(0, 0);
+        ShuffleboardLayout turnCurrents = tab.getLayout("Turn Currents", BuiltInLayouts.kGrid).withSize(2, 2).withProperties(Map.of("Number of rows", 2)).withPosition(0, 2);
 
+        driveCurrents.addDouble("Front Left", () -> frontLeft.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        driveCurrents.addDouble("Front Right", () -> frontRight.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        driveCurrents.addDouble("Back Left", () -> backLeft.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        driveCurrents.addDouble("Back Right", () -> backRight.getDriveCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+
+        turnCurrents.addDouble("Front Left", () -> frontLeft.getTurnCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        turnCurrents.addDouble("Front Right", () -> frontRight.getTurnCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        turnCurrents.addDouble("Back Left", () -> backLeft.getTurnCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+        turnCurrents.addDouble("Back Right", () -> backRight.getTurnCurrent()).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("Orientation", "VERTICAL"));
+
+
+        //tab.add("Test", "Balls").withWidget(BuiltInWidgets.kComboBoxChooser);
+
+        tab.addDouble("Robot Heading", () -> getHeading()).withWidget(BuiltInWidgets.kGyro).withSize(3, 3).withPosition(7, 0);
+
+        tab.addDouble("Rotation 2D", () -> getRotation2d().getDegrees());
+
+        tab.addDouble("Front Left Percent", () -> frontLeft.getWantedSpeed());
+        tab.addDouble("Front Right Percent", () -> frontRight.getWantedSpeed());
+        tab.addDouble("Back Left Percent", () -> backLeft.getWantedSpeed());
+        tab.addDouble("Back Right Percent", () -> backRight.getWantedSpeed());
+        tab.addDouble("180 Head", () -> head180());
+
+        //tab.addDouble("Abs Front Left", () -> frontLeft.getAbsoluteTurnPosition());
+        //tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition());
+        //tab.addDouble("Abs Back Left", () -> backLeft.getAbsoluteTurnPosition());
+        //tab.addDouble("Abs Back Right", () -> backRight.getAbsoluteTurnPosition());
+        //tab.addDouble("X", () -> odometer.getPoseMeters().getX()).withPosition(8, 3);
+        //tab.addDouble("Y", () -> odometer.getPoseMeters().getY()).withPosition(9, 3);
+
+        tab.add(field).withPosition(2, 0).withSize(5, 3);
 
         //Creates a new thread, which sleeps and then zeros out the gyro
         //Uses a new thread so that it doesn't pause all other code running
         new Thread(() -> {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(2000);
                 zeroHeading();
+                resetEncoders();
             } catch (Exception e) {
             }
         }).start();
-        
-        
     }
 
+    public Field2d getField() {
+        return field;
+    }
+
+    public double getFastSpeed() {
+        return fastSpeed.getDouble(1.0);
+    }
+
+    public double getMediumSpeed() {
+        return mediumSpeed.getDouble(0.5);
+    }
+
+    public double getSlowSpeed() {
+        return slowSpeed.getDouble(0.2);
+    }
+    
     public SwerveModulePosition[] getModulePositions() {
         return new SwerveModulePosition[] {
         frontLeft.getModulePosition(),
@@ -111,10 +157,13 @@ public class SwerveSubsystem extends SubsystemBase {
         //return Math.IEEEremainder(NavX.getAngle(), 360);
         return NavX.getAngle() % 360;
     }
+    public double head180() {
+        return  Math.IEEEremainder(NavX.getAngle(), 360);
+    }
 
     public Rotation2d getRotation2d() {
-        //return NavX.getRotation2d();
-        return Rotation2d.fromDegrees(-getHeading());
+        return NavX.getRotation2d();
+        //return Rotation2d.fromDegrees(-getHeading());
     }
     
 
@@ -144,30 +193,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
         //field.setRobotPose(odometer.getPoseMeters());
         field.setRobotPose(odometer.getPoseMeters().getX(), odometer.getPoseMeters().getY(), odometer.getPoseMeters().getRotation());
-        System.out.println(maxSpeed.getDouble(1.0));
 
         SmartDashboard.putNumber("X", odometer.getPoseMeters().getX());
         SmartDashboard.putNumber("Y", odometer.getPoseMeters().getY());
         SmartDashboard.putNumber("Pose angle", odometer.getPoseMeters().getRotation().getDegrees());
         
         //SmartDashboard.putData("Field", field);
-        
-        //Runs during robot periodic, displays shuffleboard data for this subsystem
-        SmartDashboard.putNumber("Robot Heading", getHeading());
-        SmartDashboard.putNumber("Front Left Absolute", frontLeft.getAbsoluteTurnPosition());
-        SmartDashboard.putNumber("Front Right Absolute", frontRight.getAbsoluteTurnPosition());
-        SmartDashboard.putNumber("Back Left Absolute", backLeft.getAbsoluteTurnPosition());
-        SmartDashboard.putNumber("Back Right Absolute", backRight.getAbsoluteTurnPosition());
-
-        SmartDashboard.putNumber("Front Right Turn Current", frontRight.getTurnCurrent());
-        SmartDashboard.putNumber("Front Left Turn Current", frontLeft.getTurnCurrent());
-
-        SmartDashboard.putNumber("Back Right Turn Current", backRight.getTurnCurrent());
-        SmartDashboard.putNumber("Back Left Turn Current", backLeft.getTurnCurrent());
-        SmartDashboard.putNumber("NavX", NavX.getAngle());
-        SmartDashboard.putNumber("Rotation2D", NavX.getRotation2d().getDegrees());
-
-
+    
         /*
         SmartDashboard.putNumber("Front Left", frontLeft.getTurnPosition());
         SmartDashboard.putNumber("Front Right", frontRight.getTurnPosition());
@@ -201,6 +233,16 @@ public class SwerveSubsystem extends SubsystemBase {
 
     }
 
+    public void setAutoModuleStates(SwerveModuleState[] states) {
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, ModuleConstants.maxSpeed);
+        frontLeft.setState(states[0]);
+        frontRight.setState(states[1]);
+        backLeft.setState(states[2]);
+        backRight.setState(states[3]);
+
+    }
+
     public SwerveModuleState[] getModuleStates() {
         return new SwerveModuleState[] {
             frontLeft.getState(),
@@ -209,6 +251,12 @@ public class SwerveSubsystem extends SubsystemBase {
             backRight.getState()};
     }
 
+    public void fullStop() {
+        frontLeft.fullStop();
+        frontRight.fullStop();
+        backLeft.fullStop();
+        backRight.fullStop();
+    }
     /**Puts wheels in 'X' position and sets driving to a velocity-PID loop set at 0m/s */
     public void setActiveStop() {
         System.out.println("1\n1\n1\n1\n1\n1\n1\n1");

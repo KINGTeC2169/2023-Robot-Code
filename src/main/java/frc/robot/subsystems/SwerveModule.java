@@ -78,14 +78,16 @@ public class SwerveModule {
 
     public double getDrivePosition() {
         //return driveMotor.getSelectedSensorPosition() * driveEncoderToMeter;
-        return driveMotor.getSelectedSensorPosition() * (0.32 / 13824);
+        return -driveMotor.getSelectedSensorPosition() * (0.32 / 13824);
     }
 
+    /**Returns position of turn encoder in radians. Counterclockwise is positive, accumulates. */
     public double getTurnPosition() {
         return turnEncoder.getPosition();
     }
     public Rotation2d getRotation2d() {
-        return Rotation2d.fromDegrees(getTurnPosition());
+        //return Rotation2d.fromDegrees(getTurnPosition());
+        return Rotation2d.fromRadians(getTurnPosition());
     }
 
     
@@ -130,12 +132,29 @@ public class SwerveModule {
             return;
         }
         state = SwerveModuleState.optimize(state, getState().angle);
-        //driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
-        wantedSpeed = (state.speedMetersPerSecond / maxSpeed) * 21731;
+        if(state.speedMetersPerSecond > 0) {
+            //driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
+        wantedSpeed = (((state.speedMetersPerSecond / maxSpeed) * 0.94) + 0.06);
         //driveMotor.set(ControlMode.Velocity, wantedSpeed * 3 / 2);
-        driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
+        // I LOVE ALIVEBAND  
+        driveMotor.set(ControlMode.PercentOutput, ((state.speedMetersPerSecond / maxSpeed) * 0.94) + 0.06);
+            
+        } else {
+            //driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / maxSpeed);
+        wantedSpeed = (((state.speedMetersPerSecond / maxSpeed) * 0.94) - 0.06);
+        //driveMotor.set(ControlMode.Velocity, wantedSpeed * 3 / 2);
+        // I LOVE ALIVEBAND  
+        driveMotor.set(ControlMode.PercentOutput, ((state.speedMetersPerSecond / maxSpeed) * 0.94) - 0.06);
+        }
+        
         turnMotor.set(turningPID.calculate(getTurnPosition(), state.angle.getRadians()));
 
+    }
+    public void setState(SwerveModuleState state) {
+        state = SwerveModuleState.optimize(state, getState().angle);
+
+        driveMotor.set(ControlMode.PercentOutput, -((state.speedMetersPerSecond / maxSpeed) * 0.94) - 0.06);
+        turnMotor.set(turningPID.calculate(getTurnPosition(), state.angle.getRadians()));
     }
 
     public double getError() {
@@ -164,6 +183,10 @@ public class SwerveModule {
         turnMotor.set(0);
     }
 
+    public void fullStop() {
+        driveMotor.set(ControlMode.Velocity, 0);
+        turnMotor.set(0);
+    }
     /**
      * Sets wheels to X formation
      */
