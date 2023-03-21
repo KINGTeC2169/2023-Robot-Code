@@ -44,9 +44,9 @@ import frc.robot.commands.GetStuff.LineUpSwerveCone;
 import frc.robot.commands.GetStuff.LineUpSwerveConeUpright;
 import frc.robot.commands.GetStuff.LineUpSwerveCube;
 import frc.robot.commands.GetStuff.SetAngle;
-import frc.robot.commands.ScoreLineUp.LineUpConeLeft;
 import frc.robot.commands.ScoreLineUp.LineUpConeRight;
 import frc.robot.commands.ScoreLineUp.LineUpCube;
+import frc.robot.commands.ScoreLineUp.SwerveLineUpConeLeft;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.NavX;
@@ -344,7 +344,16 @@ public class RobotContainer {
 
 		buttonBoard.button(3).whileTrue(new LineUpConeRight(swerveSubsystem));
 		buttonBoard.button(2).whileTrue(new LineUpCube(swerveSubsystem));
-		buttonBoard.button(1).whileTrue(new LineUpConeLeft(swerveSubsystem));
+		buttonBoard.button(1).whileTrue(new SwerveLineUpConeLeft(swerveSubsystem,
+		() -> leftStick.getY(), 
+		() -> leftStick.getX(), 
+		() -> rightStick.getTwist(),
+		() -> rightStick.getX(),
+		() -> rightStick.getY(),
+		() -> rightStick.button(1).getAsBoolean(),
+		() -> leftStick.button(1).getAsBoolean(),
+		() -> leftStick.button(2).getAsBoolean()
+		));
 
 		buttonBoard.button(4).whileTrue(lineupMediumConeLeft);
 		buttonBoard.button(5).whileTrue(lineupMediumCube);
