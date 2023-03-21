@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.ScoreLineUp;
 
 
 import frc.robot.Constants;
@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 
-public class LineUpConeLeft extends CommandBase {
+public class LineUpConeRight extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final SwerveSubsystem swerve;
 
@@ -48,15 +48,14 @@ public class LineUpConeLeft extends CommandBase {
     private boolean y = false;
     private boolean turn = true;
 
-    
-    
+   
 
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public LineUpConeLeft(SwerveSubsystem swerve) {
+    public LineUpConeRight(SwerveSubsystem swerve) {
         this.swerve = swerve;
         /*SmartDashboard.putNumber("P-X", 0.0016);
         SmartDashboard.putNumber("I-X", 0);
@@ -97,12 +96,12 @@ public class LineUpConeLeft extends CommandBase {
         
         //pidRotate.setI(SmartDashboard.getNumber("I-Rotate", 0));
         //pidRotate.setD(SmartDashboard.getNumber("D-Rotate", 0));
-        
+       
         //pidY.setI(SmartDashboard.getNumber("I-Y", 0));
         //pidY.setD(SmartDashboard.getNumber("D-Y", 0));
         pidRotate.calculate(-NetworkTables.apriltagYaw(), 0);
         pidX.calculate(-NetworkTables.apriltagX(), 0);
-        pidY.calculate(NetworkTables.apriltagY(), .5);
+        pidY.calculate(NetworkTables.apriltagY(), .56);
         
         
     }
@@ -117,8 +116,8 @@ public class LineUpConeLeft extends CommandBase {
 
         if(NetworkTables.apriltagYaw() != -2169 && !(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint())) {
 
-
-            xSpeed = pidX.calculate(-NetworkTables.apriltagX(), -.55);
+            
+            xSpeed = pidX.calculate(-NetworkTables.apriltagX(), .5);
             turningSpeed = pidRotate.calculate(-NetworkTables.apriltagYaw(), -3);
             if(pidX.atSetpoint() && pidRotate.atSetpoint()) {
                 centered = true;
@@ -126,7 +125,13 @@ public class LineUpConeLeft extends CommandBase {
             if(centered) {
                 ySpeed = pidY.calculate(NetworkTables.apriltagY(), .58);
             }
-                        
+                
+                
+           
+                
+             
+              
+               
         }
         
 
