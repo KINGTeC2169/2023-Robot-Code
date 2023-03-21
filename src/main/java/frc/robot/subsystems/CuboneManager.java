@@ -53,4 +53,7 @@ public class CuboneManager extends SubsystemBase {
     public static boolean isSomethingInFront() {
         return cubeInFront || coneInFront;
     }
+    public static boolean isSomethingInBound() {
+        return isConeInbound() || isCubeInbound();
+    }
 }

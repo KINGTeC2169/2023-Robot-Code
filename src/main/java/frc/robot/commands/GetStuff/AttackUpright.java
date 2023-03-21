@@ -16,12 +16,12 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class Attack extends CommandBase {
+public class AttackUpright extends CommandBase {
 	@SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 	private final Claw claw;
 	private final Arm arm;
 
-    private double armAngle = 20;
+    private double armAngle = 24;
 	private double elevatorPosition = 75000;
     
 	
@@ -31,7 +31,7 @@ public class Attack extends CommandBase {
 	 *
 	 * @param subsystem The subsystem used by this command.
 	 */
-	public Attack(Claw claw, Arm arm) {
+	public AttackUpright(Claw claw, Arm arm) {
 		this.claw = claw;
 		
 		this.arm = arm;

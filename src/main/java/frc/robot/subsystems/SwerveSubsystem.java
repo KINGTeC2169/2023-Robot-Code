@@ -105,8 +105,8 @@ public class SwerveSubsystem extends SubsystemBase {
         //tab.addDouble("Abs Front Right", () -> frontRight.getAbsoluteTurnPosition());
         //tab.addDouble("Abs Back Left", () -> backLeft.getAbsoluteTurnPosition());
         //tab.addDouble("Abs Back Right", () -> backRight.getAbsoluteTurnPosition());
-        tab.addDouble("X", () -> odometer.getPoseMeters().getX()).withPosition(8, 3);
-        tab.addDouble("Y", () -> odometer.getPoseMeters().getY()).withPosition(9, 3);
+        //tab.addDouble("X", () -> odometer.getPoseMeters().getX()).withPosition(8, 3);
+        //tab.addDouble("Y", () -> odometer.getPoseMeters().getY()).withPosition(9, 3);
 
         tab.add(field).withPosition(2, 0).withSize(5, 3);
 

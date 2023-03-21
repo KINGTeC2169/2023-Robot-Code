@@ -20,11 +20,6 @@ import frc.robot.Constants.DriveConstants;
 public class Balance extends CommandBase {
     private SwerveSubsystem swerveSubsystem;
 
-    private final ShuffleboardTab tab = Shuffleboard.getTab("Balance");
-	private final GenericEntry pX = tab.addPersistent("P X", 0).getEntry();
-	private final GenericEntry pY = tab.addPersistent("P Y", 0).getEntry();
-	private final GenericEntry pTurn = tab.addPersistent("P Turn", 0).getEntry();
-
     private final PIDController pidTurn;
     private final PIDController pidX;
     private final PIDController pidY;
@@ -39,17 +34,17 @@ public class Balance extends CommandBase {
         this.swerveSubsystem = swerveSubsystem;
         addRequirements(swerveSubsystem);
         pidTurn = new PIDController(0.5, 0, 0);
-        pidX = new PIDController(0.8, 0, 0);
-        pidY = new PIDController(0.8, 0, 0);
-        tab.addBoolean("Balanced?", () -> balanced);
+        pidX = new PIDController(0.02, 0, 0);
+        pidY = new PIDController(0.02, 0, 0);
+        
     }
 
 
     @Override
     public void initialize() {
-        pidTurn.setP(pTurn.getDouble(0));
-		pidX.setP(pX.getDouble(0));
-		pidY.setP(pY.getDouble(0));
+        pidTurn.setP(0);
+		pidX.setP(0.02);
+		pidY.setP(0.02);
         
     }
 

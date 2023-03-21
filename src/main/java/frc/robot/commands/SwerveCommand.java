@@ -35,7 +35,6 @@ public class SwerveCommand extends CommandBase {
     private final double kPTurn = 0.009;
     private ShuffleboardTab tab = Shuffleboard.getTab("Swerve");
     
-    
     public SwerveCommand(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpdFunction, 
     Supplier<Double> ySpdFunction, Supplier<Double> turningSpdFunction, Supplier<Double> slider, Supplier<Boolean> sideButton,
     Supplier<Boolean> trigger, int balls) {
@@ -84,9 +83,9 @@ public class SwerveCommand extends CommandBase {
         turnPID.setTolerance(5);
         turnPID2.enableContinuousInput(0, 360);
 
-        this.xLimiter = new SlewRateLimiter(5);
-        this.yLimiter = new SlewRateLimiter(5);
-        this.turningLimiter = new SlewRateLimiter(5);
+        this.xLimiter = new SlewRateLimiter(1.5);
+        this.yLimiter = new SlewRateLimiter(1.5);
+        this.turningLimiter = new SlewRateLimiter(1.5);
         addRequirements(swerveSubsystem);
     }
 
@@ -96,6 +95,7 @@ public class SwerveCommand extends CommandBase {
 
     @Override
     public void execute() {
+        
         SmartDashboard.putBoolean("Field Oriented", isFieldOriented);
         SmartDashboard.putBoolean("Slow mode", isSlowMode);
 
