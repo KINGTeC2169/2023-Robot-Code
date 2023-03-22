@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
-public class PickUpAngle extends CommandBase {
+public class StopAllArmAndClaw extends CommandBase {
 
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 	private final Claw claw;
@@ -17,7 +17,7 @@ public class PickUpAngle extends CommandBase {
     private double twistAngle = 0;
     private double elevatorPosition = 90000;
 
-    public PickUpAngle(Claw claw, Arm arm) {
+    public StopAllArmAndClaw(Claw claw, Arm arm) {
         this.claw = claw;
         this.arm = arm;
 
@@ -32,10 +32,10 @@ public class PickUpAngle extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		arm.setArmAngle(armAngle);
-		arm.setElevatorPosition(elevatorPosition);
-		claw.setTwistAngle(twistAngle);
-		claw.setWristAngle(wristAngle);
+		arm.stopWinchPosition();
+		arm.stopElevatorPosition();
+		claw.stopWristPosition();
+		claw.stopTwistPosition();
     }
 
     // Called once the command ends or is interrupted.

@@ -144,6 +144,14 @@ public class Arm extends SubsystemBase {
         return elevatorMotor.getClosedLoopError();
     }
 
+    public void stopElevatorPosition() {
+        elevatorMotor.set(ControlMode.Position, elevatorMotor.getSelectedSensorPosition());
+    }
+
+    public void stopWinchPosition() {
+        winchMotor.set(ControlMode.Position, winchMotor.getSelectedSensorPosition());
+    }
+
     public double getElevatorCurrent() {
         return elevatorMotor.getSupplyCurrent();
     }

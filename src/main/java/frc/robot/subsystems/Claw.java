@@ -200,6 +200,12 @@ public class Claw extends SubsystemBase {
 		clawTwist.set(ControlMode.Position, angle / 360 * 8192);
 		return clawTwist.getClosedLoopError();
 	}
+	public void stopTwistPosition() {
+		clawTwist.set(ControlMode.Position, clawTwist.getSelectedSensorPosition());
+	}
+	public void stopWristPosition() {
+		wristMotor.set(ControlMode.Position, wristMotor.getSelectedSensorPosition());
+	}
 
 	public static double getWristAngle() {
 		return wristMotor.getSelectedSensorPosition() / 979.45;
