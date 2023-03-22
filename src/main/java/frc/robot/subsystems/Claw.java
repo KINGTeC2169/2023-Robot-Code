@@ -81,7 +81,7 @@ public class Claw extends SubsystemBase {
 	public void twistUpPos() {
 		clawTwist.config_kP(0, twistP.getDouble(0.5));
 
-		twistAngle = getRelativeTwist() + 20;
+		twistAngle = getRelativeTwist() + 30;
 		if (twistAngle > 100)
 			twistAngle = 100;
 		setTwistAngle(twistAngle);
@@ -90,7 +90,7 @@ public class Claw extends SubsystemBase {
 	public void twistDownPos() {
 		clawTwist.config_kP(0, twistP.getDouble(0.5));
 
-		twistAngle = getRelativeTwist() - 20;
+		twistAngle = getRelativeTwist() - 30;
 		if (twistAngle < -100)
 			twistAngle = -100;
 		setTwistAngle(twistAngle);
@@ -128,10 +128,10 @@ public class Claw extends SubsystemBase {
     	wristMotor.set(ControlMode.PercentOutput, power);
   	}
 	public double getAbsoluteWrist() {
-		return wristEncoder.getAbsolutePosition() * 360 - 244;
+		return wristEncoder.getAbsolutePosition() * 360 - 260; //244
 	}
 	public double getAbsoluteTwist() {
-		return twistEncoder.getAbsolutePosition() * 360 - 130;
+		return twistEncoder.getAbsolutePosition() * 360 - 45;
 	}
 	public double getRelativeTwist() {
 		return clawTwist.getSelectedSensorPosition() / 8192 * 360;
