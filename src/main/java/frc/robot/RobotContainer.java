@@ -36,6 +36,17 @@ import frc.robot.commands.ArmClaw.Low.LowExtendCone;
 import frc.robot.commands.ArmClaw.Low.LowFinishCone;
 import frc.robot.commands.ArmClaw.Medium.MediumAngles;
 import frc.robot.commands.ArmClaw.Medium.MediumDrop;
+import frc.robot.commands.ButtonCommands.AttackAngle;
+import frc.robot.commands.ButtonCommands.DrivingAngle;
+import frc.robot.commands.ButtonCommands.ExtendFar;
+import frc.robot.commands.ButtonCommands.ExtendShort;
+import frc.robot.commands.ButtonCommands.FlipIntake;
+import frc.robot.commands.ButtonCommands.IntakeParshell;
+import frc.robot.commands.ButtonCommands.IntakePerpendiskular;
+import frc.robot.commands.ButtonCommands.LiftAngleHigh;
+import frc.robot.commands.ButtonCommands.LiftAngleMid;
+import frc.robot.commands.ButtonCommands.PickUpAngle;
+import frc.robot.commands.ButtonCommands.StopAllArmAndClaw;
 import frc.robot.commands.GetStuff.Attack;
 import frc.robot.commands.GetStuff.AttackUpright;
 import frc.robot.commands.GetStuff.LineUpClaw;
@@ -322,6 +333,7 @@ public class RobotContainer {
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos()));
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
 		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab()));
+		controller.rightBumper().whileTrue(new PickUpAngle(claw, arm));
 		controller.start().whileTrue(new SetAngle(claw, arm));
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos()));
 		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos()));
@@ -342,28 +354,21 @@ public class RobotContainer {
 
 		//Buttons
 
-		buttonBoard.button(3).whileTrue(new LineUpConeRight(swerveSubsystem));
-		buttonBoard.button(2).whileTrue(new LineUpCube(swerveSubsystem));
-		buttonBoard.button(1).whileTrue(new SwerveLineUpConeLeft(swerveSubsystem,
-		() -> leftStick.getY(), 
-		() -> leftStick.getX(), 
-		() -> rightStick.getTwist(),
-		() -> rightStick.getX(),
-		() -> rightStick.getY(),
-		() -> rightStick.button(1).getAsBoolean(),
-		() -> leftStick.button(1).getAsBoolean(),
-		() -> leftStick.button(2).getAsBoolean()
-		));
+		buttonBoard.button(1).whileTrue(new LiftAngleHigh(claw, arm));
+		buttonBoard.button(2).whileTrue(new LiftAngleMid(claw, arm));
+		buttonBoard.button(3).whileTrue(new ExtendFar(claw, arm));
+		buttonBoard.button(4).whileTrue(new ExtendShort(claw, arm));
+		//buttonBoard.button(5).whileTrue(lineupMediumCube); LED
+		//buttonBoard.button(6).whileTrue(lineupMediumConeRight); LED
 
-		buttonBoard.button(4).whileTrue(lineupMediumConeLeft);
-		buttonBoard.button(5).whileTrue(lineupMediumCube);
-		buttonBoard.button(6).whileTrue(lineupMediumConeRight);
-
-		buttonBoard.button(7).whileTrue(lineupHighConeLeft);
-		buttonBoard.button(8).whileTrue(lineupHighCube);
-		buttonBoard.button(9).whileTrue(lineupHighConeRight);
-
-		
+		buttonBoard.button(7).whileTrue(Commands.runOnce(() -> claw.grab()));
+		buttonBoard.button(8).whileTrue(Commands.runOnce(() -> claw.unGrab()));
+		buttonBoard.button(9).whileTrue(new IntakePerpendiskular(claw, arm));
+		buttonBoard.button(10).whileTrue(new PickUpAngle(claw, arm));
+		buttonBoard.button(11).whileTrue(new IntakeParshell(claw, arm));
+		buttonBoard.button(12).whileTrue(new StopAllArmAndClaw(claw, arm));
+		buttonBoard.button(13).onTrue(new AttackAngle(claw, arm));
+		buttonBoard.button(14).whileTrue(new DrivingAngle(claw, arm));
 	}
 
 	/**

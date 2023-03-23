@@ -128,10 +128,10 @@ public class Claw extends SubsystemBase {
     	wristMotor.set(ControlMode.PercentOutput, power);
   	}
 	public double getAbsoluteWrist() {
-		return wristEncoder.getAbsolutePosition() * 360 - 260; //244
+		return wristEncoder.getAbsolutePosition() * 360 - 190; //244
 	}
 	public double getAbsoluteTwist() {
-		return twistEncoder.getAbsolutePosition() * 360 - 45;
+		return twistEncoder.getAbsolutePosition() * 360 - 102;
 	}
 	public double getRelativeTwist() {
 		return clawTwist.getSelectedSensorPosition() / 8192 * 360;

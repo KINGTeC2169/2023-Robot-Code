@@ -211,7 +211,7 @@ public class SwerveLineUpConeLeft extends CommandBase {
         if(NetworkTables.apriltagYaw() != -2169 && !(pidRotate.atSetpoint() && pidX.atSetpoint() && pidY.atSetpoint())) {
 
 
-            xSpeed = xSpeed + pidX.calculate(-NetworkTables.apriltagX(), -.55);
+            ySpeed = ySpeed + pidX.calculate(-NetworkTables.apriltagX(), -.55);
             turningSpeed = turningSpeed + pidRotate.calculate(-NetworkTables.apriltagYaw(), -3);
       
         }
