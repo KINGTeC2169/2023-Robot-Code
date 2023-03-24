@@ -337,8 +337,8 @@ public class RobotContainer {
 		controller.a().whileTrue(Commands.run(() -> arm.winchDownPos()));
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos()));
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
-		controller.leftBumper().whileTrue(Commands.runOnce(() -> claw.toggleGrab()));
-		controller.rightBumper().whileTrue(new PickUpAngle(claw, arm));
+		controller.leftBumper().whileTrue(new SequentialCommandGroup(Commands.runOnce(() -> claw.unGrab()), new WaitCommand(2), Commands.runOnce(() -> claw.stopGrab())));
+		controller.rightBumper().onTrue(Commands.runOnce(() -> claw.toggleGrab()));
 		controller.start().whileTrue(new SetAngle(claw, arm));
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos()));
 		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos()));
@@ -366,8 +366,8 @@ public class RobotContainer {
 		//buttonBoard.button(5).whileTrue(lineupMediumCube); LED
 		//buttonBoard.button(6).whileTrue(lineupMediumConeRight); LED
 
-		buttonBoard.button(7).whileTrue(Commands.runOnce(() -> claw.grab()));
-		buttonBoard.button(8).whileTrue(Commands.runOnce(() -> claw.unGrab()));
+		buttonBoard.button(7).onTrue(Commands.runOnce(() -> claw.grab()));
+		buttonBoard.button(8).onTrue(Commands.runOnce(() -> claw.unGrab()));
 		buttonBoard.button(9).whileTrue(new IntakePerpendiskular(claw, arm));
 		buttonBoard.button(10).whileTrue(new PickUpAngle(claw, arm));
 		buttonBoard.button(11).whileTrue(new IntakeParshell(claw, arm));

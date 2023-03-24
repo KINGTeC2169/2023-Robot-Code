@@ -28,7 +28,6 @@ public class Claw extends SubsystemBase {
 	private static final TalonSRX clawTwist = new TalonSRX(Ports.clawTwist);
 	private static final TalonSRX clawGrippers = new TalonSRX(Ports.clawGrippers);
 
-	private final DoubleSolenoid grabber = new DoubleSolenoid(PneumaticsModuleType.REVPH, Ports.grabberOne, Ports.grabberTwo);
 	private final DutyCycleEncoder twistEncoder = new DutyCycleEncoder(Ports.twistEncoder);
 	private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(Ports.wristEncoder);
 	private double wristPos;
@@ -141,23 +140,24 @@ public class Claw extends SubsystemBase {
 	}
 
 	public void grab() {
-		grabber.set(Value.kForward);
+		
 		clawGrippers.set(ControlMode.PercentOutput, 1);
 		
 	}
 	public void unGrab() {
-		grabber.set(Value.kReverse);
+		//public 
+		
 		clawGrippers.set(ControlMode.PercentOutput, -1);
 
 	}
-	public void setGrab(Boolean isGrab) {
-		//grabber.set(Value.kReverse);
+	public void stopGrab() {
+		clawGrippers.set(ControlMode.PercentOutput, 0);
 	} 
 	public void toggleGrab() {
-		if(clawGrippers.getMotorOutputPercent() == -1)
+		if(Math.abs(clawGrippers.getMotorOutputPercent()) == 1)
 			clawGrippers.set(ControlMode.PercentOutput, 1);
 		else
-			clawGrippers.set(ControlMode.PercentOutput, -1);
+			clawGrippers.set(ControlMode.PercentOutput, 0);
 		
 	}
 
