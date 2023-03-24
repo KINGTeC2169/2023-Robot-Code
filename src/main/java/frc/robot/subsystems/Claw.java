@@ -26,6 +26,8 @@ import frc.robot.Constants.Ports;
 public class Claw extends SubsystemBase {
 	private static final TalonFX wristMotor = new TalonFX(Ports.wristMotor);
 	private static final TalonSRX clawTwist = new TalonSRX(Ports.clawTwist);
+	private static final TalonSRX clawGrippers = new TalonSRX(Ports.clawGrippers);
+
 	private final DoubleSolenoid grabber = new DoubleSolenoid(PneumaticsModuleType.REVPH, Ports.grabberOne, Ports.grabberTwo);
 	private final DutyCycleEncoder twistEncoder = new DutyCycleEncoder(Ports.twistEncoder);
 	private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(Ports.wristEncoder);
@@ -33,6 +35,7 @@ public class Claw extends SubsystemBase {
 	private double twistPos;
 	private double twistAngle = 0;
 	private double twistOffset;
+
 	
 	
 
@@ -139,19 +142,22 @@ public class Claw extends SubsystemBase {
 
 	public void grab() {
 		grabber.set(Value.kForward);
+		clawGrippers.set(ControlMode.PercentOutput, 1);
 		
 	}
 	public void unGrab() {
 		grabber.set(Value.kReverse);
+		clawGrippers.set(ControlMode.PercentOutput, -1);
+
 	}
 	public void setGrab(Boolean isGrab) {
 		//grabber.set(Value.kReverse);
 	} 
 	public void toggleGrab() {
-		if(grabber.get() == Value.kOff)
-			grabber.set(Value.kForward);
+		if(clawGrippers.getMotorOutputPercent() == -1)
+			clawGrippers.set(ControlMode.PercentOutput, 1);
 		else
-			grabber.toggle();
+			clawGrippers.set(ControlMode.PercentOutput, -1);
 		
 	}
 

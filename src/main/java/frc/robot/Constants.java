@@ -19,6 +19,7 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
     public static final class Ports {
+        public static final int clawGrippers = 16;
         public static final int winchMotor = 3;
         public static final int elevatorMotor = 14;
         public static final int wristMotor = 15;

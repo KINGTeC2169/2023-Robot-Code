@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -54,6 +55,8 @@ public class Arm extends SubsystemBase {
 
         elevatorMotor.config_kP(0, 0.1);
         winchMotor.config_kP(0, 0.1);
+        winchMotor.configMotionAcceleration(1000000);
+        
         winchPos = winchMotor.getSelectedSensorPosition(); 
         tab.addDouble("Elevator Position", () -> getElevatorEncoder()).withPosition(7, 0);
 
@@ -64,7 +67,7 @@ public class Arm extends SubsystemBase {
         currents.addDouble("Elevator Current", () -> getElevatorCurrent()).withWidget(BuiltInWidgets.kVoltageView);
 
         tab.add("Reset Elevator Position", Commands.runOnce(() -> resetElevatorEncoder())).withPosition(8, 0).withSize(2, 1);
-        tab.add("Reset Winch Position",Commands.runOnce(() -> resetWinchEncoder())).withPosition(8, 1).withSize(2, 1);
+        tab.add("Reset Winch Position", Commands.runOnce(() -> resetWinchEncoder())).withPosition(8, 1).withSize(2, 1);
         tab.addBoolean("Wrist will break", () -> wristWillBreak);
 
         resetWinchEncoder();
@@ -110,8 +113,9 @@ public class Arm extends SubsystemBase {
         }
     }
     public void setWinch(double angle) {
-       // if(angle < winchUpperLimit.getDouble(WINCH_UPPER_LIMIT) && angle > winchLowerLimit.getDouble(WINCH_LOWER_LIMIT))
-            winchMotor.set(ControlMode.Position, angle * 13540.4526);
+        if(angle < winchUpperLimit.getDouble(WINCH_UPPER_LIMIT) && angle > winchLowerLimit.getDouble(WINCH_LOWER_LIMIT))
+            //winchMotor.set(ControlMode.Position, angle * 7010.837);
+            winchMotor.set(ControlMode.MotionMagic, angle * 7010.837, DemandType.Neutral, 1);
     }
     /**Lifts arm by winch speed value from shuffleboard. ControlMode.Position */
     public void winchUpPos() {
@@ -186,18 +190,18 @@ public class Arm extends SubsystemBase {
     }
 
     public double getLiftAngle() {
-        return winchMotor.getSelectedSensorPosition() / 13540.4526;
+        return winchMotor.getSelectedSensorPosition() / 7010.837;
         
     }
 
     //TODO: check if this is right, I think it is but I dont know why you got rid of it
     public double setArmAngle(double degrees) {
-        winchMotor.set(ControlMode.Position, degrees * 13540.4526);
+        winchMotor.set(ControlMode.Position, degrees * 7010.837);
         return winchMotor.getClosedLoopError();
     }
 
     public void resetWinchEncoder() {
-        winchMotor.setSelectedSensorPosition(getAngleAbsolute() * 13540.4526);
+        winchMotor.setSelectedSensorPosition(getAngleAbsolute() * 7010.837);
     }
 
     public static double getElevator() {

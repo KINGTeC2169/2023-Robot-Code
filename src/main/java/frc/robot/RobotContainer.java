@@ -328,6 +328,11 @@ public class RobotContainer {
 		
 		//controller.x().whileTrue(score);
 		controller.y().whileTrue(Commands.run(() -> arm.winchUpPos()));
+		//controller.y().whileTrue(Commands.run(() -> arm.setWinchPower(0.5)));
+		//controller.y().whileTrue(Commands.startEnd(() -> arm.setWinchPower(1), () -> arm.setWinchPower(0)));
+		//controller.a().whileTrue(Commands.startEnd(() -> arm.setWinchPower(-1), () -> arm.setWinchPower(0)));
+
+		//controller.a().whileTrue(Commands.run(() -> arm.setWinchPower(-0.5)));
 		//controller.y().whileTrue())
 		controller.a().whileTrue(Commands.run(() -> arm.winchDownPos()));
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos()));
