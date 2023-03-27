@@ -337,7 +337,7 @@ public class RobotContainer {
 		controller.a().whileTrue(Commands.run(() -> arm.winchDownPos()));
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos()));
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
-		controller.leftBumper().whileTrue(new SequentialCommandGroup(Commands.runOnce(() -> claw.unGrab()), new WaitCommand(2), Commands.runOnce(() -> claw.stopGrab())));
+		controller.leftBumper().onTrue(new SequentialCommandGroup(Commands.runOnce(() -> claw.unGrab()), new WaitCommand(2), Commands.runOnce(() -> claw.stopGrab())));
 		controller.rightBumper().onTrue(Commands.runOnce(() -> claw.toggleGrab()));
 		controller.start().whileTrue(new SetAngle(claw, arm));
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos()));
@@ -345,6 +345,8 @@ public class RobotContainer {
 		//controller.povRight().whileTrue(Commands.startEnd(() -> claw.twistClaw(0.5), () -> claw.twistClaw(0)).repeatedly());
 		controller.povRight().whileTrue(Commands.run(() -> claw.twistUpPos()));
 		controller.povLeft().whileTrue(Commands.run(() -> claw.twistDownPos()));
+		controller.leftStick().onTrue(Commands.run(() -> claw.killTwist()));
+		controller.rightStick().onTrue(Commands.run(() -> claw.unKillTwist()));
 		//controller.povLeft().whileTrue(Commands.startEnd(() -> claw.setTwistAngle(45), () -> claw.twistClaw(0)).repeatedly());
 		//leftStick.button(2).onTrue(Commands.runOnce(() -> NavX.reset()));
 		///rightStick.button(1).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders()));

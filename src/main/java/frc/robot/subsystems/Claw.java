@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
@@ -61,6 +62,8 @@ public class Claw extends SubsystemBase {
 
 		tab.addDouble("Twist Relative", () -> getRelativeTwist());
 		tab.addDouble("Absolute relative twist", () -> twistEncoder.get());
+		tab.addDouble("Grip Current", () -> getGrippersCurrent());
+		tab.addBoolean("Is Grabbed", () -> isGrabbed()).withWidget(BuiltInWidgets.kBooleanBox);
 		//twistEncoder.setPositionOffset(244/360);
 		new Thread(() -> {
             try {
@@ -79,22 +82,28 @@ public class Claw extends SubsystemBase {
 		
 		//clawTwist.set(ControlMode.PercentOutput, number);
 	}
+	public double getGrippersCurrent() {
+		return clawGrippers.getSupplyCurrent();
+	}
+	public boolean isGrabbed() {
+		return getGrippersCurrent() > 11.0;
+	}
 
 	public void twistUpPos() {
 		clawTwist.config_kP(0, twistP.getDouble(0.5));
 
-		twistAngle = getRelativeTwist() + 30;
-		if (twistAngle > 100)
-			twistAngle = 100;
+		twistAngle = getRelativeTwist() + 50;
+		if (twistAngle > 180)
+			twistAngle = 180;
 		setTwistAngle(twistAngle);
 		
 	}
 	public void twistDownPos() {
 		clawTwist.config_kP(0, twistP.getDouble(0.5));
 
-		twistAngle = getRelativeTwist() - 30;
-		if (twistAngle < -100)
-			twistAngle = -100;
+		twistAngle = getRelativeTwist() - 50;
+		if (twistAngle < -180)
+			twistAngle = -180;
 		setTwistAngle(twistAngle);
 	}
 	public void wristUpPos() {
@@ -133,7 +142,7 @@ public class Claw extends SubsystemBase {
 		return wristEncoder.getAbsolutePosition() * 360 - 190; //244
 	}
 	public double getAbsoluteTwist() {
-		return twistEncoder.getAbsolutePosition() * 360 - 102;
+		return twistEncoder.getAbsolutePosition() * 360 - 16.1;
 	}
 	public double getRelativeTwist() {
 		return clawTwist.getSelectedSensorPosition() / 8192 * 360;
@@ -154,11 +163,18 @@ public class Claw extends SubsystemBase {
 		clawGrippers.set(ControlMode.PercentOutput, 0);
 	} 
 	public void toggleGrab() {
-		if(Math.abs(clawGrippers.getMotorOutputPercent()) == 1)
+		if(Math.abs(clawGrippers.getMotorOutputPercent()) == 0)
 			clawGrippers.set(ControlMode.PercentOutput, 1);
 		else
 			clawGrippers.set(ControlMode.PercentOutput, 0);
 		
+	}
+	public void killTwist() {
+		clawTwist.config_kP(0, 0);
+		clawTwist.set(ControlMode.PercentOutput, 0);
+	}
+	public void unKillTwist() {
+		clawTwist.config_kP(0, .5);
 	}
 
 	public double getWristCurrent() {
@@ -187,10 +203,10 @@ public class Claw extends SubsystemBase {
 	}
 
 	public double setTwistAngle(double angle) {
-		if (angle > 100)
-			angle = 100;
-		if (angle < -100)
-			angle = -100;
+		if (angle > 180)
+			angle = 180;
+		if (angle < -180)
+			angle = -180;
 		clawTwist.config_kP(0, twistP.getDouble(0.5));
 
 		//clawTwist.set(ControlMode.Position, angle);

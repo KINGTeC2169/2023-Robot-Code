@@ -36,7 +36,7 @@ public class PickUpAngle extends CommandBase {
 		arm.setElevatorPosition(elevatorPosition);
 		claw.setTwistAngle(twistAngle);
 		claw.setWristAngle(wristAngle);
-		claw.unGrab();
+		claw.grab();
     }
 
     // Called once the command ends or is interrupted.
