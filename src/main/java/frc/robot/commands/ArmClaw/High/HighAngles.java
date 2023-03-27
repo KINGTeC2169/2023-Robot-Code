@@ -9,8 +9,8 @@ public class HighAngles extends CommandBase {
 
     private Arm arm;
     private Claw claw;
-    private double armAngle = 47;
-    private double wristAngle = -15;
+    private double armAngle = 40;
+    private double wristAngle = 0;
     private double twistAngle = 0;
 
     public HighAngles(Arm arm, Claw claw) {

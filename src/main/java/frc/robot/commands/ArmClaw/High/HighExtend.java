@@ -8,7 +8,7 @@ public class HighExtend extends CommandBase {
 
 
     private Arm arm;
-    private double elevatorPosition = 305000;
+    private double elevatorPosition = 320000;
     
 
     public HighExtend(Arm arm) {
