@@ -161,14 +161,14 @@ public class RobotContainer {
 		PathPlannerTrajectory scoreAndBalancePath = PathPlanner.loadPath("ScoreAndBalance", new PathConstraints(4, 3));
 		PathPlannerTrajectory scoreAndParkClosePath = PathPlanner.loadPath("ScoreAndParkClose", new PathConstraints(1, 2));
 		PathPlannerTrajectory scoreAndParkLongPath = PathPlanner.loadPath("ScoreAndParkLong", new PathConstraints(1, 2));
-		PathPlannerTrajectory score2FeederPath = PathPlanner.loadPath("Score2Feeder", new PathConstraints(4, 3));
+		PathPlannerTrajectory score2FeederPath = PathPlanner.loadPath("Score2Feeder", new PathConstraints(1, 1));
 		PathPlannerTrajectory balanceMiddlePath = PathPlanner.loadPath("BalanceMiddle", new PathConstraints(6, 4));
 		PathPlannerTrajectory basicBalancePath = PathPlanner.loadPath("BasicBalance", new PathConstraints(2, 2));
 
 		// This is just an example event map. It would be better to have a constant, global event map
 		// in your code that will be used by all path following commands.
 		HashMap<String, Command> score2Map = new HashMap<String, Command>();
-		HashMap<String, Command> scoreAndBalanceMap = new HashMap<String, Command>();
+		HashMap<String, Command> scoreAndBalanceMap = new HashMap<String, Command>(); 
 		HashMap<String, Command> scoreAndParkCloseMap = new HashMap<String, Command>();
 		HashMap<String, Command> scoreAndParkLongMap = new HashMap<String, Command>();
 		HashMap<String, Command> score2FeederMap = new HashMap<String, Command>();
@@ -188,8 +188,10 @@ public class RobotContainer {
 		scoreAndParkLongMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 
 		score2FeederMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
-		score2FeederMap.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), Commands.runOnce(() -> claw.unGrab()), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.25), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
-		score2FeederMap.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new LineUpConeRight(swerveSubsystem), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
+		score2FeederMap.put("readyToGrab", new CubePickUp(claw, arm));
+		//score2FeederMap.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), Commands.runOnce(() -> claw.unGrab()), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.25), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
+		score2FeederMap.put("angles", new HighAngles(arm, claw));
+		score2FeederMap.put("score2", new SequentialCommandGroup(new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		
 		balanceMiddleMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		balanceMiddleMap.put("coolBalance", new PrintCommand("In progress"));
@@ -402,6 +404,9 @@ public class RobotContainer {
 		}
 		else if(autoChoice.getDouble(0.0) == 6.0) {
 			return basicBalance;
+		}
+		else if(autoChoice.getDouble(0.0) == 2169) {
+			return null;
 		}
 		return justScore;
 	
