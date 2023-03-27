@@ -49,6 +49,7 @@ import frc.robot.commands.ButtonCommands.PickUpAngle;
 import frc.robot.commands.ButtonCommands.StopAllArmAndClaw;
 import frc.robot.commands.GetStuff.Attack;
 import frc.robot.commands.GetStuff.AttackUpright;
+import frc.robot.commands.GetStuff.CubePickup;
 import frc.robot.commands.GetStuff.LineUpClaw;
 import frc.robot.commands.GetStuff.LineUpRetract;
 import frc.robot.commands.GetStuff.LineUpSwerveCone;
@@ -365,8 +366,9 @@ public class RobotContainer {
 		buttonBoard.button(2).whileTrue(new LiftAngleMid(claw, arm));
 		buttonBoard.button(3).whileTrue(new ExtendFar(claw, arm));
 		buttonBoard.button(4).whileTrue(new ExtendShort(claw, arm));
-		//buttonBoard.button(5).whileTrue(lineupMediumCube); LED
-		//buttonBoard.button(6).whileTrue(lineupMediumConeRight); LED
+
+		//buttonBoard.button(5).whileTrue(lineupMediumConeRight); LED
+		buttonBoard.button(6).whileTrue(new CubePickup(claw, arm));
 
 		buttonBoard.button(7).onTrue(Commands.runOnce(() -> claw.grab()));
 		buttonBoard.button(8).onTrue(Commands.runOnce(() -> claw.unGrab()));

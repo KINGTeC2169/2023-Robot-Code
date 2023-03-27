@@ -9,8 +9,8 @@ public class HighDrop extends CommandBase {
 
     private Arm arm;
     private Claw claw;
-    private double elevatorPosition = 250560;
-    private double armAngle = 37;
+    private double elevatorPosition = 310000;
+    private double armAngle = 34;
 
     public HighDrop(Arm arm, Claw claw) {
         this.arm = arm;
