@@ -1,4 +1,4 @@
-package frc.robot.commands.GetStuff;
+package frc.robot.commands.ArmClaw;
 
 
 import frc.robot.Constants.DriveConstants;
@@ -16,14 +16,15 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class Attack extends CommandBase {
+public class SetAngle extends CommandBase {
 	@SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 	private final Claw claw;
 	private final Arm arm;
 
-    private double armAngle = 20;
-	private double elevatorPosition = 75000;
-    
+    private double armAngle = 35;
+    private double wristAngle = -115;
+    private double twistAngle = 0;
+    private double elevatorPos = 90000;
 	
 
 	/**
@@ -31,7 +32,7 @@ public class Attack extends CommandBase {
 	 *
 	 * @param subsystem The subsystem used by this command.
 	 */
-	public Attack(Claw claw, Arm arm) {
+	public SetAngle(Claw claw, Arm arm) {
 		this.claw = claw;
 		
 		this.arm = arm;
@@ -54,21 +55,20 @@ public class Attack extends CommandBase {
 	public void execute() {
 		//51931 elevator 23 angle
 		arm.setArmAngle(armAngle);
-		arm.setElevatorPosition(elevatorPosition);
-        
+        claw.setTwistAngle(twistAngle);
+        claw.setWristAngle(wristAngle);
+        arm.setElevatorPosition(elevatorPos);
 
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-        if(!interrupted) 
-            claw.grab();
 	}
 
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(arm.getElevatorEncoder() - elevatorPosition) < 1000;
+        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(claw.getWristEncoder() - wristAngle) < 10 && Math.abs(claw.getTwistEncoder() - twistAngle) < 4 && Math.abs(arm.getElevatorEncoder() - elevatorPos) < 1000;
 	}
 }
