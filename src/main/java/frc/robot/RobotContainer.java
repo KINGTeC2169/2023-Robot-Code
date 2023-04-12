@@ -109,7 +109,7 @@ public class RobotContainer {
 
 		PathPlannerTrajectory scoreAndParkClosePath = PathPlanner.loadPath("ScoreAndParkClose", new PathConstraints(1, 2));
 		PathPlannerTrajectory scoreAndParkLongPath = PathPlanner.loadPath("ScoreAndParkLong", new PathConstraints(1, 2));
-		PathPlannerTrajectory score2FeederPath = PathPlanner.loadPath("Score2Feeder", new PathConstraints(3.2, 2));
+		PathPlannerTrajectory score2FeederPath = PathPlanner.loadPath("Score2Feeder", new PathConstraints(3.2, 1.5));
 		//PathPlannerTrajectory score2FeederPath = PathPlanner.loadPath("Score2Feeder", new PathConstraints(1, 2));
 
 
@@ -123,11 +123,11 @@ public class RobotContainer {
 		scoreAndParkCloseMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		scoreAndParkLongMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 
-		score2FeederMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.12), new HighDrop(arm, claw), new WaitCommand(0.12), new HighAngles(arm, claw), new HighRetract(arm, claw)));
+		score2FeederMap.put("score", new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.01), new HighDrop(arm, claw), new WaitCommand(0.01), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		score2FeederMap.put("readyToGrab", new CubePickup(claw, arm));
 		//score2FeederMap.put("pickUp", new SequentialCommandGroup(new SetAngle(claw, arm), Commands.runOnce(() -> claw.unGrab()), new LineUpSwerveCone(claw, swerveSubsystem), new LineUpClaw(claw), new WaitCommand(0.25), new Attack(claw, arm), new WaitCommand(.5), new LineUpRetract(arm, claw)));
 		score2FeederMap.put("angles", new HighAngles(arm, claw));
-		score2FeederMap.put("score2", new SequentialCommandGroup(Commands.runOnce(() -> swerveSubsystem.stopModules()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.08), new HighDrop(arm, claw), new WaitCommand(0.12), new HighAngles(arm, claw), new HighRetract(arm, claw)));
+		score2FeederMap.put("score2", new SequentialCommandGroup(Commands.runOnce(() -> swerveSubsystem.stopModules()), new HighAngles(arm, claw), new HighExtend(arm),new WaitCommand(.08), Commands.runOnce(() -> claw.unGrab()), new HighAngles(arm, claw), new HighRetract(arm, claw)));
 		
 
 		// Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
@@ -159,8 +159,8 @@ public class RobotContainer {
 			swerveSubsystem::getPose, // Pose2d supplier
 			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
 			swerveSubsystem.kinematics, // SwerveDriveKinematics
-			new PIDConstants(2, 0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-			new PIDConstants(2.2, 0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+			new PIDConstants(3.0, 0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+			new PIDConstants(2.5, 0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
 			swerveSubsystem::setAutoModuleStates, // Module states consumer used to output to the drive subsystem
 			score2FeederMap,
 			true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
