@@ -18,7 +18,7 @@ import static frc.robot.Constants.ModuleConstants.*;
 
 import frc.robot.Constants.DriveConstants;
 
-public class Balance extends CommandBase {
+public class Balance2 extends CommandBase {
     private SwerveSubsystem swerveSubsystem;
 
     private final PIDController pidTurn;
@@ -30,20 +30,20 @@ public class Balance extends CommandBase {
     private boolean balanced;
 
     
-    public Balance(SwerveSubsystem swerveSubsystem) {
+    public Balance2(SwerveSubsystem swerveSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
         addRequirements(swerveSubsystem);
         pidTurn = new PIDController(0.5, 0, 0);
-        pidX = new PIDController(0.1, 0.0, 0.0001);
-        
+        pidX = new PIDController(0.18, 0.0, 0);
+    
     }
 
 
     @Override
     public void initialize() {
         pidTurn.setP(0);
-		pidX.setP(0.05);
-        pidX.setTolerance(1);
+		pidX.setP(0.015);
+        pidX.setTolerance(2);
     }
 
     @Override
@@ -64,7 +64,14 @@ public class Balance extends CommandBase {
        //xSpeed = -pidX.calculate(NavX.getPitch(), 0);
        //chassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, turningSpeed);
 
-   
+       
+       if(pidX.atSetpoint()) {
+        xSpeed = 0;
+        ySpeed = 0.1;
+        balanced = true;
+       } else {
+        balanced = false;
+       }
        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
 
 
@@ -78,12 +85,15 @@ public class Balance extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+
+        
+        //swerveSubsystem.stopModules();
+        swerveSubsystem.setActiveStop();
     }
 
   
     @Override
     public boolean isFinished() {
-        return NavX.getPitch() < -7;
+        return balanced;
     }
 }

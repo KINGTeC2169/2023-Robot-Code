@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.Balance;
+import frc.robot.commands.Balance2;
+import frc.robot.commands.Run;
 import frc.robot.commands.SwerveCommand;
 import frc.robot.commands.TurnToPosition;
 import frc.robot.commands.ArmClaw.CubePickup;
@@ -33,6 +35,7 @@ import frc.robot.commands.ButtonCommands.ExtendFar;
 import frc.robot.commands.ButtonCommands.ExtendShort;
 import frc.robot.commands.ButtonCommands.IntakeParshell;
 import frc.robot.commands.ButtonCommands.IntakePerpendiskular;
+import frc.robot.commands.ButtonCommands.Janis;
 import frc.robot.commands.ButtonCommands.LiftAngleHigh;
 import frc.robot.commands.ButtonCommands.LiftAngleMid;
 import frc.robot.commands.ButtonCommands.PickUpAngle;
@@ -91,6 +94,7 @@ public class RobotContainer {
 	private Command score2Feeder;
 	private Command justScore;
 	private Command scoreAndBalance;
+	private Command justBalance;
 
 
  
@@ -155,7 +159,7 @@ public class RobotContainer {
 			swerveSubsystem::getPose, // Pose2d supplier
 			swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
 			swerveSubsystem.kinematics, // SwerveDriveKinematics
-			new PIDConstants(15, 0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+			new PIDConstants(2, 0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
 			new PIDConstants(2.2, 0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
 			swerveSubsystem::setAutoModuleStates, // Module states consumer used to output to the drive subsystem
 			score2FeederMap,
@@ -167,8 +171,15 @@ public class RobotContainer {
 		scoreAndParkClose = scoreAndParkCloseBuilder.fullAuto(scoreAndParkClosePath);
 		scoreAndParkLong = scoreAndParkLongBuilder.fullAuto(scoreAndParkLongPath);
 		score2Feeder = score2FeederBuilder.fullAuto(score2FeederPath);
-		justScore = new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm), new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), new HighAngles(arm, claw), new HighRetract(arm, claw));
-
+		justScore = new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm), 
+														new WaitCommand(.5), new HighDrop(arm, claw), new WaitCommand(0.5), 
+														new HighAngles(arm, claw), new HighRetract(arm, claw));
+		scoreAndBalance = new SequentialCommandGroup(Commands.runOnce(() -> claw.grab()), new HighAngles(arm, claw), new HighExtend(arm), 
+														new WaitCommand(.1), new HighDrop(arm, claw), new WaitCommand(0.1), 
+														new HighAngles(arm, claw), new HighRetract(arm, claw), new WaitCommand(0.2),
+														new Run(swerveSubsystem, arm, claw), new Balance(swerveSubsystem),
+														new Balance2(swerveSubsystem));
+		justBalance = new SequentialCommandGroup(new Run(swerveSubsystem, arm, claw), new Balance(swerveSubsystem), new Balance2(swerveSubsystem));
 
 		swerveSubsystem.setDefaultCommand(new SwerveCommand(swerveSubsystem,
 		() -> leftStick.getY(), 
@@ -196,11 +207,14 @@ public class RobotContainer {
 		controller.a().whileTrue(Commands.run(() -> arm.winchDownPos()));
 		controller.b().whileTrue(Commands.run(() -> arm.extendPos()));
 		controller.x().whileTrue(Commands.run(() -> arm.retractPos()));
-		controller.leftBumper().onTrue(new SequentialCommandGroup(Commands.runOnce(() -> claw.unGrab()), new WaitCommand(2), Commands.runOnce(() -> claw.stopGrab())));
-		controller.rightBumper().onTrue(Commands.runOnce(() -> claw.toggleGrab()));
+		controller.rightBumper().onTrue(new SequentialCommandGroup(Commands.runOnce(() -> claw.unGrab(), claw), new WaitCommand(2), Commands.runOnce(() -> claw.stopGrab(), claw)));
+		controller.leftBumper().onTrue(Commands.runOnce(() -> claw.toggleGrab(), claw));
 		controller.start().whileTrue(new SetAngle(claw, arm));
 		controller.povUp().whileTrue(Commands.run(() -> claw.wristUpPos()));
 		controller.povDown().whileTrue(Commands.run(() -> claw.wristDownPos()));
+		//controller.povUp().whileTrue(Commands.runEnd(() -> claw.moveWrist(0.2), () -> claw.moveWrist(0)));
+		//controller.povDown().whileTrue(Commands.runEnd(() -> claw.moveWrist(-0.2), () -> claw.moveWrist(0)));
+
 		controller.povRight().whileTrue(Commands.run(() -> claw.twistUpPos()));
 		controller.povLeft().whileTrue(Commands.run(() -> claw.twistDownPos()));
 		controller.leftStick().onTrue(Commands.run(() -> claw.killTwist()));
@@ -220,7 +234,7 @@ public class RobotContainer {
 
 		buttonBoard.button(7).onTrue(Commands.runOnce(() -> claw.grab()));
 		buttonBoard.button(8).onTrue(Commands.runOnce(() -> claw.unGrab()));
-		buttonBoard.button(9).whileTrue(new IntakePerpendiskular(claw, arm));
+		buttonBoard.button(9).whileTrue(new Janis(claw, arm));
 		buttonBoard.button(10).whileTrue(new PickUpAngle(claw, arm));
 		buttonBoard.button(11).whileTrue(new IntakeParshell(claw, arm));
 		buttonBoard.button(12).whileTrue(new StopAllArmAndClaw(claw, arm));
@@ -245,7 +259,10 @@ public class RobotContainer {
 			return score2Feeder;
 		}
 		else if(autoChoice.getDouble(0.0) == 4.0) {
-			return null; //balance
+			return scoreAndBalance; //balance
+		}
+		else if(autoChoice.getDouble(0.0) == 5.0) {
+			return justBalance;
 		}
 		else if(autoChoice.getDouble(0.0) == 2169) {
 			return null;

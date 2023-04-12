@@ -195,7 +195,7 @@ public class SwerveModule {
         System.out.println("2\n2\n2\n2\n2\n2\n2\n2");
         SwerveModuleState state = new SwerveModuleState(0, new Rotation2d(0.785398 * direction));
         state = SwerveModuleState.optimize(state, getState().angle);
-        driveMotor.set(ControlMode.PercentOutput, drivePID.calculate(getDriveVelocity(), 0));
+        driveMotor.set(ControlMode.PercentOutput, 0);
         turnMotor.set(turningPID.calculate(getTurnPosition(), state.angle.getRadians()));
     }
 

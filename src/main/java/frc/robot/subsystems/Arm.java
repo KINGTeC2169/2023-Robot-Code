@@ -27,23 +27,23 @@ public class Arm extends SubsystemBase {
     
 
 
-    private final double ELEVATOR_UPPER_LIMIT = 320000;
+    private final double ELEVATOR_UPPER_LIMIT = 320001;
     private final double ELEVATOR_LOWER_LIMIT = 0;
-    private final double WINCH_UPPER_LIMIT = 80;
-    private final double WINCH_LOWER_LIMIT = 14;
+    private final double WINCH_UPPER_LIMIT = 70;
+    private final double WINCH_LOWER_LIMIT = 12.5;
     private final double ELEVATOR_SPEED = 20000;
-    private final double WINCH_SPEED = 1;
+    private final double WINCH_SPEED = 5;
     private final double lowLimit = 80000;
     //private boolean wristWillBreak;
 
     private ShuffleboardTab tab = Shuffleboard.getTab("Arm");
-    private GenericEntry elevatorUpperLimit = tab.addPersistent("Elevator Upper Limit", ELEVATOR_UPPER_LIMIT).withSize(2, 1).withPosition(4, 0).getEntry();
-    private GenericEntry elevatorLowerLimit = tab.addPersistent("Elevator Lower Limit", ELEVATOR_LOWER_LIMIT).withSize(2, 1).withPosition(4, 1).getEntry();
-    private GenericEntry winchUpperLimit = tab.addPersistent("Winch Upper Limit", WINCH_UPPER_LIMIT).withSize(2, 1).withPosition(2, 0).getEntry();
-    private GenericEntry winchLowerLimit = tab.addPersistent("Winch Lower Limit", WINCH_LOWER_LIMIT).withSize(2, 1).withPosition(2, 1).getEntry();
+    //private GenericEntry elevatorUpperLimit = tab.addPersistent("Elevator Upper Limit", ELEVATOR_UPPER_LIMIT).withSize(2, 1).withPosition(4, 0).getEntry();
+    //private GenericEntry elevatorLowerLimit = tab.addPersistent("Elevator Lower Limit", ELEVATOR_LOWER_LIMIT).withSize(2, 1).withPosition(4, 1).getEntry();
+    //private GenericEntry winchUpperLimit = tab.addPersistent("Winch Upper Limit", WINCH_UPPER_LIMIT).withSize(2, 1).withPosition(2, 0).getEntry();
+    //private GenericEntry winchLowerLimit = tab.addPersistent("Winch Lower Limit", WINCH_LOWER_LIMIT).withSize(2, 1).withPosition(2, 1).getEntry();
 
-    private GenericEntry elevatorSpeed = tab.addPersistent("Elevator Speed", ELEVATOR_SPEED).withSize(2, 1).withPosition(4, 2).getEntry();
-    private GenericEntry winchSpeed = tab.addPersistent("Winch Speed", WINCH_SPEED).withSize(2, 1).withPosition(2, 2).getEntry();
+    //private GenericEntry elevatorSpeed = tab.addPersistent("Elevator Speed", ELEVATOR_SPEED).withSize(2, 1).withPosition(4, 2).getEntry();
+    //private GenericEntry winchSpeed = tab.addPersistent("Winch Speed", WINCH_SPEED).withSize(2, 1).withPosition(2, 2).getEntry();
 
     
     /**
@@ -81,9 +81,9 @@ public class Arm extends SubsystemBase {
     /**Extends arm by elevator speed value from shuffleboard. ControlMode.Position */
     public void extendPos() {
         double pos = elevatorMotor.getSelectedSensorPosition();
-        double speed = elevatorSpeed.getDouble(ELEVATOR_SPEED);
+        double speed = ELEVATOR_SPEED;
 
-        if(pos + speed < elevatorUpperLimit.getDouble(ELEVATOR_UPPER_LIMIT)) {
+        if(pos + speed < ELEVATOR_UPPER_LIMIT) {
             elevatorPos = pos + speed;
             elevatorMotor.set(ControlMode.Position, elevatorPos);
         }
@@ -91,9 +91,9 @@ public class Arm extends SubsystemBase {
     /**Retracts arm by elevator speed value from shuffleboard. ControlMode.Position */
     public void retractPos() {
         double pos = elevatorMotor.getSelectedSensorPosition();
-        double speed = elevatorSpeed.getDouble(ELEVATOR_SPEED);
+        double speed = ELEVATOR_SPEED;
 
-        if(pos - speed > elevatorLowerLimit.getDouble(ELEVATOR_LOWER_LIMIT)) {
+        if(pos - speed > ELEVATOR_LOWER_LIMIT) {
                     elevatorPos = pos - speed;
                     elevatorMotor.set(ControlMode.Position, elevatorPos);
         }
@@ -101,16 +101,16 @@ public class Arm extends SubsystemBase {
 
     }
     public void setWinch(double angle) {
-        if(angle < winchUpperLimit.getDouble(WINCH_UPPER_LIMIT) && angle > winchLowerLimit.getDouble(WINCH_LOWER_LIMIT))
+        if(angle < WINCH_UPPER_LIMIT && angle > WINCH_LOWER_LIMIT)
             //winchMotor.set(ControlMode.Position, angle * 7010.837);
             winchMotor.set(ControlMode.MotionMagic, angle * 7010.837, DemandType.Neutral, 1);
     }
     /**Lifts arm by winch speed value from shuffleboard. ControlMode.Position */
     public void winchUpPos() {
         double pos = getLiftAngle();
-        double speed = winchSpeed.getDouble(WINCH_SPEED);
+        double speed = WINCH_SPEED;
 
-        if(pos + speed < winchUpperLimit.getDouble(WINCH_UPPER_LIMIT)) {
+        if(pos + speed < WINCH_UPPER_LIMIT) {
             winchPos = pos + speed;
             setWinch(winchPos);
         }
@@ -122,9 +122,9 @@ public class Arm extends SubsystemBase {
     /**Lowers arm by winch speed value from shuffleboard. ControlMode.Position */
     public void winchDownPos() {
         double pos = getLiftAngle();
-        double speed = winchSpeed.getDouble(WINCH_SPEED);
+        double speed = WINCH_SPEED;
 
-        if(pos - speed > winchLowerLimit.getDouble(WINCH_LOWER_LIMIT)) {
+        if(pos - speed > WINCH_LOWER_LIMIT) {
             winchPos = pos - speed;
             setWinch(winchPos);
         }
@@ -137,7 +137,7 @@ public class Arm extends SubsystemBase {
         return elevatorMotor.getSelectedSensorPosition();
     }
     public double setElevatorPosition(double pos) {
-        if(pos > elevatorLowerLimit.getDouble(ELEVATOR_LOWER_LIMIT) && pos < elevatorUpperLimit.getDouble(ELEVATOR_UPPER_LIMIT))
+        if(pos > ELEVATOR_LOWER_LIMIT && pos < ELEVATOR_UPPER_LIMIT)
             elevatorMotor.set(ControlMode.Position, pos);
         return elevatorMotor.getClosedLoopError();
     }

@@ -165,6 +165,9 @@ public class SwerveSubsystem extends SubsystemBase {
         return NavX.getRotation2d();
         //return Rotation2d.fromDegrees(-getHeading());
     }
+    public Rotation2d getAdjustedRotation() {
+        return new Rotation2d(NavX.getRotation2d().getRadians() + Math.PI);
+    }
     
 
     public void resetPose(Pose2d pose) {
