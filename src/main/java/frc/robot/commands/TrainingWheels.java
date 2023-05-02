@@ -25,12 +25,11 @@ public class TrainingWheels extends CommandBase {
     public void execute() {
         arm.setArmAngle(armAngle);
         claw.setWristAngleSlow(wristAngle);
-        claw.setTwistAngle(twistAngle);
 
     }
     
     @Override
     public boolean isFinished() {
-        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(claw.getWristEncoder() - wristAngle) < 10 && Math.abs(claw.getTwistEncoder() - twistAngle) < 4;
+        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(claw.getWristEncoder() - wristAngle) < 10;
     }
 }

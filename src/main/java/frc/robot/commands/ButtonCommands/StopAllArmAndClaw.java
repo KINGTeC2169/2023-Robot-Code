@@ -1,7 +1,5 @@
 package frc.robot.commands.ButtonCommands;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
@@ -11,11 +9,6 @@ public class StopAllArmAndClaw extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 	private final Claw claw;
 	private final Arm arm;
-
-	private double armAngle = 35;
-    private double wristAngle = -115;
-    private double twistAngle = 0;
-    private double elevatorPosition = 90000;
 
     public StopAllArmAndClaw(Claw claw, Arm arm) {
         this.claw = claw;
@@ -35,7 +28,6 @@ public class StopAllArmAndClaw extends CommandBase {
 		arm.stopWinchPosition();
 		arm.stopElevatorPosition();
 		claw.stopWristPosition();
-		claw.stopTwistPosition();
     }
 
     // Called once the command ends or is interrupted.

@@ -1,7 +1,5 @@
 package frc.robot.commands.ButtonCommands;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
@@ -14,7 +12,6 @@ public class PickUpAngle extends CommandBase {
 
 	private double armAngle = 35;
     private double wristAngle = -115;
-    private double twistAngle = 0;
     private double elevatorPosition = 90000;
 
     public PickUpAngle(Claw claw, Arm arm) {
@@ -34,7 +31,6 @@ public class PickUpAngle extends CommandBase {
 	public void execute() {
 		arm.setArmAngle(armAngle);
 		arm.setElevatorPosition(elevatorPosition);
-		claw.setTwistAngle(twistAngle);
 		claw.setWristAngle(wristAngle);
 		claw.grab();
     }

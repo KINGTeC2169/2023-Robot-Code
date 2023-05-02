@@ -23,7 +23,6 @@ import frc.robot.commands.Run;
 import frc.robot.commands.SwerveCommand;
 import frc.robot.commands.TurnToPosition;
 import frc.robot.commands.ArmClaw.CubePickup;
-import frc.robot.commands.ArmClaw.ResetArmClaw;
 import frc.robot.commands.ArmClaw.SetAngle;
 import frc.robot.commands.ArmClaw.High.HighAngles;
 import frc.robot.commands.ArmClaw.High.HighExtend;
@@ -33,8 +32,6 @@ import frc.robot.commands.ButtonCommands.AttackAngle;
 import frc.robot.commands.ButtonCommands.DrivingAngle;
 import frc.robot.commands.ButtonCommands.ExtendFar;
 import frc.robot.commands.ButtonCommands.ExtendShort;
-import frc.robot.commands.ButtonCommands.IntakeParshell;
-import frc.robot.commands.ButtonCommands.IntakePerpendiskular;
 import frc.robot.commands.ButtonCommands.Janis;
 import frc.robot.commands.ButtonCommands.LiftAngleHigh;
 import frc.robot.commands.ButtonCommands.LiftAngleMid;
@@ -71,9 +68,6 @@ public class RobotContainer {
 
 	private final TurnToPosition turnToPosition = new TurnToPosition(swerveSubsystem, 90);  	
 	
-
-
-
 	
 	//private final GetCubone rotateToCone = new GetCubone(claw, swerve, arm);
 	private final CommandXboxController controller = new CommandXboxController(Ports.controller);
@@ -215,10 +209,6 @@ public class RobotContainer {
 		//controller.povUp().whileTrue(Commands.runEnd(() -> claw.moveWrist(0.2), () -> claw.moveWrist(0)));
 		//controller.povDown().whileTrue(Commands.runEnd(() -> claw.moveWrist(-0.2), () -> claw.moveWrist(0)));
 
-		controller.povRight().whileTrue(Commands.run(() -> claw.twistUpPos()));
-		controller.povLeft().whileTrue(Commands.run(() -> claw.twistDownPos()));
-		controller.leftStick().onTrue(Commands.run(() -> claw.killTwist()));
-		controller.rightStick().onTrue(Commands.run(() -> claw.unKillTwist()));
 		rightStick.button(1).onTrue(Commands.runOnce(() -> NavX.reset()));
 		rightStick.button(2).onTrue(Commands.runOnce(() -> swerveSubsystem.resetEncoders(), swerveSubsystem));
 
@@ -236,7 +226,6 @@ public class RobotContainer {
 		buttonBoard.button(8).onTrue(Commands.runOnce(() -> claw.unGrab()));
 		buttonBoard.button(9).whileTrue(new Janis(claw, arm));
 		buttonBoard.button(10).whileTrue(new PickUpAngle(claw, arm));
-		buttonBoard.button(11).whileTrue(new IntakeParshell(claw, arm));
 		buttonBoard.button(12).whileTrue(new StopAllArmAndClaw(claw, arm));
 		buttonBoard.button(13).onTrue(new AttackAngle(claw, arm));
 		buttonBoard.button(14).whileTrue(new DrivingAngle(claw, arm));

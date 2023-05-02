@@ -2,7 +2,6 @@ package frc.robot.commands.ArmClaw;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Claw;
 
 public class ResetArmClaw extends CommandBase {
     

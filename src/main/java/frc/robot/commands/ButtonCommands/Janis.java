@@ -1,7 +1,5 @@
 package frc.robot.commands.ButtonCommands;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
@@ -15,7 +13,6 @@ public class Janis extends CommandBase {
 	private double armAngle = 61;
     private double wristAngle = -71;
     private double elevatorPosition = 89600;
-    private double twistAngle = 0;
 
     public Janis(Claw claw, Arm arm) {
         this.claw = claw;
@@ -35,7 +32,6 @@ public class Janis extends CommandBase {
 		arm.setArmAngle(armAngle);
 		arm.setElevatorPosition(elevatorPosition);
 		claw.setWristAngle(wristAngle);
-        claw.setTwistAngle(twistAngle);
     }
 
     // Called once the command ends or is interrupted.

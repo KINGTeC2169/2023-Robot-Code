@@ -1,18 +1,8 @@
 package frc.robot.commands.ArmClaw;
 
 
-import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
-import frc.robot.subsystems.CuboneManager;
-import frc.robot.subsystems.NetworkTables;
-import frc.robot.subsystems.SwerveSubsystem;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
@@ -23,7 +13,6 @@ public class SetAngle extends CommandBase {
 
     private double armAngle = 35;
     private double wristAngle = -115;
-    private double twistAngle = 0;
     private double elevatorPos = 90000;
 	
 
@@ -55,7 +44,6 @@ public class SetAngle extends CommandBase {
 	public void execute() {
 		//51931 elevator 23 angle
 		arm.setArmAngle(armAngle);
-        claw.setTwistAngle(twistAngle);
         claw.setWristAngle(wristAngle);
         arm.setElevatorPosition(elevatorPos);
 
@@ -69,6 +57,6 @@ public class SetAngle extends CommandBase {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(claw.getWristEncoder() - wristAngle) < 10 && Math.abs(claw.getTwistEncoder() - twistAngle) < 4 && Math.abs(arm.getElevatorEncoder() - elevatorPos) < 1000;
+        return Math.abs(arm.getLiftAngle() - armAngle) < 5 && Math.abs(claw.getWristEncoder() - wristAngle) < 10 && Math.abs(arm.getElevatorEncoder() - elevatorPos) < 1000;
 	}
 }

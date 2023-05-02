@@ -1,7 +1,5 @@
 package frc.robot.commands.ArmClaw;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
@@ -15,7 +13,6 @@ public class CubePickup extends CommandBase {
 	
     private double elevatorPosition = 2478;
     private double winchPos = 14;
-    private double twistAngle = 0;
     private double wristAngle = -56;
     
 
@@ -35,7 +32,6 @@ public class CubePickup extends CommandBase {
 	@Override
 	public void execute() {
 		arm.setElevatorPosition(elevatorPosition);
-        claw.setTwistAngle(twistAngle);
         claw.setWristAngle(wristAngle);
         arm.setWinch(winchPos);
         claw.grab();

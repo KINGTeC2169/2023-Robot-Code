@@ -1,20 +1,11 @@
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.BooleanEntry;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SwerveSubsystem;
-import static frc.robot.Constants.ModuleConstants.*;
 
 import frc.robot.Constants.DriveConstants;
 
@@ -27,7 +18,6 @@ public class Balance extends CommandBase {
     private double xSpeed;
     private double ySpeed;
     private double turningSpeed;
-    private boolean balanced;
 
     
     public Balance(SwerveSubsystem swerveSubsystem) {

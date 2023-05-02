@@ -27,11 +27,11 @@ public class Arm extends SubsystemBase {
     
 
 
-    private final double ELEVATOR_UPPER_LIMIT = 320001;
+    private final double ELEVATOR_UPPER_LIMIT = 81200;
     private final double ELEVATOR_LOWER_LIMIT = 0;
     private final double WINCH_UPPER_LIMIT = 70;
     private final double WINCH_LOWER_LIMIT = 12.5;
-    private final double ELEVATOR_SPEED = 20000;
+    private final double ELEVATOR_SPEED = 10000;
     private final double WINCH_SPEED = 5;
     private final double lowLimit = 80000;
     //private boolean wristWillBreak;
