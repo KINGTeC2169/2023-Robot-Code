@@ -54,6 +54,8 @@ public class Arm extends SubsystemBase {
         ShuffleboardLayout currents = tab.getLayout("Arm Currents", BuiltInLayouts.kGrid).withSize(2, 1).withProperties(Map.of("Number of rows", 1)).withPosition(0, 0);
 
         elevatorMotor.config_kP(0, 0.1);
+        elevatorMotor.config_kF(0, 0.1); //figure this out :(
+        elevatorMotor.configMotionCruiseVelocity(10, 0);
         winchMotor.config_kP(0, 0.1);
         winchMotor.configMotionAcceleration(10000000);
         
@@ -85,7 +87,7 @@ public class Arm extends SubsystemBase {
 
         if(pos + speed < ELEVATOR_UPPER_LIMIT) {
             elevatorPos = pos + speed;
-            elevatorMotor.set(ControlMode.Position, elevatorPos);
+            elevatorMotor.set(ControlMode.MotionMagic, elevatorPos);
         }
     }
     /**Retracts arm by elevator speed value from shuffleboard. ControlMode.Position */
@@ -95,7 +97,7 @@ public class Arm extends SubsystemBase {
 
         if(pos - speed > ELEVATOR_LOWER_LIMIT) {
                     elevatorPos = pos - speed;
-                    elevatorMotor.set(ControlMode.Position, elevatorPos);
+                    elevatorMotor.set(ControlMode.MotionMagic, elevatorPos);
         }
         
 
@@ -107,7 +109,7 @@ public class Arm extends SubsystemBase {
         double speed = ELEVATOR_SPEED;
 
         elevatorPos = pos + speed;
-        elevatorMotor.set(ControlMode.Position, elevatorPos);
+        elevatorMotor.set(ControlMode.MotionMagic, elevatorPos);
     
     }
     public void retractPosLimitless() {
@@ -116,7 +118,7 @@ public class Arm extends SubsystemBase {
 
       
         elevatorPos = pos - speed;
-        elevatorMotor.set(ControlMode.Position, elevatorPos);
+        elevatorMotor.set(ControlMode.MotionMagic, elevatorPos);
 
     }
     public void setWinch(double angle) {
@@ -157,12 +159,12 @@ public class Arm extends SubsystemBase {
     }
     public double setElevatorPosition(double pos) {
         if(pos > ELEVATOR_LOWER_LIMIT && pos < ELEVATOR_UPPER_LIMIT)
-            elevatorMotor.set(ControlMode.Position, pos);
+            elevatorMotor.set(ControlMode.MotionMagic, pos);
         return elevatorMotor.getClosedLoopError();
     }
 
     public void stopElevatorPosition() {
-        elevatorMotor.set(ControlMode.Position, elevatorMotor.getSelectedSensorPosition());
+        elevatorMotor.set(ControlMode.MotionMagic, elevatorMotor.getSelectedSensorPosition());
     }
 
     public void stopWinchPosition() {
