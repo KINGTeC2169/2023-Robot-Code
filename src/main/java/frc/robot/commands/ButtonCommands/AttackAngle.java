@@ -13,7 +13,7 @@ public class AttackAngle extends CommandBase {
 
 	private double armAngle = 22;
     private double wristAngle = -115;
-    private double elevatorPosition = 90000;
+    private double elevatorPosition = 90000 / 4;
 
     public AttackAngle(Claw claw, Arm arm) {
         this.claw = claw;

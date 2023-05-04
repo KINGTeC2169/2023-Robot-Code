@@ -13,7 +13,7 @@ public class DrivingAngle extends CommandBase {
 
 	private double armAngle = 40;
     private double wristAngle = -115;
-    private double elevatorPosition = 900;
+    private double elevatorPosition = 900 / 4;
 
     public DrivingAngle(Claw claw, Arm arm) {
         this.claw = claw;

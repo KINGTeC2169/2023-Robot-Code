@@ -6,7 +6,7 @@ import frc.robot.subsystems.Arm;
 public class ResetArmClaw extends CommandBase {
     
     private Arm arm;
-    private double elevatorPosition = 10000;
+    private double elevatorPosition = 10000 / 4;
     private double armAngle = 47;
 
     public ResetArmClaw(Arm arm) {

@@ -100,6 +100,25 @@ public class Arm extends SubsystemBase {
         
 
     }
+
+    /**Hopefully do not need to use these :( */
+    public void extendPosLimitless() {
+        double pos = elevatorMotor.getSelectedSensorPosition();
+        double speed = ELEVATOR_SPEED;
+
+        elevatorPos = pos + speed;
+        elevatorMotor.set(ControlMode.Position, elevatorPos);
+    
+    }
+    public void retractPosLimitless() {
+        double pos = elevatorMotor.getSelectedSensorPosition();
+        double speed = ELEVATOR_SPEED;
+
+      
+        elevatorPos = pos - speed;
+        elevatorMotor.set(ControlMode.Position, elevatorPos);
+
+    }
     public void setWinch(double angle) {
         if(angle < WINCH_UPPER_LIMIT && angle > WINCH_LOWER_LIMIT)
             //winchMotor.set(ControlMode.Position, angle * 7010.837);

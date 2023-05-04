@@ -11,7 +11,7 @@ public class CubePickup extends CommandBase {
 	private final Arm arm;
 
 	
-    private double elevatorPosition = 2478;
+    private double elevatorPosition = 2478 / 4;
     private double winchPos = 14;
     private double wristAngle = -56;
     

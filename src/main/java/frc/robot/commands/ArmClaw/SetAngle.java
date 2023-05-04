@@ -13,7 +13,7 @@ public class SetAngle extends CommandBase {
 
     private double armAngle = 35;
     private double wristAngle = -115;
-    private double elevatorPos = 90000;
+    private double elevatorPos = 90000 / 4;
 	
 
 	/**

@@ -219,8 +219,8 @@ public class RobotContainer {
 		buttonBoard.button(3).whileTrue(new ExtendFar(claw, arm));
 		buttonBoard.button(4).whileTrue(new ExtendShort(claw, arm));
 
-		//buttonBoard.button(5).whileTrue(lineupMediumConeRight); LED
-		buttonBoard.button(6).whileTrue(new CubePickup(claw, arm));
+		buttonBoard.button(5).whileTrue(Commands.run(() -> arm.extendPosLimitless()));
+		buttonBoard.button(6).whileTrue(Commands.run(() -> arm.extendPosLimitless()));
 
 		buttonBoard.button(7).onTrue(Commands.runOnce(() -> claw.grab()));
 		buttonBoard.button(8).onTrue(Commands.runOnce(() -> claw.unGrab()));

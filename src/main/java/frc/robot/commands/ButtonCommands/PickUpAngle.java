@@ -12,7 +12,7 @@ public class PickUpAngle extends CommandBase {
 
 	private double armAngle = 35;
     private double wristAngle = -115;
-    private double elevatorPosition = 90000;
+    private double elevatorPosition = 90000 / 4;
 
     public PickUpAngle(Claw claw, Arm arm) {
         this.claw = claw;

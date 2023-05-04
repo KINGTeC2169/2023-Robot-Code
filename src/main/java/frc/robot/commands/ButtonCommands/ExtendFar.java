@@ -11,7 +11,7 @@ public class ExtendFar extends CommandBase {
 	private final Arm arm;
 
 	
-    private double elevatorPosition = 273480;
+    private double elevatorPosition = 273480 / 4;
 
     public ExtendFar(Claw claw, Arm arm) {
         this.claw = claw;
