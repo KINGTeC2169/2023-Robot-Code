@@ -54,7 +54,6 @@ public class Arm extends SubsystemBase {
         ShuffleboardLayout currents = tab.getLayout("Arm Currents", BuiltInLayouts.kGrid).withSize(2, 1).withProperties(Map.of("Number of rows", 1)).withPosition(0, 0);
 
         elevatorMotor.config_kP(0, 0.1);
-        elevatorMotor.config_kF(0, 0.1); //figure this out :( (100% X 1023) / maxObserve we need to get max velocity
         elevatorMotor.configMotionCruiseVelocity(10, 0);
         winchMotor.config_kP(0, 0.1);
         winchMotor.configMotionAcceleration(10000000);
@@ -97,7 +96,7 @@ public class Arm extends SubsystemBase {
 
         if(pos - speed > ELEVATOR_LOWER_LIMIT) {
                     elevatorPos = pos - speed;
-                    elevatorMotor.set(ControlMode.MotionMagic, elevatorPos);
+                    elevatorMotor.set(ControlMode.MotionMagic, elevatorPos, DemandType.Neutral, 1);
         }
         
 
@@ -109,7 +108,7 @@ public class Arm extends SubsystemBase {
         double speed = ELEVATOR_SPEED;
 
         elevatorPos = pos + speed;
-        elevatorMotor.set(ControlMode.MotionMagic, elevatorPos);
+        elevatorMotor.set(ControlMode.MotionMagic, elevatorPos, DemandType.Neutral, 1);
     
     }
     public void retractPosLimitless() {
@@ -118,7 +117,7 @@ public class Arm extends SubsystemBase {
 
       
         elevatorPos = pos - speed;
-        elevatorMotor.set(ControlMode.MotionMagic, elevatorPos);
+        elevatorMotor.set(ControlMode.MotionMagic, elevatorPos, DemandType.Neutral, 1);
 
     }
     public void setWinch(double angle) {
