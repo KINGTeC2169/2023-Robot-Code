@@ -12,7 +12,7 @@ public class Janis extends CommandBase {
 
 	private double armAngle = 61;
     private double wristAngle = -71;
-    private double elevatorPosition = 89600 / 4;
+    private double elevatorPosition = 14680;//89600 / 4;
 
     public Janis(Claw claw, Arm arm) {
         this.claw = claw;

@@ -42,7 +42,9 @@ public class Balance2 extends CommandBase {
     @Override
     public void initialize() {
         pidTurn.setP(0);
-		pidX.setP(0.015);
+		//pidX.setP(0.015); Use this if the broken swerve module is fixed
+        
+        pidX.setP(0.022); //This is temporary solution for only having three wheels
         pidX.setTolerance(2);
     }
 

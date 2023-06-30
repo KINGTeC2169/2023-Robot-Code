@@ -31,7 +31,7 @@ public class Arm extends SubsystemBase {
     private final double ELEVATOR_LOWER_LIMIT = 0;
     private final double WINCH_UPPER_LIMIT = 70;
     private final double WINCH_LOWER_LIMIT = 12.5;
-    private final double ELEVATOR_SPEED = 10000;
+    private final double ELEVATOR_SPEED = 20000;
     private final double WINCH_SPEED = 5;
     private final double lowLimit = 80000;
     //private boolean wristWillBreak;
@@ -52,9 +52,11 @@ public class Arm extends SubsystemBase {
     public Arm() {
 
         ShuffleboardLayout currents = tab.getLayout("Arm Currents", BuiltInLayouts.kGrid).withSize(2, 1).withProperties(Map.of("Number of rows", 1)).withPosition(0, 0);
-
+        //elevatorMotor.configFactoryDefault();
         elevatorMotor.config_kP(0, 0.1);
-        elevatorMotor.configMotionCruiseVelocity(10, 0);
+
+        elevatorMotor.configMotionCruiseVelocity(1000000000, 0);
+        elevatorMotor.configMotionAcceleration(100000);
         winchMotor.config_kP(0, 0.1);
         winchMotor.configMotionAcceleration(10000000);
         
@@ -86,7 +88,7 @@ public class Arm extends SubsystemBase {
 
         if(pos + speed < ELEVATOR_UPPER_LIMIT) {
             elevatorPos = pos + speed;
-            elevatorMotor.set(ControlMode.MotionMagic, elevatorPos);
+            elevatorMotor.set(ControlMode.MotionMagic, elevatorPos, DemandType.Neutral, 1);
         }
     }
     /**Retracts arm by elevator speed value from shuffleboard. ControlMode.Position */

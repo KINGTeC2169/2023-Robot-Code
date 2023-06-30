@@ -11,7 +11,7 @@ public class LiftAngleMid extends CommandBase {
 	private final Arm arm;
 
 	private double armAngle = 53.5;
-    private double wristAngle = -54;
+    private double wristAngle = -16;
 
     public LiftAngleMid(Claw claw, Arm arm) {
         this.claw = claw;

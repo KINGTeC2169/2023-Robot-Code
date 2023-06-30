@@ -11,7 +11,7 @@ public class ExtendShort extends CommandBase {
 	private final Arm arm;
 
 	
-    private double elevatorPosition = 910 / 4;
+    private double elevatorPosition = 19900;
 
     public ExtendShort(Claw claw, Arm arm) {
         this.claw = claw;
