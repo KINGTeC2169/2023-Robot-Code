@@ -2,13 +2,12 @@ package frc.robot.commands.ArmClaw.High;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Claw;
 
 public class HighExtend extends CommandBase {
 
 
     private Arm arm;
-    private double elevatorPosition = 305000;
+    private double elevatorPosition = 320000 / 4;
     
 
     public HighExtend(Arm arm) {

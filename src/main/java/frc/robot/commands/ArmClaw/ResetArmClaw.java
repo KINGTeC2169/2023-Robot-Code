@@ -2,12 +2,11 @@ package frc.robot.commands.ArmClaw;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Claw;
 
 public class ResetArmClaw extends CommandBase {
     
     private Arm arm;
-    private double elevatorPosition = 10000;
+    private double elevatorPosition = 10000 / 4;
     private double armAngle = 47;
 
     public ResetArmClaw(Arm arm) {

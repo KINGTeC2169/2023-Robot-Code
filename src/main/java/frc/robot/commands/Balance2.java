@@ -1,15 +1,24 @@
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SwerveSubsystem;
+import static frc.robot.Constants.ModuleConstants.*;
 
 import frc.robot.Constants.DriveConstants;
 
-public class Balance extends CommandBase {
+public class Balance2 extends CommandBase {
     private SwerveSubsystem swerveSubsystem;
 
     private final PIDController pidTurn;
@@ -18,22 +27,25 @@ public class Balance extends CommandBase {
     private double xSpeed;
     private double ySpeed;
     private double turningSpeed;
+    private boolean balanced;
 
     
-    public Balance(SwerveSubsystem swerveSubsystem) {
+    public Balance2(SwerveSubsystem swerveSubsystem) {
         this.swerveSubsystem = swerveSubsystem;
         addRequirements(swerveSubsystem);
         pidTurn = new PIDController(0.5, 0, 0);
-        pidX = new PIDController(0.1, 0.0, 0.0001);
-        
+        pidX = new PIDController(0.18, 0.0, 0);
+    
     }
 
 
     @Override
     public void initialize() {
         pidTurn.setP(0);
-		pidX.setP(0.05);
-        pidX.setTolerance(1);
+		//pidX.setP(0.015); Use this if the broken swerve module is fixed
+        
+        pidX.setP(0.022); //This is temporary solution for only having three wheels
+        pidX.setTolerance(2);
     }
 
     @Override
@@ -54,7 +66,14 @@ public class Balance extends CommandBase {
        //xSpeed = -pidX.calculate(NavX.getPitch(), 0);
        //chassisSpeeds = new ChassisSpeeds(ySpeed, xSpeed, turningSpeed);
 
-   
+       
+       if(pidX.atSetpoint()) {
+        xSpeed = 0;
+        ySpeed = 0.1;
+        balanced = true;
+       } else {
+        balanced = false;
+       }
        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
 
 
@@ -68,12 +87,15 @@ public class Balance extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+
+        
+        //swerveSubsystem.stopModules();
+        swerveSubsystem.setActiveStop();
     }
 
   
     @Override
     public boolean isFinished() {
-        return NavX.getPitch() < -7;
+        return balanced;
     }
 }

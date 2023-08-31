@@ -157,7 +157,7 @@ public class SwerveCommand extends CommandBase {
                 
                 SmartDashboard.putNumber("Control angle", angle);
 
-               turningSpeed = turnPID2.calculate(swerveSubsystem.getHeading(), angle);
+               //turningSpeed = turnPID2.calculate(swerveSubsystem.getHeading(), angle);
             }
 
             if(leftBottom.get()) {
@@ -189,7 +189,9 @@ public class SwerveCommand extends CommandBase {
         ChassisSpeeds chassisSpeeds;
         //if(fieldOrientedFunction.get()) {
         if(isFieldOriented) {
-            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
+            //chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
+            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, swerveSubsystem.getAdjustedRotation());
+
         }
         else {
             chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);

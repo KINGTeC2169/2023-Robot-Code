@@ -9,8 +9,8 @@ public class HighRetract extends CommandBase {
 
     private Arm arm;
     private Claw claw;
-    private double elevatorPosition = 1000;
-    private double armAngle = 37;
+    private double elevatorPosition = 1000 / 4;
+    private double armAngle = 36;
 
     public HighRetract(Arm arm, Claw claw) {
         this.arm = arm;
